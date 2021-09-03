@@ -1141,7 +1141,4 @@ int gladLoadGLLoader(GLADloadproc load) {
 	return GLVersion.major != 0 || GLVersion.minor != 0;
 }
 
-int main() {  //TODO: remove later!
-	return 0;
-}
 
