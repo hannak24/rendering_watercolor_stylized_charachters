@@ -148,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="fShader.glsl" />
+    <None Include="lightCubefShader.glsl" />
     <None Include="vShader.glsl" />
   </ItemGroup>
   <ItemGroup>

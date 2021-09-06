@@ -35,6 +35,9 @@
     <None Include="fShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="lightCubefShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
