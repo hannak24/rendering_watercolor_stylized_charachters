@@ -15,5 +15,5 @@ void main()
 {
     vec3 result = light.ambient + light.diffuse + light.specular;
     //FragColor = vec4(result, 1.0);
-    FragColor = vec4(1.0);
+    FragColor = vec4(1.0,0.0,0.0,1.0);
 }
