@@ -38,6 +38,12 @@
     <None Include="lightCubefShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="loadModelvShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="loadModelFShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
@@ -50,6 +56,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Model.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
