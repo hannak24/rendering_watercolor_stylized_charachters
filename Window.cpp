@@ -76,7 +76,7 @@ int main()
     }
 
     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-    stbi_set_flip_vertically_on_load(true);
+    //stbi_set_flip_vertically_on_load(true);
 
     // configure global opengl state
     // -----------------------------
@@ -100,7 +100,7 @@ int main()
 
     // load models
     // -----------
-    Model ourModel("objects/backpack/backpack.obj");
+    Model ourModel("objects/Caracal/Caracal.obj");
 
 
     // draw in wireframe
