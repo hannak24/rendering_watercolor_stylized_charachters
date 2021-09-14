@@ -151,6 +151,8 @@
     <None Include="lightCubefShader.glsl" />
     <None Include="loadModelFShader.glsl" />
     <None Include="loadModelvShader.glsl" />
+    <None Include="loadSkyBoxFShader.glsl" />
+    <None Include="loadSkyBoxVShader.glsl" />
     <None Include="vShader.glsl" />
   </ItemGroup>
   <ItemGroup>

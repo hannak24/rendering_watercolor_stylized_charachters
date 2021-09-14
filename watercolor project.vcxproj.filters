@@ -44,6 +44,12 @@
     <None Include="loadModelFShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="loadSkyBoxVShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="loadSkyBoxFShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
