@@ -36,7 +36,7 @@ float lastFrame = 0.0f;
 float modelYawAngle = 0.0f;
 float modelRollAngle = 0.0f;
 float modelPitchAngle = 0.0f;
-float modelScale = 1.0f;
+float modelScale = 0.005f;
 
 int main()
 {
@@ -46,6 +46,7 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_SAMPLES, 4);
 
 #ifdef __APPLE__
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
@@ -82,6 +83,7 @@ int main()
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_MULTISAMPLE);
 
     // build and compile shaders
     // -------------------------
@@ -165,12 +167,12 @@ int main()
     // load skybox
     vector<std::string> faces = 
     {
-            "skyboxes/skybox/right.jpg",
-            "skyboxes/skybox/left.jpg",
-            "skyboxes/skybox/top.jpg",
-            "skyboxes/skybox/bottom.jpg",
-            "skyboxes/skybox/front.jpg",
-            "skyboxes/skybox/back.jpg"
+            "skyboxes/watercolor paper/right.jpg",
+            "skyboxes/watercolor paper/left.jpg",
+            "skyboxes/watercolor paper/top.jpg",
+            "skyboxes/watercolor paper/bottom.jpg",
+            "skyboxes/watercolor paper/front.jpg",
+            "skyboxes/watercolor paper/back.jpg"
     };
     unsigned int cubemapTexture = loadCubemap(faces);
 
@@ -202,7 +204,7 @@ int main()
 
         // directional light
         ourShader.setVec3("dirLight.direction", -0.2f, -1.0f, -0.3f);
-        ourShader.setVec3("dirLight.ambient", 0.05f, 0.05f, 0.05f);
+        ourShader.setVec3("dirLight.ambient", 0.15f, 0.15f, 0.15f);
         ourShader.setVec3("dirLight.diffuse", 0.4f, 0.4f, 0.4f);
         ourShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
         // point light 1
@@ -316,17 +318,17 @@ void processInput(GLFWwindow* window)
         camera.ProcessKeyboard(RIGHT, deltaTime);
 
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        modelYawAngle = modelYawAngle + 0.7;
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        modelYawAngle = modelYawAngle - 0.7;
-    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        modelRollAngle = modelRollAngle + 0.7;
-    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        modelRollAngle = modelRollAngle - 0.7;
-    if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
         modelPitchAngle = modelPitchAngle + 0.7;
-    if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
         modelPitchAngle = modelPitchAngle - 0.7;
+    if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        modelYawAngle = modelYawAngle + 0.7;
+    if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        modelYawAngle = modelYawAngle - 0.7;
+    if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
+        modelRollAngle = modelRollAngle + 0.7;
+    if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
+        modelRollAngle = modelRollAngle - 0.7;
     if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
         modelScale = modelScale * 1.01;
     if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
