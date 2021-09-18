@@ -18,6 +18,7 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path);
 void renderScene(Shader& shader, Model ourModel, Shader& modelShader);
+unsigned int loadCubemap(vector<std::string> faces);
 
 
 // settings
@@ -94,6 +95,7 @@ int main()
     Shader shader("3.1.2.shadow_mapping.vs", "3.1.2.shadow_mapping.fs");
     Shader simpleDepthShader("shadeVShader.glsl", "shadeFShader.glsl");
     Shader modelShader("3.1.2.shadow_mapping.vs", "shadowMappingFShader.glsl");
+    Shader skyboxShader("loadSkyBoxVshader.glsl", "loadSkyBoxFshader.glsl");
 
     // load models
 // -----------
@@ -101,15 +103,18 @@ int main()
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
+
+
+
     float planeVertices[] = {
         // positions            // normals         // texcoords
-         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-        -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+        -50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
 
-         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,  25.0f,  0.0f,
-        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-         25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,  25.0f, 25.0f
+         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+         50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
     };
     // plane VAO
     unsigned int planeVBO;
@@ -126,9 +131,78 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glBindVertexArray(0);
 
+    float skyboxVertices[] = {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+    unsigned int skyboxVBO, skyboxVAO;
+    glGenVertexArrays(1, &skyboxVAO);
+    glGenBuffers(1, &skyboxVBO);
+
+    glBindVertexArray(skyboxVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, skyboxVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+
+    // position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    vector<std::string> faces = 
+    {
+            "skyboxes/watercolor paper/right.jpg",
+            "skyboxes/watercolor paper/left.jpg",
+            "skyboxes/watercolor paper/top.jpg",
+            "skyboxes/watercolor paper/bottom.jpg",
+            "skyboxes/watercolor paper/front.jpg",
+            "skyboxes/watercolor paper/back.jpg"
+    };
+    unsigned int cubemapTexture = loadCubemap(faces);
+
+
     // load textures
     // -------------
-    unsigned int woodTexture = loadTexture("textures/wood.png");
+    unsigned int woodTexture = loadTexture("textures/watercolor paper.jpg");
 
     // configure depth map FBO
     // -----------------------
@@ -233,6 +307,26 @@ int main()
         glBindTexture(GL_TEXTURE_2D, depthMap);
         renderScene(shader, ourModel, modelShader);
 
+        glDepthFunc(GL_LEQUAL);
+        skyboxShader.use();
+        glDepthMask(GL_FALSE);
+        skyboxShader.use();
+
+        // view/projection transformations
+        projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+        skyboxShader.setMat4("projection", projection);
+        skyboxShader.setMat4("view", view);
+
+        // render the loaded model
+        model = glm::mat4(1.0f);
+        skyboxShader.setMat4("model", model);
+
+        glBindVertexArray(skyboxVAO);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDepthMask(GL_TRUE);
+
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -253,9 +347,18 @@ int main()
 // --------------------
 void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
 {
-    
+    // positions of the point lights
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3(0.7f,  0.2f,  2.0f),
+        glm::vec3(2.3f, -3.3f, -4.0f),
+        glm::vec3(-4.0f,  2.0f, -12.0f),
+        glm::vec3(0.0f,  0.0f, -3.0f)
+    };
+
+    shader.use();
     // floor
     glm::mat4 model = glm::mat4(1.0f);
+    shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -267,6 +370,41 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
     model = glm::scale(model, modelScale * glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
     shader.setMat4("model", model);
+    shader.setVec3("dirLight.ambient", 0.7f, 0.7f, 0.7f);
+    shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
+    shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+    // point light 1
+    shader.setVec3("pointLights[0].position", pointLightPositions[0]);
+    shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+    shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+    shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+    shader.setFloat("pointLights[0].constant", 1.0f);
+    shader.setFloat("pointLights[0].linear", 0.09);
+    shader.setFloat("pointLights[0].quadratic", 0.032);
+    // point light 2
+    shader.setVec3("pointLights[1].position", pointLightPositions[1]);
+    shader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+    shader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+    shader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+    shader.setFloat("pointLights[1].constant", 1.0f);
+    shader.setFloat("pointLights[1].linear", 0.09);
+    shader.setFloat("pointLights[1].quadratic", 0.032);
+    // point light 3
+    shader.setVec3("pointLights[2].position", pointLightPositions[2]);
+    shader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+    shader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+    shader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+    shader.setFloat("pointLights[2].constant", 1.0f);
+    shader.setFloat("pointLights[2].linear", 0.09);
+    shader.setFloat("pointLights[2].quadratic", 0.032);
+    // point light 4
+    shader.setVec3("pointLights[3].position", pointLightPositions[3]);
+    shader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+    shader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+    shader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+    shader.setFloat("pointLights[3].constant", 1.0f);
+    shader.setFloat("pointLights[3].linear", 0.09);
+    shader.setFloat("pointLights[3].quadratic", 0.032);
     ourModel.Draw(shader);
    
 }
@@ -383,6 +521,38 @@ unsigned int loadTexture(char const* path)
         std::cout << "Texture failed to load at path: " << path << std::endl;
         stbi_image_free(data);
     }
+
+    return textureID;
+}
+
+unsigned int loadCubemap(vector<std::string> faces)
+{
+    unsigned int textureID;
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    int width, height, nrChannels;
+    for (unsigned int i = 0; i < faces.size(); i++)
+    {
+        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &nrChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data
+            );
+            stbi_image_free(data);
+        }
+        else
+        {
+            std::cout << "Cubemap tex failed to load at path: " << faces[i] << std::endl;
+            stbi_image_free(data);
+        }
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
     return textureID;
 }
