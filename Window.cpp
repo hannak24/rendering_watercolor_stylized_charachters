@@ -405,6 +405,18 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[3].constant", 1.0f);
     shader.setFloat("pointLights[3].linear", 0.09);
     shader.setFloat("pointLights[3].quadratic", 0.032);
+    // spotLight
+    shader.setVec3("spotLight.position", camera.Position);
+    shader.setVec3("spotLight.direction", camera.Front);
+    shader.setVec3("spotLight.ambient", 0.2f, 0.2f, 0.2f);
+    shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+    shader.setVec3("spotLight.specular", 0.5f, 0.5f, 0.5f);
+    shader.setFloat("spotLight.constant", 1.0f);
+    shader.setFloat("spotLight.linear", 0.09);
+    shader.setFloat("spotLight.quadratic", 0.032);
+    shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+    shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+    shader.setFloat("material.shininess", 64.0f);
     ourModel.Draw(shader);
    
 }
