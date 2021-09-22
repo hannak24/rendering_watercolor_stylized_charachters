@@ -85,6 +85,9 @@ int main()
         return -1;
     }
 
+     // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
+    //stbi_set_flip_vertically_on_load(true);
+
     // configure global opengl state
     // -----------------------------
     glEnable(GL_DEPTH_TEST);
@@ -92,9 +95,11 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    Shader shader("3.1.2.shadow_mapping.vs", "3.1.2.shadow_mapping.fs");
+    //Shader shader("3.1.2.shadow_mapping.vs", "3.1.2.shadow_mapping.fs");
+    //Shader shader("vShader.glsl", "fShader.glsl");
+    Shader shader("normalVShader.glsl", "normalFShader.glsl");
     Shader simpleDepthShader("shadeVShader.glsl", "shadeFShader.glsl");
-    Shader modelShader("3.1.2.shadow_mapping.vs", "shadowMappingFShader.glsl");
+    Shader modelShader("3.1.2.shadow_mapping.vs", "3.1.2.shadow_mapping.fs");
     Shader skyboxShader("loadSkyBoxVshader.glsl", "loadSkyBoxFshader.glsl");
 
     // load models
@@ -280,6 +285,13 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
+        shader.use();
+        // floor
+        model = glm::mat4(1.0f);
+        /*shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
+        shader.setMat4("model", model);
+        glBindVertexArray(planeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);*/
         renderScene(simpleDepthShader, ourModel, simpleDepthShader);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glCullFace(GL_BACK);
@@ -305,6 +317,13 @@ int main()
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
+        shader.use();
+        // floor
+        /*model = glm::mat4(1.0f);
+        shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
+        shader.setMat4("model", model);
+        glBindVertexArray(planeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);*/
         renderScene(shader, ourModel, modelShader);
 
         glDepthFunc(GL_LEQUAL);
@@ -358,12 +377,14 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.use();
     // floor
     glm::mat4 model = glm::mat4(1.0f);
+    shader.setFloat("normalFlag", 0.0f);
     shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     //model
+    shader.setFloat("normalFlag", 1.0f);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
@@ -405,7 +426,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[3].constant", 1.0f);
     shader.setFloat("pointLights[3].linear", 0.09);
     shader.setFloat("pointLights[3].quadratic", 0.032);
-    // spotLight
+    //// spotLight
     shader.setVec3("spotLight.position", camera.Position);
     shader.setVec3("spotLight.direction", camera.Front);
     shader.setVec3("spotLight.ambient", 0.2f, 0.2f, 0.2f);

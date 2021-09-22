@@ -14,3 +14,4 @@ newmtl 01___Default
 	Ke 0.0000 0.0000 0.0000
 	map_Ka 10014_dolphin_v1_Diffuse.jpg
 	map_Kd 10014_dolphin_v1_Diffuse.jpg
+	map_Bump normal.jpg

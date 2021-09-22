@@ -68,6 +68,12 @@
     <None Include="shadowMappingFShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="normalVShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="normalFShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">
