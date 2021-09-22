@@ -385,6 +385,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
 
     //model
     shader.setFloat("normalFlag", 1.0f);
+    shader.setFloat("parralaxFlag", 1.0f);
+    shader.setFloat("height_scale", 0.0f);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
@@ -393,7 +395,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setMat4("model", model);
     shader.setVec3("dirLight.ambient", 0.7f, 0.7f, 0.7f);
     shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
-    shader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
+    shader.setVec3("dirLight.specular", 0.1f, 0.1f, 0.1f);
     // point light 1
     shader.setVec3("pointLights[0].position", pointLightPositions[0]);
     shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);

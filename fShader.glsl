@@ -6,10 +6,12 @@ in VS_OUT {
     vec3 Normal;
     vec2 TexCoords;
     vec4 FragPosLightSpace;
+    mat3 TBN;
 } fs_in;
 
 uniform sampler2D diffuseTexture;
 uniform sampler2D texture_diffuse;
+uniform sampler2D texture_normal;
 uniform sampler2D shadowMap;
 
 uniform vec3 lightPos;
@@ -50,6 +52,7 @@ struct DirLight {
 };  
 
 uniform DirLight dirLight;
+uniform float normalFlag;
 
 struct PointLight {    
     vec3 position;
@@ -117,8 +120,13 @@ float ShadowCalculation(vec4 fragPosLightSpace, float bias)
 }
 
 void main()
-{           
+{   
     vec3 normal = normalize(fs_in.Normal);
+    if(normalFlag == 1.0f){
+        normal = texture(texture_normal, fs_in.TexCoords).rgb;
+        normal = normal * 2.0 - 1.0;   
+        normal = normalize(fs_in.TBN * normal);
+    }
     vec3 viewDir = normalize(viewPos - fs_in.FragPos);
     vec3 result = vec3(0.0);
     result = CalcDirLight(dirLight, normal, viewDir);
