@@ -111,7 +111,8 @@ void main()
     }
     if(normalFlag == 1.0f){
         normal = texture(texture_normal, texCoords).rgb;
-        normal = normal * 2.0 - 1.0;   
+        normal = normal * 2.0 - 1.0;
+        //normal = transpose(fs_in.TBN) * normal;
     }
     vec3 result = vec3(0.0);
     result = CalcDirLight(dirLight, normal, viewDir, texCoords);

@@ -376,6 +376,10 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
 
     shader.use();
     // floor
+    shader.setFloat("normalFlag", 0.0f);
+    shader.setFloat("parralaxFlag", 0.0f);
+    shader.setFloat("height_scale", 0.0f);
+    shader.setFloat("tremor", 0.0f);
     glm::mat4 model = glm::mat4(1.0f);
     shader.setFloat("normalFlag", 0.0f);
     shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
@@ -387,6 +391,9 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("normalFlag", 1.0f);
     shader.setFloat("parralaxFlag", 1.0f);
     shader.setFloat("height_scale", 0.0f);
+    shader.setFloat("time", glfwGetTime());
+    shader.setFloat("speed", deltaTime);
+    shader.setFloat("tremor", 0.3f);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
