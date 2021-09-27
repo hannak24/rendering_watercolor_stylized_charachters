@@ -244,6 +244,8 @@ int main()
     // -------------
     glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
 
+    
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
@@ -379,21 +381,27 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("height_scale", 0.0f);
+    shader.setFloat("diluteAreaVariable", 1);
+    shader.setFloat("modelFlag", 0.0f);
     shader.setFloat("tremor", 0.0f);
     glm::mat4 model = glm::mat4(1.0f);
-    shader.setFloat("normalFlag", 0.0f);
     shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     //model
-    shader.setFloat("normalFlag", 1.0f);
-    shader.setFloat("parralaxFlag", 1.0f);
+    shader.setVec3("cameraPos", camera.Position);
+    shader.setFloat("normalFlag", 0.0f);
+    shader.setFloat("parralaxFlag", 0.0f);
+    shader.setFloat("modelFlag", 1.0f);
     shader.setFloat("height_scale", 0.0f);
     shader.setFloat("time", glfwGetTime());
+    shader.setFloat("frequency", 1/ deltaTime);
     shader.setFloat("speed", deltaTime);
-    shader.setFloat("tremor", 0.3f);
+    shader.setFloat("tremor", 0.009f);
+    shader.setFloat("diluteAreaVariable",1);
+    shader.setInt("skybox", 0);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
@@ -403,6 +411,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setVec3("dirLight.ambient", 0.7f, 0.7f, 0.7f);
     shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
     shader.setVec3("dirLight.specular", 0.1f, 0.1f, 0.1f);
+    shader.setFloat("dirLight.cangiante", 0.7);
+    shader.setFloat("dirLight.dilution", 0.8);
     // point light 1
     shader.setVec3("pointLights[0].position", pointLightPositions[0]);
     shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
@@ -411,6 +421,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[0].constant", 1.0f);
     shader.setFloat("pointLights[0].linear", 0.09);
     shader.setFloat("pointLights[0].quadratic", 0.032);
+    shader.setFloat("pointLights[0].cangiante", 0.7);
+    shader.setFloat("pointLights[0].dilution", 0.3);
     // point light 2
     shader.setVec3("pointLights[1].position", pointLightPositions[1]);
     shader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
@@ -419,6 +431,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[1].constant", 1.0f);
     shader.setFloat("pointLights[1].linear", 0.09);
     shader.setFloat("pointLights[1].quadratic", 0.032);
+    shader.setFloat("pointLights[1].cangiante", 0.7);
+    shader.setFloat("pointLights[1].dilution", 0.8);
     // point light 3
     shader.setVec3("pointLights[2].position", pointLightPositions[2]);
     shader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
@@ -427,6 +441,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[2].constant", 1.0f);
     shader.setFloat("pointLights[2].linear", 0.09);
     shader.setFloat("pointLights[2].quadratic", 0.032);
+    shader.setFloat("pointLights[2].cangiante", 0.7);
+    shader.setFloat("pointLights[2].dilution", 0.8);
     // point light 4
     shader.setVec3("pointLights[3].position", pointLightPositions[3]);
     shader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
@@ -435,6 +451,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[3].constant", 1.0f);
     shader.setFloat("pointLights[3].linear", 0.09);
     shader.setFloat("pointLights[3].quadratic", 0.032);
+    shader.setFloat("pointLights[3].cangiante", 0.7);
+    shader.setFloat("pointLights[3].dilution", 0.8);
     //// spotLight
     shader.setVec3("spotLight.position", camera.Position);
     shader.setVec3("spotLight.direction", camera.Front);
@@ -446,6 +464,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("spotLight.quadratic", 0.032);
     shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
     shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+    shader.setFloat("spotLight.cangiante", 0.7);
+    shader.setFloat("spotLight.dilution", 0.8);
     shader.setFloat("material.shininess", 64.0f);
     ourModel.Draw(shader);
    

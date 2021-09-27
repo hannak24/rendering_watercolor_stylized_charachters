@@ -7,6 +7,7 @@ layout (location = 4) in vec3 aBitangent;
 
 out vec2 TexCoords;
 
+
 out VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -20,6 +21,12 @@ uniform mat4 view;
 uniform mat4 model;
 uniform mat4 lightSpaceMatrix;
 
+uniform vec3 viewPos;
+uniform float time;
+uniform float tremor;
+uniform float frequency;
+
+
 void main()
 {
     vs_out.FragPos = vec3(model * vec4(aPos, 1.0));
@@ -30,6 +37,13 @@ void main()
     vec3 B = normalize(vec3(model * vec4(aBitangent, 0.0)));
     vec3 N = normalize(vec3(model * vec4(aNormal,    0.0)));
     mat3 TBN = mat3(T, B, N);
-    vs_out.TBN = mat3(T, B, N);
+    vs_out.TBN = transpose(mat3(T, B, N));
     gl_Position = projection * view * model * vec4(aPos, 1.0);
+
+    vec4 offset = sin(time + gl_Position * frequency) * tremor;
+    vec3 viewDir = normalize(viewPos - vs_out.FragPos);
+    vec3 normal = normalize(vs_out.Normal);
+    gl_Position = gl_Position + offset * tremor *(dot(normal, viewDir));
 }
+
+
