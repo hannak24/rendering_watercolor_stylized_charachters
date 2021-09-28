@@ -15,15 +15,19 @@ uniform sampler2D texture_diffuse;
 uniform sampler2D texture_normal;
 uniform sampler2D texture_height;
 uniform sampler2D shadowMap;
+uniform samplerCube skybox;
 
 uniform float diluteAreaVariable;
 uniform float cangiante;
 uniform float dilution;
+uniform float density;
+
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
 uniform vec3 cameraPos;
 uniform float height_scale;
+ 
 
 
 
@@ -53,7 +57,7 @@ uniform DirLight dirLight;
 uniform float normalFlag;
 uniform float parralaxFlag;
 uniform float modelFlag;
-uniform samplerCube skybox;
+
 
 struct PointLight {    
     vec3 position;
@@ -122,7 +126,7 @@ void main()
     result = CalcDirLight(dirLight, normal, viewDir, texCoords);
     // phase 2: Point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        result += 0.05 * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
+        result += 0.15 * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
     // phase 3: Spot light
     //result += CalcSpotLight(spotLight, normal, fs_in.FragPos, viewDir, texCoords);
 
@@ -168,8 +172,20 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
 
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
+    result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+
+
+    //implement density control
+    if(density < 0.5){
+        for(int i=0; i < floor(3 - density * 4); i++){
+            result *= result;
+        }
+    }
+    else{
+        result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
+    }
     
-    return vec4(light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor, 1.0);
+    return result;
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords)
@@ -213,8 +229,19 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
+    result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+
+    //implement density control
+    if(density < 0.5){
+        for(int i=0; i < floor(3 - density * 4); i++){
+            result *= result;
+        }
+    }
+    else{
+        result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
+    }
     
-    return vec4(light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor, 1.0);
+    return result;
 } 
 
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords)
@@ -272,8 +299,18 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
 
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    
-    return vec4(light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor, 1.0);
+    result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+
+    //implement density control
+    if(density < 0.5){
+        for(int i=0; i < floor(3 - density * 4); i++){
+            result *= result;
+        }
+    }
+    else{
+        result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
+    }
+
 
     return (result);
 } 

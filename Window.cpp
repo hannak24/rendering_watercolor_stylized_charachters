@@ -402,6 +402,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("tremor", 0.009f);
     shader.setFloat("diluteAreaVariable",1);
     shader.setInt("skybox", 0);
+    shader.setFloat("density", 0.5f);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
@@ -432,7 +433,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[1].linear", 0.09);
     shader.setFloat("pointLights[1].quadratic", 0.032);
     shader.setFloat("pointLights[1].cangiante", 0.7);
-    shader.setFloat("pointLights[1].dilution", 0.8);
+    shader.setFloat("pointLights[1].dilution", 0.6);
     // point light 3
     shader.setVec3("pointLights[2].position", pointLightPositions[2]);
     shader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
