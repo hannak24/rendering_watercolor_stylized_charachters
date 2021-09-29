@@ -443,7 +443,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[2].linear", 0.09);
     shader.setFloat("pointLights[2].quadratic", 0.032);
     shader.setFloat("pointLights[2].cangiante", 0.7);
-    shader.setFloat("pointLights[2].dilution", 0.8);
+    shader.setFloat("pointLights[2].dilution", 0.3);
     // point light 4
     shader.setVec3("pointLights[3].position", pointLightPositions[3]);
     shader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
@@ -453,7 +453,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("pointLights[3].linear", 0.09);
     shader.setFloat("pointLights[3].quadratic", 0.032);
     shader.setFloat("pointLights[3].cangiante", 0.7);
-    shader.setFloat("pointLights[3].dilution", 0.8);
+    shader.setFloat("pointLights[3].dilution", 0.3);
     //// spotLight
     shader.setVec3("spotLight.position", camera.Position);
     shader.setVec3("spotLight.direction", camera.Front);
