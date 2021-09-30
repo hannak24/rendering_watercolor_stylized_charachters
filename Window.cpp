@@ -402,6 +402,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("modelFlag", 1.0f);
+    shader.setFloat("toonShading", 1.0f);
     shader.setFloat("height_scale", 0.0f);
     shader.setFloat("time", glfwGetTime());
     shader.setFloat("frequency", 1/ deltaTime);
@@ -424,7 +425,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("dirLight.dilution", 0.8);
     // point light 1
     shader.setVec3("pointLights[0].position", pointLightPositions[0]);
-    shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+    //shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+    shader.setVec3("pointLights[0].ambient", 0.95f, 0.45f, 0.05f);
     shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
     shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
     shader.setFloat("pointLights[0].constant", 1.0f);
