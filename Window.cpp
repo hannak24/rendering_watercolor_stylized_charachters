@@ -208,6 +208,8 @@ int main()
     // load textures
     // -------------
     unsigned int woodTexture = loadTexture("textures/watercolor paper.jpg");
+    
+
 
     // configure depth map FBO
     // -----------------------
@@ -238,6 +240,7 @@ int main()
     shader.use();
     shader.setInt("diffuseTexture", 0);
     shader.setInt("shadowMap", 1);
+    shader.setInt("noise_texture", 3);
 
 
     // lighting info
@@ -287,6 +290,7 @@ int main()
         glClear(GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
+
         shader.use();
         // floor
         model = glm::mat4(1.0f);
@@ -319,6 +323,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
+ 
         shader.use();
         // floor
         /*model = glm::mat4(1.0f);
@@ -377,6 +382,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     };
 
     shader.use();
+
     // floor
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
@@ -384,6 +390,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("diluteAreaVariable", 1);
     shader.setFloat("modelFlag", 0.0f);
     shader.setFloat("tremor", 0.0f);
+    shader.setInt("noise_texture", 3);
     glm::mat4 model = glm::mat4(1.0f);
     shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
     shader.setMat4("model", model);
@@ -402,7 +409,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("tremor", 0.009f);
     shader.setFloat("diluteAreaVariable",1);
     shader.setInt("skybox", 0);
-    shader.setFloat("density", 0.5f);
+    shader.setInt("noise_texture", 3);
+    shader.setFloat("density", 0.6f);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));

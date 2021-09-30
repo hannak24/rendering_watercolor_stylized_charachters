@@ -14,4 +14,5 @@ newmtl 01___Default
 	Ke 0.0000 0.0000 0.0000
 	map_Ka disp.png
 	map_Kd 10014_dolphin_v1_Diffuse.jpg
+	map_Ks noise_distortion_8.jpg
 	map_Bump normal.jpg

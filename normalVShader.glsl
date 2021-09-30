@@ -6,6 +6,7 @@ layout (location = 3) in vec3 aTangent;
 layout (location = 4) in vec3 aBitangent;  
 
 out vec2 TexCoords;
+out vec3 v_texCoord3D;
 
 
 out VS_OUT {
@@ -40,6 +41,7 @@ void main()
     vs_out.TBN = transpose(mat3(T, B, N));
     gl_Position = projection * view * model * vec4(aPos, 1.0);
 
+    v_texCoord3D = aPos;
     vec4 offset = sin(time + gl_Position * frequency) * tremor;
     vec3 viewDir = normalize(viewPos - vs_out.FragPos);
     vec3 normal = normalize(vs_out.Normal);
