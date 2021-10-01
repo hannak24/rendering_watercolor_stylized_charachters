@@ -402,7 +402,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("modelFlag", 1.0f);
-    shader.setFloat("toonShading", 1.0f);
+    shader.setFloat("toonShading", 0.0f);
     shader.setFloat("height_scale", 0.0f);
     shader.setFloat("time", glfwGetTime());
     shader.setFloat("frequency", 1/ deltaTime);
@@ -411,7 +411,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("diluteAreaVariable",1);
     shader.setInt("skybox", 0);
     shader.setInt("noise_texture", 3);
-    shader.setFloat("density", 0.6f);
+    shader.setFloat("density", 0.55f);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
