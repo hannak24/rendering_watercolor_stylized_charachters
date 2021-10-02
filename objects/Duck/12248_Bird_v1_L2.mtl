@@ -14,3 +14,4 @@ newmtl 12248_Bird_v1
 	Ke 0.0000 0.0000 0.0000
 	map_Ka 12248_Bird_v1_diff.jpg
 	map_Kd 12248_Bird_v1_diff.jpg
+	map_Ks noise_distortion_8.jpg

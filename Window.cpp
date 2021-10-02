@@ -43,6 +43,7 @@ float modelYawAngle = 0.0f;
 float modelRollAngle = 0.0f;
 float modelPitchAngle = 0.0f;
 float modelScale = 0.005f;
+float turbulance = 1.21;
 
 
 
@@ -104,6 +105,8 @@ int main()
 
     // load models
 // -----------
+    //Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
+    //Model ourModel("objects/Swan/Swan.obj");
     Model ourModel("objects/dolphin/dolphin.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -411,7 +414,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("diluteAreaVariable",1);
     shader.setInt("skybox", 0);
     shader.setInt("noise_texture", 3);
-    shader.setFloat("density", 0.50f);
+    shader.setFloat("density", 0.5f);
+    shader.setFloat("turbulance", turbulance);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
@@ -422,7 +426,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
     shader.setVec3("dirLight.specular", 0.1f, 0.1f, 0.1f);
     shader.setFloat("dirLight.cangiante", 0.7);
-    shader.setFloat("dirLight.dilution", 0.8);
+    shader.setFloat("dirLight.dilution", 0.99);
     // point light 1
     shader.setVec3("pointLights[0].position", pointLightPositions[0]);
     shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
@@ -519,6 +523,10 @@ void processInput(GLFWwindow* window)
             modelScale = modelScale * 1.01;
         if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
             modelScale = modelScale * 0.99;
+        if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+            turbulance = turbulance * 1.01;
+        if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+            turbulance = turbulance * 0.99;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
