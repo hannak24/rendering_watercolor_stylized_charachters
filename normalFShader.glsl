@@ -32,7 +32,7 @@ uniform vec3 cameraPos;
 uniform float height_scale;
 uniform float time;
  
- const float levels = 5.0;
+ const float levels = 7.0;
 
 
 struct Material {
@@ -133,8 +133,8 @@ void main()
     vec3 result = vec3(0.0);
     result = CalcDirLight(dirLight, normal, viewDir, texCoords);
     // phase 2: Point lights
-    //for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        //result += 0.05 * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
+    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+        result += 0.15 * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
     // phase 3: Spot light
     //result += CalcSpotLight(spotLight, normal, fs_in.FragPos, viewDir, texCoords);
 
@@ -200,9 +200,12 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
    
        // combine results
 
-        ambient = 0.8 *(light.ambient * brightness) * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-        diffuse = 0.8 *(light.diffuse *  brightness) * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-        specular = 0.8 *(light.specular * brightness) * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
+        ambient = 0.45 *(light.ambient * brightness) + 0.6*light.ambient * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+        diffuse = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+        specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
+        //ambient = brightness + light.ambient * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+        //diffuse = brightness +light.diffuse *diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+        //specular = brightness + light.specular * spec *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
     }
 
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
@@ -281,11 +284,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
    
        // combine results
 
-        ambient = 0.4 *(light.ambient * brightness) + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-        diffuse = 0.4 *(light.diffuse *  brightness) * diff + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-        specular = 0.4 *(light.specular * brightness) * spec + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
+        ambient = 0.45 *(light.ambient * brightness) + 0.6*light.ambient * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+        diffuse = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+        specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
 
-        result = 0.6 *ambient + 0.6 *diffuse + 0.6 *specular + 0.5 * texture(material.texture_diffuse1, texCoords).rgb ;
+        //result = 0.6 *ambient + 0.6 *diffuse + 0.6 *specular + 0.5 * texture(material.texture_diffuse1, texCoords).rgb ;
+        result = ambient + diffuse + specular;
     }
 
    
@@ -339,6 +343,19 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias); 
    
+    if(toonShading == 1){
+        float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
+        float brightness = max(nDot1,0.0);
+        float level = floor(brightness * levels);
+        brightness = level / levels;
+   
+       // combine results
+
+        ambient = 0.4 *(light.ambient * brightness) + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+        diffuse = 0.4 *(light.diffuse *  brightness) * diff + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+        specular = 0.4 *(light.specular * brightness) * spec + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
+    }
+
     
     // spotlight (soft edges)
     float theta = dot(lightDir, normalize(-light.direction)); 

@@ -402,7 +402,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("modelFlag", 1.0f);
-    shader.setFloat("toonShading", 0.0f);
+    shader.setFloat("toonShading", 1.0f);
     shader.setFloat("height_scale", 0.0f);
     shader.setFloat("time", glfwGetTime());
     shader.setFloat("frequency", 1/ deltaTime);
@@ -411,7 +411,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("diluteAreaVariable",1);
     shader.setInt("skybox", 0);
     shader.setInt("noise_texture", 3);
-    shader.setFloat("density", 0.55f);
+    shader.setFloat("density", 0.50f);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
@@ -425,8 +425,8 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("dirLight.dilution", 0.8);
     // point light 1
     shader.setVec3("pointLights[0].position", pointLightPositions[0]);
-    //shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-    shader.setVec3("pointLights[0].ambient", 0.95f, 0.45f, 0.05f);
+    shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+    //shader.setVec3("pointLights[0].ambient", 0.95f, 0.45f, 0.05f);
     shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
     shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
     shader.setFloat("pointLights[0].constant", 1.0f);
