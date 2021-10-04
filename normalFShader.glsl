@@ -32,7 +32,7 @@ uniform vec3 cameraPos;
 uniform float height_scale;
 uniform float time;
  
- const float levels = 7.0;
+  const float levels = 7.0;
 
 
 struct Material {
@@ -63,7 +63,6 @@ uniform float normalFlag;
 uniform float parralaxFlag;
 uniform float modelFlag;
 uniform float toonShading;
-
 
 struct PointLight {    
     vec3 position;
@@ -192,10 +191,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
         specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
     }
 
-     if(modelFlag == 0){
-        vec3 result = ambient + diffuse + specular;
-        return result;
-    }
+    
 
     if(toonShading == 1){
         float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
@@ -213,10 +209,12 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias); 
     vec3 result = ambient + (1.0 - shadow) * (diffuse) + specular;
+    if(modelFlag == 0){
+        return result;
+    }
     result = mix(texture(texture_specular, texCoords).rgb,result ,turbulance);
 
-   
-
+    
 
     //calc light dilution
     float ratio = 1.0;
@@ -230,6 +228,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
     result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+
+    
+
 
     //implement density control
     if(density < 0.5){
@@ -272,8 +273,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     specular *= attenuation;
     vec3 result = ambient + diffuse + specular;
 
-
-     if(modelFlag == 0){
+    if(modelFlag == 0){
         return result;
     }
 
@@ -292,8 +292,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
         result = ambient + diffuse + specular;
         result = mix(texture(texture_specular, texCoords).rgb,result ,turbulance);
     }
-
-   
 
     //calc light dilution
     float ratio = 1.0;
@@ -344,19 +342,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias); 
    
-    if(toonShading == 1){
-        float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
-        float brightness = max(nDot1,0.0);
-        float level = floor(brightness * levels);
-        brightness = level / levels;
-   
-       // combine results
-
-        ambient = 0.4 *(light.ambient * brightness) + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-        diffuse = 0.4 *(light.diffuse *  brightness) * diff + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-        specular = 0.4 *(light.specular * brightness) * spec + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
-    }
-
     
     // spotlight (soft edges)
     float theta = dot(lightDir, normalize(-light.direction)); 
@@ -376,6 +361,19 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     
     if(modelFlag == 0){
         return result;
+    }
+
+    if(toonShading == 1){
+    float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
+    float brightness = max(nDot1,0.0);
+    float level = floor(brightness * levels);
+    brightness = level / levels;
+   
+    // combine results
+
+    ambient = 0.4 *(light.ambient * brightness) + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+    diffuse = 0.4 *(light.diffuse *  brightness) * diff + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+    specular = 0.4 *(light.specular * brightness) * spec + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
     }
 
     //calc light dilution

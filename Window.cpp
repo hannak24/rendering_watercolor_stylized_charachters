@@ -44,6 +44,7 @@ float modelRollAngle = 0.0f;
 float modelPitchAngle = 0.0f;
 float modelScale = 0.005f;
 float turbulance = 1.21;
+float density = 0.5;
 
 
 
@@ -106,8 +107,9 @@ int main()
     // load models
 // -----------
     //Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
-    //Model ourModel("objects/Swan/Swan.obj");
-    Model ourModel("objects/dolphin/dolphin.obj");
+    Model ourModel("objects/Swan/Swan.obj");
+    //Model ourModel("objects/dolphin/dolphin.obj");
+    //Model ourModel("objects/Duck/Duck.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -414,7 +416,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("diluteAreaVariable",1);
     shader.setInt("skybox", 0);
     shader.setInt("noise_texture", 3);
-    shader.setFloat("density", 0.5f);
+    shader.setFloat("density", density);
     shader.setFloat("turbulance", turbulance);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
@@ -527,6 +529,10 @@ void processInput(GLFWwindow* window)
             turbulance = turbulance * 1.01;
         if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
             turbulance = turbulance * 0.99;
+        if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+            density = density * 0.99;
+        if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+            density = density * 1.005;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

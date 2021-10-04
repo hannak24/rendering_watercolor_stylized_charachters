@@ -24,7 +24,7 @@ uniform float diluteAreaVariable;
 uniform float cangiante;
 uniform float dilution;
 uniform float density;
-
+uniform float turbulance;
 
 uniform vec3 lightPos;
 uniform vec3 viewPos;
@@ -32,7 +32,7 @@ uniform vec3 cameraPos;
 uniform float height_scale;
 uniform float time;
  
-
+  const float levels = 7.0;
 
 
 struct Material {
@@ -62,7 +62,7 @@ uniform DirLight dirLight;
 uniform float normalFlag;
 uniform float parralaxFlag;
 uniform float modelFlag;
-
+uniform float toonShading;
 
 struct PointLight {    
     vec3 position;
@@ -132,14 +132,14 @@ void main()
     vec3 result = vec3(0.0);
     result = CalcDirLight(dirLight, normal, viewDir, texCoords);
     // phase 2: Point lights
-    //for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        //result += 0.05 * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
+    for(int i = 0; i < NR_POINT_LIGHTS; i++)
+        result += 0.15 * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
     // phase 3: Spot light
     //result += CalcSpotLight(spotLight, normal, fs_in.FragPos, viewDir, texCoords);
 
     // implement turbulance
 
-      // Perturb the texcoords with three components of noise
+    // Perturb the texcoords with three components of noise
     vec3 uvw = v_texCoord3D + 0.1*vec3(snoise(v_texCoord3D + vec3(0.0, 0.0, time)),
     snoise(v_texCoord3D + vec3(43.0, 17.0, time)),
 	snoise(v_texCoord3D + vec3(-17.0, -43.0, time)));
@@ -158,13 +158,6 @@ void main()
         FragColor = vec4(0.4 * result + 0.2 * vec3(n, n, n)+ 0.6 * vec3(0.2824,0.749,0.7686), 1.0);
     }
     else{
-        //FragColor = vec4(result + vec3(s,s,s), 1.0);
-        //float n =
-        //snoise(vec3(result.xy, 30.0)/128.0)/ 1.0 +
-        //snoise(vec3(result.xy, 30.0)/64.0) / 2.0 +
-        //snoise(vec3(result.xy, 64.0)/32.0) / 16.0;
-	    //FragColor = vec4(mix(mix(result, result, n + 1.0), vec3(0.1, 0.0, 0.0), n*0.5 + 0.5) , 1.0);
-        //FragColor = vec4(result + 0.2 * vec3(n, n, n), 1.0);
         FragColor = vec4(result, 1.0);
     }
 }
@@ -197,18 +190,31 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
         diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
         specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
     }
+
+    
+
+    if(toonShading == 1){
+        float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
+        float brightness = max(nDot1,0.0);
+        float level = floor(brightness * levels);
+        brightness = level / levels;
+   
+       // combine results
+
+        ambient = 0.45 *(light.ambient * brightness) + 0.6*light.ambient * vec3(texture(material.texture_diffuse1, texCoords));
+        diffuse = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff * vec3(texture(material.texture_diffuse1, texCoords));
+        specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec *vec3(texture(material.texture_specular1, texCoords));
+    }
+
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias); 
     vec3 result = ambient + (1.0 - shadow) * (diffuse) + specular;
-
     if(modelFlag == 0){
         return result;
     }
+    result = mix(texture(texture_specular, texCoords).rgb,result ,turbulance);
 
-    //calc perlin noise for turbulance
-    //vec3 offset = vec3(cnoise(fs_in.FragPos));
-    //vec3 offset = vec3(cnoise(result));
-    //result = result + 2 * abs(offset);
+    
 
     //calc light dilution
     float ratio = 1.0;
@@ -269,6 +275,22 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 
     if(modelFlag == 0){
         return result;
+    }
+
+    if(toonShading == 1){
+        float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
+        float brightness = max(nDot1,0.0);
+        float level = floor(brightness * levels);
+        brightness = level / levels;
+   
+       // combine results
+
+        ambient = 0.45 *(light.ambient * brightness) + 0.6*light.ambient * vec3(texture(material.texture_diffuse1, texCoords));
+        diffuse = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff * vec3(texture(material.texture_diffuse1, texCoords));
+        specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec *vec3(texture(material.texture_specular1, texCoords));
+
+        result = ambient + diffuse + specular;
+        result = mix(texture(texture_specular, texCoords).rgb,result ,turbulance);
     }
 
     //calc light dilution
@@ -339,6 +361,19 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     
     if(modelFlag == 0){
         return result;
+    }
+
+    if(toonShading == 1){
+    float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
+    float brightness = max(nDot1,0.0);
+    float level = floor(brightness * levels);
+    brightness = level / levels;
+   
+    // combine results
+
+    ambient = 0.4 *(light.ambient * brightness) + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+    diffuse = 0.4 *(light.diffuse *  brightness) * diff + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
+    specular = 0.4 *(light.specular * brightness) * spec + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
     }
 
     //calc light dilution
