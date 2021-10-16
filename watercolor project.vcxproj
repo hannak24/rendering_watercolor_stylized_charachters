@@ -150,8 +150,15 @@
   <ItemGroup>
     <None Include="3.1.2.shadow_mapping.fs" />
     <None Include="3.1.2.shadow_mapping.vs" />
+    <None Include="bloomFShader.glsl" />
+    <None Include="bloomVShader.glsl" />
+    <None Include="bloom_finalFShader.glsl" />
+    <None Include="bloom_finalVShader.glsl" />
+    <None Include="blurFShader.glsl" />
+    <None Include="blurVShader.glsl" />
     <None Include="fShader.glsl" />
     <None Include="lightCubefShader.glsl" />
+    <None Include="light_boxFShader.glsl" />
     <None Include="loadModelFShader.glsl" />
     <None Include="loadModelvShader.glsl" />
     <None Include="loadSkyBoxFShader.glsl" />

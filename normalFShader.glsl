@@ -1,5 +1,6 @@
 #version 330 core
-out vec4 FragColor;
+layout (location = 0) out vec4 FragColor;
+layout (location = 1) out vec4 BrightColor;
 
 in vec3 v_texCoord3D;
 
@@ -156,9 +157,11 @@ void main()
 
     if(modelFlag == 0){
         FragColor = vec4(0.4 * result + 0.2 * vec3(n, n, n)+ 0.6 * vec3(0.2824,0.749,0.7686), 1.0);
+        BrightColor = vec4(result, 1.0);
     }
     else{
         FragColor = vec4(result, 1.0);
+        BrightColor = vec4(result, 1.0);
     }
 }
 

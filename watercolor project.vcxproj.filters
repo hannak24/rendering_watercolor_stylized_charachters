@@ -74,6 +74,27 @@
     <None Include="normalFShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="bloomVShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="bloomFShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="blurVShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="blurFShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="light_boxFShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="bloom_finalVShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
+    <None Include="bloom_finalFShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

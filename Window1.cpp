@@ -1,10 +1,10 @@
 //#include <glad/glad.h>
 //#include <GLFW/glfw3.h>
+//#include "stb_image.h"
 //
 //#include <glm/glm.hpp>
 //#include <glm/gtc/matrix_transform.hpp>
 //#include <glm/gtc/type_ptr.hpp>
-//
 //
 //#include "Shader.h"
 //#include "Camera.h"
@@ -15,8 +15,11 @@
 //void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 //void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 //void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-//unsigned int loadCubemap(vector<std::string> faces);
 //void processInput(GLFWwindow* window);
+//unsigned int loadTexture(const char* path);
+//void renderScene(Shader& shader, Model ourModel, Shader& modelShader);
+//unsigned int loadCubemap(vector<std::string> faces);
+//
 //
 //// settings
 //const unsigned int SCR_WIDTH = 800;
@@ -24,19 +27,26 @@
 //
 //// camera
 //Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
-//float lastX = SCR_WIDTH / 2.0f;
-//float lastY = SCR_HEIGHT / 2.0f;
+//float lastX = (float)SCR_WIDTH / 2.0;
+//float lastY = (float)SCR_HEIGHT / 2.0;
 //bool firstMouse = true;
 //
 //// timing
 //float deltaTime = 0.0f;
 //float lastFrame = 0.0f;
 //
+//// meshes
+//unsigned int planeVAO;
+//
 //// model
 //float modelYawAngle = 0.0f;
 //float modelRollAngle = 0.0f;
 //float modelPitchAngle = 0.0f;
 //float modelScale = 0.005f;
+//float turbulance = 1.21;
+//float density = 0.5;
+//
+//
 //
 //int main()
 //{
@@ -54,7 +64,7 @@
 //
 //    // glfw window creation
 //    // --------------------
-//    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Watercolor application", NULL, NULL);
+//    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
 //    if (window == NULL)
 //    {
 //        std::cout << "Failed to create GLFW window" << std::endl;
@@ -78,32 +88,46 @@
 //    }
 //
 //    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
-//    //stbi_set_flip_vertically_on_load(true);
+//   //stbi_set_flip_vertically_on_load(true);
 //
-//    // configure global opengl state
-//    // -----------------------------
+//   // configure global opengl state
+//   // -----------------------------
 //    glEnable(GL_DEPTH_TEST);
 //    glEnable(GL_MULTISAMPLE);
 //
 //    // build and compile shaders
 //    // -------------------------
-//    //Shader ourShader("loadModelVshader.glsl", "loadModelFshader.glsl");
-//    Shader ourShader("vShader.glsl", "fShader.glsl");
+//    //Shader shader("3.1.2.shadow_mapping.vs", "3.1.2.shadow_mapping.fs");
+//    //Shader shader("vShader.glsl", "fShader.glsl");
+//    Shader shader("normalVShader.glsl", "normalFShader.glsl");
+//    Shader simpleDepthShader("shadeVShader.glsl", "shadeFShader.glsl");
+//    Shader modelShader("3.1.2.shadow_mapping.vs", "3.1.2.shadow_mapping.fs");
 //    Shader skyboxShader("loadSkyBoxVshader.glsl", "loadSkyBoxFshader.glsl");
-//    Shader shadeShader("shadeVShader.glsl", "shadeFShader.glsl");
+//
+//    // load models
+//// -----------
+//    //Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
+//    Model ourModel("objects/Swan/Swan.obj");
+//    //Model ourModel("objects/dolphin/dolphin.obj");
+//    //Model ourModel("objects/Duck/Duck.obj");
+//
+//    // set up vertex data (and buffer(s)) and configure vertex attributes
+//    // ------------------------------------------------------------------
+//
+//
 //
 //    float planeVertices[] = {
 //        // positions            // normals         // texcoords
-//         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   25.0f,  0.0f,
-//        -25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-//        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
+//         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+//        -50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+//        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
 //
-//         25.0f, -0.5f,  25.0f,  0.0f, 1.0f, 0.0f,   25.0f,  0.0f,
-//        -25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   0.0f, 25.0f,
-//         25.0f, -0.5f, -25.0f,  0.0f, 1.0f, 0.0f,   25.0f, 25.0f
+//         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+//        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+//         50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
 //    };
 //    // plane VAO
-//    unsigned int planeVBO, planeVAO;
+//    unsigned int planeVBO;
 //    glGenVertexArrays(1, &planeVAO);
 //    glGenBuffers(1, &planeVBO);
 //    glBindVertexArray(planeVAO);
@@ -116,10 +140,6 @@
 //    glEnableVertexAttribArray(2);
 //    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 //    glBindVertexArray(0);
-//
-//    // load textures
-//    // -------------
-//    unsigned int woodTexture = TextureFromFile("wood.png", "textures", false);
 //
 //    float skyboxVertices[] = {
 //        // positions          
@@ -178,51 +198,7 @@
 //    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 //    glEnableVertexAttribArray(0);
 //
-//    //make frame buffer for shadows
-//
-//    unsigned int depthMapFBO;
-//    glGenFramebuffers(1, &depthMapFBO);
-//    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
-//    unsigned int depthMap;
-//    glGenTextures(1, &depthMap);
-//    glBindTexture(GL_TEXTURE_2D, depthMap);
-//    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT,
-//        SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-//    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
-//    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
-//    glDrawBuffer(GL_NONE);
-//    glReadBuffer(GL_NONE);
-//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-//    float near_plane = 1.0f, far_plane = 7.5f;
-//    glm::mat4 lightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, near_plane, far_plane);
-//    glm::mat4 lightView = glm::lookAt(glm::vec3(-2.0f, 4.0f, -1.0f),
-//        glm::vec3(0.0f, 0.0f, 0.0f),
-//        glm::vec3(0.0f, 1.0f, 0.0f));
-//    glm::mat4 lightSpaceMatrix = lightProjection * lightView;
-//
-//
-//    // positions of the point lights
-//    glm::vec3 pointLightPositions[] = {
-//        glm::vec3(0.7f,  0.2f,  2.0f),
-//        glm::vec3(2.3f, -3.3f, -4.0f),
-//        glm::vec3(-4.0f,  2.0f, -12.0f),
-//        glm::vec3(0.0f,  0.0f, -3.0f)
-//    };
-//
-//    ourShader.use();
-//    ourShader.setVec3("viewPos", camera.Position);
-//    ourShader.setFloat("material.shininess", 32.0f);
-//
-//    // load models
-//    // -----------
-//    Model ourModel("objects/dolphin/dolphin.obj");
-//
-//    // load skybox
-//    vector<std::string> faces = 
+//    vector<std::string> faces =
 //    {
 //            "skyboxes/watercolor paper/right.jpg",
 //            "skyboxes/watercolor paper/left.jpg",
@@ -233,13 +209,50 @@
 //    };
 //    unsigned int cubemapTexture = loadCubemap(faces);
 //
+//
+//    // load textures
+//    // -------------
+//    unsigned int woodTexture = loadTexture("textures/watercolor paper.jpg");
+//
+//
+//
+//    // configure depth map FBO
+//    // -----------------------
+//    const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
+//    unsigned int depthMapFBO;
+//    glGenFramebuffers(1, &depthMapFBO);
+//    // create depth texture
+//    unsigned int depthMap;
+//    glGenTextures(1, &depthMap);
+//    glBindTexture(GL_TEXTURE_2D, depthMap);
+//    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+//    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+//    float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+//    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+//    // attach depth texture as FBO's depth buffer
+//    glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
+//    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, depthMap, 0);
+//    glDrawBuffer(GL_NONE);
+//    glReadBuffer(GL_NONE);
+//    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//
+//
+//    // shader configuration
+//    // --------------------
+//    shader.use();
+//    shader.setInt("diffuseTexture", 0);
+//    shader.setInt("shadowMap", 1);
+//    shader.setInt("noise_texture", 3);
+//
+//
 //    // lighting info
 //    // -------------
-//    glm::vec3 lightPos(2.0f, -4.0f, -1.0f);
+//    glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
 //
 //
-//    // draw in wireframe
-//    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 //
 //    // render loop
 //    // -----------
@@ -257,9 +270,16 @@
 //
 //        // render
 //        // ------
-//        glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+//        glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 //        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 //
+//        glm::mat4 model = glm::mat4(1.0);
+//        shader.setMat4("model", model);
+//        ourModel.Draw(shader);
+//
+//        // 1. render depth of scene to texture (from light's perspective)
+//        // --------------------------------------------------------------
+//        glCullFace(GL_FRONT);
 //        glm::mat4 lightProjection, lightView;
 //        glm::mat4 lightSpaceMatrix;
 //        float near_plane = 1.0f, far_plane = 7.5f;
@@ -267,109 +287,56 @@
 //        lightView = glm::lookAt(lightPos, glm::vec3(0.0f), glm::vec3(0.0, 1.0, 0.0));
 //        lightSpaceMatrix = lightProjection * lightView;
 //        // render scene from light's point of view
-//        shadeShader.use();
-//        shadeShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+//        simpleDepthShader.use();
+//        simpleDepthShader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 //
 //        glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
 //        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 //        glClear(GL_DEPTH_BUFFER_BIT);
 //        glActiveTexture(GL_TEXTURE0);
 //        glBindTexture(GL_TEXTURE_2D, woodTexture);
-//        glm::mat4 model = glm::mat4(1.0f);
-//        shadeShader.setMat4("model", model);
-//        glBindVertexArray(planeVAO);
-//        glDrawArrays(GL_TRIANGLES, 0, 6);
+//
+//        shader.use();
+//        // floor
 //        model = glm::mat4(1.0f);
-//        model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
-//        model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
-//        model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
-//        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-//        model = glm::scale(model, modelScale * glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-//        shadeShader.setMat4("model", model);
-//        ourModel.Draw(shadeShader);
+//        /*shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
+//        shader.setMat4("model", model);
+//        glBindVertexArray(planeVAO);
+//        glDrawArrays(GL_TRIANGLES, 0, 6);*/
+//        renderScene(simpleDepthShader, ourModel, simpleDepthShader);
 //        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+//        glCullFace(GL_BACK);
+//
 //        // reset viewport
 //        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
 //        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        
 //
-//        // don't forget to enable shader before setting uniforms
-//        ourShader.use();
-//
-//
-//        // directional light
-//        glm::vec3 n = normalize(glm::vec3(1.0f, -6.0f, 0.0f));
-//        ourShader.setVec3("dirLight.direction", n);
-//        ourShader.setVec3("dirLight.ambient", 0.3f, 0.3f, 0.3f);
-//        ourShader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
-//        ourShader.setVec3("dirLight.specular", 0.5f, 0.5f, 0.5f);
-//        // point light 1
-//        ourShader.setVec3("pointLights[0].position", pointLightPositions[0]);
-//        ourShader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-//        ourShader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-//        ourShader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-//        ourShader.setFloat("pointLights[0].constant", 1.0f);
-//        ourShader.setFloat("pointLights[0].linear", 0.09);
-//        ourShader.setFloat("pointLights[0].quadratic", 0.032);
-//        // point light 2
-//        ourShader.setVec3("pointLights[1].position", pointLightPositions[1]);
-//        ourShader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-//        ourShader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-//        ourShader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-//        ourShader.setFloat("pointLights[1].constant", 1.0f);
-//        ourShader.setFloat("pointLights[1].linear", 0.09);
-//        ourShader.setFloat("pointLights[1].quadratic", 0.032);
-//        // point light 3
-//        ourShader.setVec3("pointLights[2].position", pointLightPositions[2]);
-//        ourShader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-//        ourShader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-//        ourShader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-//        ourShader.setFloat("pointLights[2].constant", 1.0f);
-//        ourShader.setFloat("pointLights[2].linear", 0.09);
-//        ourShader.setFloat("pointLights[2].quadratic", 0.032);
-//        // point light 4
-//        ourShader.setVec3("pointLights[3].position", pointLightPositions[3]);
-//        ourShader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-//        ourShader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-//        ourShader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-//        ourShader.setFloat("pointLights[3].constant", 1.0f);
-//        ourShader.setFloat("pointLights[3].linear", 0.09);
-//        ourShader.setFloat("pointLights[3].quadratic", 0.032);
-//        // spotLight
-//        ourShader.setVec3("spotLight.position", camera.Position);
-//        ourShader.setVec3("spotLight.direction", camera.Front);
-//        ourShader.setVec3("spotLight.ambient", 0.0f, 0.0f, 0.0f);
-//        ourShader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-//        ourShader.setVec3("spotLight.specular", 1.0f, 1.0f, 1.0f);
-//        ourShader.setFloat("spotLight.constant", 1.0f);
-//        ourShader.setFloat("spotLight.linear", 0.09);
-//        ourShader.setFloat("spotLight.quadratic", 0.032);
-//        ourShader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-//        ourShader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
-//        
-//
-//        // view/projection transformations
+//        // 2. render scene as normal using the generated depth/shadow map  
+//        // --------------------------------------------------------------
+//        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+//        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+//        shader.use();
 //        glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
 //        glm::mat4 view = camera.GetViewMatrix();
-//        ourShader.setMat4("projection", projection);
-//        ourShader.setMat4("view", view);
-//
-//        // render the loaded model
-//        model = glm::mat4(1.0f);
-//        model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
-//        model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
-//        model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
-//        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-//        model = glm::scale(model, modelScale * glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
-//        ourShader.setMat4("model", model);
-//        ourModel.Draw(ourShader);
-//
-//        glm::mat4 planeModel = glm::mat4(1.0f);
-//        ourShader.setMat4("model", planeModel);
+//        shader.setMat4("projection", projection);
+//        shader.setMat4("view", view);
+//        // set light uniforms
+//        shader.setVec3("viewPos", camera.Position);
+//        shader.setVec3("lightPos", lightPos);
+//        shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 //        glActiveTexture(GL_TEXTURE0);
 //        glBindTexture(GL_TEXTURE_2D, woodTexture);
+//        glActiveTexture(GL_TEXTURE1);
+//        glBindTexture(GL_TEXTURE_2D, depthMap);
+//
+//        shader.use();
+//        // floor
+//        /*model = glm::mat4(1.0f);
+//        shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
+//        shader.setMat4("model", model);
 //        glBindVertexArray(planeVAO);
-//        glDrawArrays(GL_TRIANGLES, 0, 6);
+//        glDrawArrays(GL_TRIANGLES, 0, 6);*/
+//        renderScene(shader, ourModel, modelShader);
 //
 //        glDepthFunc(GL_LEQUAL);
 //        skyboxShader.use();
@@ -388,7 +355,7 @@
 //
 //        glBindVertexArray(skyboxVAO);
 //        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-//        //glDrawArrays(GL_TRIANGLES, 0, 36);
+//        glDrawArrays(GL_TRIANGLES, 0, 36);
 //        glDepthMask(GL_TRUE);
 //
 //
@@ -398,13 +365,130 @@
 //        glfwPollEvents();
 //    }
 //
-//    // glfw: terminate, clearing all previously allocated GLFW resources.
-//    // ------------------------------------------------------------------
+//    // optional: de-allocate all resources once they've outlived their purpose:
+//    // ------------------------------------------------------------------------
 //    glDeleteVertexArrays(1, &planeVAO);
 //    glDeleteBuffers(1, &planeVBO);
+//
 //    glfwTerminate();
 //    return 0;
 //}
+//
+//// renders the 3D scene
+//// --------------------
+//void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
+//{
+//    // positions of the point lights
+//    glm::vec3 pointLightPositions[] = {
+//        glm::vec3(0.7f,  0.2f,  2.0f),
+//        glm::vec3(2.3f, -3.3f, -4.0f),
+//        glm::vec3(-4.0f,  2.0f, -12.0f),
+//        glm::vec3(0.0f,  0.0f, -3.0f)
+//    };
+//
+//    shader.use();
+//
+//    // floor
+//    shader.setFloat("normalFlag", 0.0f);
+//    shader.setFloat("parralaxFlag", 0.0f);
+//    shader.setFloat("height_scale", 0.0f);
+//    shader.setFloat("diluteAreaVariable", 1);
+//    shader.setFloat("modelFlag", 0.0f);
+//    shader.setFloat("tremor", 0.0f);
+//    shader.setInt("noise_texture", 3);
+//    glm::mat4 model = glm::mat4(1.0f);
+//    shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
+//    shader.setMat4("model", model);
+//    glBindVertexArray(planeVAO);
+//    glDrawArrays(GL_TRIANGLES, 0, 6);
+//
+//    //model
+//    shader.setVec3("cameraPos", camera.Position);
+//    shader.setFloat("normalFlag", 0.0f);
+//    shader.setFloat("parralaxFlag", 0.0f);
+//    shader.setFloat("modelFlag", 1.0f);
+//    shader.setFloat("toonShading", 1.0f);
+//    shader.setFloat("height_scale", 0.0f);
+//    shader.setFloat("time", glfwGetTime());
+//    shader.setFloat("frequency", 1 / deltaTime);
+//    shader.setFloat("speed", deltaTime);
+//    shader.setFloat("tremor", 0.009f);
+//    shader.setFloat("diluteAreaVariable", 1);
+//    shader.setInt("skybox", 0);
+//    shader.setInt("noise_texture", 3);
+//    shader.setFloat("density", density);
+//    shader.setFloat("turbulance", turbulance);
+//    model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
+//    model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
+//    model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
+//    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
+//    model = glm::scale(model, modelScale * glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+//    shader.setMat4("model", model);
+//    shader.setVec3("dirLight.ambient", 0.7f, 0.7f, 0.7f);
+//    shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
+//    shader.setVec3("dirLight.specular", 0.1f, 0.1f, 0.1f);
+//    shader.setFloat("dirLight.cangiante", 0.7);
+//    shader.setFloat("dirLight.dilution", 0.99);
+//    // point light 1
+//    shader.setVec3("pointLights[0].position", pointLightPositions[0]);
+//    shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
+//    //shader.setVec3("pointLights[0].ambient", 0.95f, 0.45f, 0.05f);
+//    shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
+//    shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
+//    shader.setFloat("pointLights[0].constant", 1.0f);
+//    shader.setFloat("pointLights[0].linear", 0.09);
+//    shader.setFloat("pointLights[0].quadratic", 0.032);
+//    shader.setFloat("pointLights[0].cangiante", 0.7);
+//    shader.setFloat("pointLights[0].dilution", 0.3);
+//    // point light 2
+//    shader.setVec3("pointLights[1].position", pointLightPositions[1]);
+//    shader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
+//    shader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
+//    shader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
+//    shader.setFloat("pointLights[1].constant", 1.0f);
+//    shader.setFloat("pointLights[1].linear", 0.09);
+//    shader.setFloat("pointLights[1].quadratic", 0.032);
+//    shader.setFloat("pointLights[1].cangiante", 0.7);
+//    shader.setFloat("pointLights[1].dilution", 0.6);
+//    // point light 3
+//    shader.setVec3("pointLights[2].position", pointLightPositions[2]);
+//    shader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
+//    shader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
+//    shader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
+//    shader.setFloat("pointLights[2].constant", 1.0f);
+//    shader.setFloat("pointLights[2].linear", 0.09);
+//    shader.setFloat("pointLights[2].quadratic", 0.032);
+//    shader.setFloat("pointLights[2].cangiante", 0.7);
+//    shader.setFloat("pointLights[2].dilution", 0.3);
+//    // point light 4
+//    shader.setVec3("pointLights[3].position", pointLightPositions[3]);
+//    shader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
+//    shader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
+//    shader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
+//    shader.setFloat("pointLights[3].constant", 1.0f);
+//    shader.setFloat("pointLights[3].linear", 0.09);
+//    shader.setFloat("pointLights[3].quadratic", 0.032);
+//    shader.setFloat("pointLights[3].cangiante", 0.7);
+//    shader.setFloat("pointLights[3].dilution", 0.3);
+//    //// spotLight
+//    shader.setVec3("spotLight.position", camera.Position);
+//    shader.setVec3("spotLight.direction", camera.Front);
+//    shader.setVec3("spotLight.ambient", 0.2f, 0.2f, 0.2f);
+//    shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
+//    shader.setVec3("spotLight.specular", 0.5f, 0.5f, 0.5f);
+//    shader.setFloat("spotLight.constant", 1.0f);
+//    shader.setFloat("spotLight.linear", 0.09);
+//    shader.setFloat("spotLight.quadratic", 0.032);
+//    shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+//    shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
+//    shader.setFloat("spotLight.cangiante", 0.7);
+//    shader.setFloat("spotLight.dilution", 0.8);
+//    shader.setFloat("material.shininess", 64.0f);
+//    ourModel.Draw(shader);
+//
+//}
+//
+//
 //
 //// process all input: query GLFW whether relevant keys are pressed/released this frame and react accordingly
 //// ---------------------------------------------------------------------------------------------------------
@@ -425,7 +509,6 @@
 //        camera.ProcessKeyboard(FORWARD, deltaTime);
 //    if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 //        camera.ProcessKeyboard(BACKWARD, deltaTime);
-//
 //    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
 //        modelPitchAngle = modelPitchAngle - 0.7;
 //    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
@@ -442,6 +525,14 @@
 //        modelScale = modelScale * 1.01;
 //    if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
 //        modelScale = modelScale * 0.99;
+//    if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+//        turbulance = turbulance * 1.01;
+//    if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
+//        turbulance = turbulance * 0.99;
+//    if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
+//        density = density * 0.99;
+//    if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
+//        density = density * 1.005;
 //}
 //
 //// glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -452,6 +543,7 @@
 //    // height will be significantly larger than specified on retina displays.
 //    glViewport(0, 0, width, height);
 //}
+//
 //
 //// glfw: whenever the mouse moves, this callback is called
 //// -------------------------------------------------------
@@ -478,6 +570,46 @@
 //void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 //{
 //    camera.ProcessMouseScroll(yoffset);
+//}
+//
+//// utility function for loading a 2D texture from file
+//// ---------------------------------------------------
+//unsigned int loadTexture(char const* path)
+//{
+//    unsigned int textureID;
+//    glGenTextures(1, &textureID);
+//
+//
+//    int width, height, nrComponents;
+//    unsigned char* data = stbi_load(path, &width, &height, &nrComponents, 0);
+//    if (data)
+//    {
+//        GLenum format;
+//        if (nrComponents == 1)
+//            format = GL_RED;
+//        else if (nrComponents == 3)
+//            format = GL_RGB;
+//        else if (nrComponents == 4)
+//            format = GL_RGBA;
+//
+//        glBindTexture(GL_TEXTURE_2D, textureID);
+//        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
+//        glGenerateMipmap(GL_TEXTURE_2D);
+//
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT); // for this tutorial: use GL_CLAMP_TO_EDGE to prevent semi-transparent borders. Due to interpolation it takes texels from next repeat 
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, format == GL_RGBA ? GL_CLAMP_TO_EDGE : GL_REPEAT);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+//        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+//
+//        stbi_image_free(data);
+//    }
+//    else
+//    {
+//        std::cout << "Texture failed to load at path: " << path << std::endl;
+//        stbi_image_free(data);
+//    }
+//
+//    return textureID;
 //}
 //
 //unsigned int loadCubemap(vector<std::string> faces)
