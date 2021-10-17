@@ -49,6 +49,7 @@ float modelPitchAngle = 0.0f;
 float modelScale = 0.005f;
 float turbulance = 1.21;
 float density = 0.5;
+float bleed = 1.0;
 
 
 
@@ -102,7 +103,7 @@ int main()
     // build and compile shaders
     // -------------------------
     //Shader shader("bloomVShader.glsl", "bloomFShader.glsl");
-    Shader shaderLight("bloomVShader.glsl", "light_boxFShader.glsl");
+    //Shader shaderLight("bloomVShader.glsl", "light_boxFShader.glsl");
     Shader shaderBlur("blurVShader.glsl", "blurFShader.glsl");
     Shader shaderBloomFinal("bloom_finalVShader.glsl", "bloom_finalFShader.glsl");
     Shader shader("normalVShader.glsl", "normalFShader.glsl");
@@ -503,6 +504,14 @@ int main()
         //shaderLight.use();
         //renderScene(shaderLight, ourModel, shaderLight);
         renderScene(shader, ourModel, shader);
+        // render the loaded model
+        model = glm::mat4(1.0f);
+        skyboxShader.setMat4("model", model);
+
+        glBindVertexArray(skyboxVAO);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDepthMask(GL_TRUE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
         
@@ -511,7 +520,8 @@ int main()
         bool horizontal = true, first_iteration = true;
         unsigned int amount = 10;
         shaderBlur.use();
-        for (unsigned int i = 0; i < amount; i++)
+        shaderBlur.setInt("amount", 5);
+        for (unsigned int i = 0; i < 10; i++)
         {
             glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
             shaderBlur.setInt("horizontal", horizontal);
@@ -535,6 +545,7 @@ int main()
         glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
         shaderBloomFinal.setInt("bloom", bloom);
         shaderBloomFinal.setFloat("exposure", exposure);
+        shaderBloomFinal.setFloat("bleed", bleed);
         //renderScene(shaderBloomFinal, ourModel, shaderBloomFinal);
         renderQuad();
 
@@ -735,6 +746,10 @@ void processInput(GLFWwindow* window)
         density = density * 0.99;
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
         density = density * 1.005;
+    if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
+        bleed = bleed * 0.99;
+    if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+        bleed = bleed * 1.005;
 
 }
 
@@ -967,3 +982,4 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     ourModel.Draw(shader);
 
 }
+
