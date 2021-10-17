@@ -20,7 +20,7 @@ void main()
         //hdrColor += 2 * bloomColor; // additive blending
         //bloomColor = pow(bloomColor, vec3(1.0 / gamma));
         //hdrColor = bloomColor;
-        bloomColor = mix(bloomColor, texture(paper, TexCoords).rgb, 0.2);
+        //bloomColor = mix(bloomColor, texture(paper, TexCoords).rgb, bleed * 0.2);
         hdrColor += bleed * bloomColor; // additive blending
         //if ((hdrColor.r < bloomColor.r) & (hdrColor.g < bloomColor.g) & (hdrColor.b < bloomColor.b))
         //if (hdrColor.r < 0.2){
