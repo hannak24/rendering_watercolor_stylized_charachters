@@ -32,8 +32,9 @@ uniform vec3 viewPos;
 uniform vec3 cameraPos;
 uniform float height_scale;
 uniform float time;
+uniform bool water;
  
-  const float levels = 7.0;
+const float levels = 7.0;
 
 
 struct Material {
@@ -156,7 +157,10 @@ void main()
     n = n * 0.7;
 
     if(modelFlag == 0){
-        FragColor = vec4(0.4 * result + 0.2 * vec3(n, n, n)+ 0.6 * vec3(0.2824,0.749,0.7686), 1.0);
+        if(water)
+            FragColor = vec4(0.4 * result + 0.2 * vec3(n, n, n)+ 0.6 * vec3(0.2824,0.749,0.7686), 1.0);
+        else
+            FragColor = vec4(result, 1.0);
         BrightColor = vec4(result, 1.0);
     }
     else{

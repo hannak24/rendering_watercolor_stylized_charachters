@@ -50,7 +50,7 @@ float modelScale = 0.005f;
 float turbulance = 1.21;
 float density = 0.5;
 float bleed = 1.0;
-
+float light = 1.0;
 
 
 int main()
@@ -394,6 +394,7 @@ int main()
         shader.setVec3("viewPos", camera.Position);
         shader.setVec3("lightPos", lightPos);
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
+        shader.setBool("water", false);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, woodTexture);
         glActiveTexture(GL_TEXTURE1);
@@ -423,7 +424,7 @@ int main()
         glDepthMask(GL_TRUE);
 
         
-        // 2. blur bright fragments with two-pass Gaussian Blur 
+        // 3. blur bright fragments with two-pass Gaussian Blur 
         // --------------------------------------------------
         bool horizontal = true, first_iteration = true;
         unsigned int amount = 100;
@@ -442,24 +443,11 @@ int main()
                 first_iteration = false;
         }
 
-        glDepthFunc(GL_LEQUAL);
-        skyboxShader.use();
-        glDepthMask(GL_FALSE);
-        skyboxShader.use();
 
-        // render the loaded model
-        model = glm::mat4(1.0f);
-        skyboxShader.setMat4("model", model);
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        glBindVertexArray(skyboxVAO);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glDepthMask(GL_TRUE);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         
 
-        //// 3. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
+        //// 4. now render floating point color buffer to 2D quad 
          //--------------------------------------------------------------------------------------------------------------------------
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         shaderBloomFinal.use();
@@ -467,6 +455,8 @@ int main()
         glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, woodTexture);
         shaderBloomFinal.setInt("bloom", bloom);
         shaderBloomFinal.setFloat("exposure", exposure);
         shaderBloomFinal.setFloat("bleed", bleed);
@@ -475,7 +465,7 @@ int main()
 
 
 
-        std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
+        //std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -676,6 +666,11 @@ void processInput(GLFWwindow* window)
         bleed = bleed * 0.99;
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
         bleed = bleed * 1.005;
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+        light = light * 0.99;
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+        light = light * 1.005;
+
 
 }
 
@@ -818,7 +813,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("tremor", 0.0f);
     shader.setInt("noise_texture", 3);
     glm::mat4 model = glm::mat4(1.0f);
-    shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
+    shader.setVec3("dirLight.ambient", light * 0.2f, light * 0.2f, light * 0.2f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
     glDrawArrays(GL_TRIANGLES, 0, 6);
@@ -828,7 +823,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("modelFlag", 1.0f);
-    shader.setFloat("toonShading", 1.0f);
+    shader.setFloat("toonShading", 0.0f);
     shader.setFloat("height_scale", 0.0f);
     shader.setFloat("time", glfwGetTime());
     shader.setFloat("frequency", 1 / deltaTime);
@@ -845,7 +840,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
     model = glm::scale(model, modelScale * glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
     shader.setMat4("model", model);
-    shader.setVec3("dirLight.ambient", 0.7f, 0.7f, 0.7f);
+    shader.setVec3("dirLight.ambient", 0.8 * light * 0.7f, 0.8 * light * 0.7f, 0.8 * light * 0.7f);
     shader.setVec3("dirLight.diffuse", 1.0f, 1.0f, 1.0f);
     shader.setVec3("dirLight.specular", 0.1f, 0.1f, 0.1f);
     shader.setFloat("dirLight.cangiante", 0.7);
