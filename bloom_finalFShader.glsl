@@ -17,9 +17,18 @@ void main()
     if(bloom)
         //hdrColor += 1.5 * bloomColor; // additive blending
         //hdrColor += 2 * bloomColor; // additive blending
-        bloomColor = pow(bloomColor, vec3(1.0 / gamma));
+        //bloomColor = pow(bloomColor, vec3(1.0 / gamma));
         //hdrColor = bloomColor;
-        hdrColor += bleed * bloomColor; // additive blending
+        //hdrColor += bleed * bloomColor; // additive blending
+        //if ((hdrColor.r < bloomColor.r) & (hdrColor.g < bloomColor.g) & (hdrColor.b < bloomColor.b))
+        if (hdrColor.r < 0.2){
+            if (hdrColor.g < 0.2){
+                if (hdrColor.b < 0.2){
+                   hdrColor = bloomColor;
+                }
+            } 
+        }
+           
     // tone mapping
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
     // also gamma correct while we're at it       

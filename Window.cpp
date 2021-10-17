@@ -422,103 +422,11 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
         glDepthMask(GL_TRUE);
 
-        //// 1. render scene into floating point framebuffer
-        //// -----------------------------------------------
-        glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        view = camera.GetViewMatrix();
-        model = glm::mat4(1.0f);
-        shader.use();
-        //shader.setMat4("projection", projection);
-        //shader.setMat4("view", view);
-        //glActiveTexture(GL_TEXTURE0);
-        //glBindTexture(GL_TEXTURE_2D, woodTexture);
-        //// set lighting uniforms
-        //for (unsigned int i = 0; i < lightPositions.size(); i++)
-        //{
-        //    shader.setVec3("lights[" + std::to_string(i) + "].Position", lightPositions[i]);
-        //    shader.setVec3("lights[" + std::to_string(i) + "].Color", lightColors[i]);
-        //}
-        //shader.setVec3("viewPos", camera.Position);
-        //// create one large cube that acts as the floor
-        //model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(0.0f, -1.0f, 0.0));
-        //model = glm::scale(model, glm::vec3(12.5f, 0.5f, 12.5f));
-        //shader.setMat4("model", model);
-        //renderCube();
-        //// then create multiple cubes as the scenery
-        //glBindTexture(GL_TEXTURE_2D, containerTexture);
-        //model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(0.0f, 1.5f, 0.0));
-        //model = glm::scale(model, glm::vec3(0.5f));
-        //shader.setMat4("model", model);
-        //renderCube();
-
-        //model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(2.0f, 0.0f, 1.0));
-        //model = glm::scale(model, glm::vec3(0.5f));
-        //shader.setMat4("model", model);
-        //renderCube();
-
-        //model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(-1.0f, -1.0f, 2.0));
-        //model = glm::rotate(model, glm::radians(60.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-        //shader.setMat4("model", model);
-        //renderCube();
-
-        //model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(0.0f, 2.7f, 4.0));
-        //model = glm::rotate(model, glm::radians(23.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-        //model = glm::scale(model, glm::vec3(1.25));
-        //shader.setMat4("model", model);
-        //renderCube();
-
-        //model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(-2.0f, 1.0f, -3.0));
-        //model = glm::rotate(model, glm::radians(124.0f), glm::normalize(glm::vec3(1.0, 0.0, 1.0)));
-        //shader.setMat4("model", model);
-        //renderCube();
-
-        //model = glm::mat4(1.0f);
-        //model = glm::translate(model, glm::vec3(-3.0f, 0.0f, 0.0));
-        //model = glm::scale(model, glm::vec3(0.5f));
-        //shader.setMat4("model", model);
-        //renderCube();
-
-
-        // finally show all the light sources as bright cubes
-        //shaderLight.use();
-        //shaderLight.setMat4("projection", projection);
-        //shaderLight.setMat4("view", view);
-
-        //for (unsigned int i = 0; i < lightPositions.size(); i++)
-        //{
-        //    model = glm::mat4(1.0f);
-        //    model = glm::translate(model, glm::vec3(lightPositions[i]));
-        //    model = glm::scale(model, glm::vec3(0.25f));
-        //    shaderLight.setMat4("model", model);
-        //    shaderLight.setVec3("lightColor", lightColors[i]);
-        //    renderCube();
-        //}
-        //shaderLight.use();
-        //renderScene(shaderLight, ourModel, shaderLight);
-        renderScene(shader, ourModel, shader);
-        // render the loaded model
-        model = glm::mat4(1.0f);
-        skyboxShader.setMat4("model", model);
-
-        glBindVertexArray(skyboxVAO);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glDepthMask(GL_TRUE);
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
         
         // 2. blur bright fragments with two-pass Gaussian Blur 
         // --------------------------------------------------
         bool horizontal = true, first_iteration = true;
-        unsigned int amount = 10;
+        unsigned int amount = 100;
         shaderBlur.use();
         shaderBlur.setInt("amount", 5);
         for (unsigned int i = 0; i < 10; i++)
@@ -533,7 +441,23 @@ int main()
             if (first_iteration)
                 first_iteration = false;
         }
+
+        glDepthFunc(GL_LEQUAL);
+        skyboxShader.use();
+        glDepthMask(GL_FALSE);
+        skyboxShader.use();
+
+        // render the loaded model
+        model = glm::mat4(1.0f);
+        skyboxShader.setMat4("model", model);
+
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindVertexArray(skyboxVAO);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDepthMask(GL_TRUE);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        
 
         //// 3. now render floating point color buffer to 2D quad and tonemap HDR colors to default framebuffer's (clamped) color range
          //--------------------------------------------------------------------------------------------------------------------------
@@ -548,6 +472,8 @@ int main()
         shaderBloomFinal.setFloat("bleed", bleed);
         //renderScene(shaderBloomFinal, ourModel, shaderBloomFinal);
         renderQuad();
+
+
 
         std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
 
