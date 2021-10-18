@@ -115,6 +115,8 @@ int main()
     // load models
     // -----------
     //Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
+    //Model ourModel("objects/Duck/Duck.obj");
+    //Model ourModel("objects/Goldfish/Goldfish.obj");
     //Model ourModel("objects/Swan/Swan.obj");
     Model ourModel("objects/dolphin/dolphin.obj");
     //Model ourModel("objects/Duck/Duck.obj");
@@ -861,7 +863,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     //model
     shader.setVec3("cameraPos", camera.Position);
     shader.setFloat("normalFlag", 0.0f);
-    shader.setFloat("parralaxFlag", 0.0f);
+    shader.setFloat("parralaxFlag", 1.0f);
     shader.setFloat("modelFlag", 1.0f);
     shader.setFloat("toonShading", 0.0f);
     shader.setFloat("height_scale", 0.0f);
