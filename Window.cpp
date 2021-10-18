@@ -48,10 +48,11 @@ float modelYawAngle = 0.0f;
 float modelRollAngle = 0.0f;
 float modelPitchAngle = 0.0f;
 float modelScale = 0.005f;
-float turbulance = 1.968;
-float density = 0.5796;
-float bleed = 1.3271;
-float light = 1.0;
+float turbulance = 2.9299;
+float density = 0.8942;
+float bleed = 0.5329;
+float light = 1.1429;
+float darkEdge = 2.0867;
 
 
 int main()
@@ -105,7 +106,8 @@ int main()
     // -------------------------
     //Shader shader("bloomVShader.glsl", "bloomFShader.glsl");
     //Shader shaderLight("bloomVShader.glsl", "light_boxFShader.glsl");
-    Shader shaderBlur("blurVShader.glsl", "blurFShader.glsl");
+    //Shader shaderBlur("blurVShader.glsl", "blurFShader.glsl");
+    Shader shaderBlur("blurVShader.glsl", "paper_blurFShader.glsl");
     Shader shaderBloomFinal("bloom_finalVShader.glsl", "bloom_finalFShader.glsl");
     Shader shader("normalVShader.glsl", "normalFShader.glsl");
     Shader simpleDepthShader("shadeVShader.glsl", "shadeFShader.glsl");
@@ -458,7 +460,8 @@ int main()
         unsigned int amount = 100;
         shaderBlur.use();
         shaderBlur.setInt("amount", 5);
-        for (unsigned int i = 0; i < 10; i++)
+        //for (unsigned int i = 0; i < 10; i++)
+        for (unsigned int i = 0; i < 42; i++)
         {
             glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
             shaderBlur.setInt("horizontal", horizontal);
@@ -488,6 +491,7 @@ int main()
         shaderBloomFinal.setInt("bloom", bloom);
         shaderBloomFinal.setFloat("exposure", exposure);
         shaderBloomFinal.setFloat("bleed", bleed);
+        shaderBloomFinal.setFloat("darkEdge", darkEdge);
         //renderScene(shaderBloomFinal, ourModel, shaderBloomFinal);
         renderQuad();
 
@@ -698,6 +702,10 @@ void processInput(GLFWwindow* window)
         light = light * 0.99;
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
         light = light * 1.005;
+    if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
+        darkEdge = darkEdge * 0.99;
+    if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
+        darkEdge = darkEdge * 1.005;
 
 
 }
