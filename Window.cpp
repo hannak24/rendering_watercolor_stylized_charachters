@@ -53,6 +53,7 @@ float density = 0.8942;
 float bleed = 0.5329;
 float light = 1.1429;
 float darkEdge = 2.0867;
+float granulation = 0.22;
 
 
 int main()
@@ -71,7 +72,7 @@ int main()
 
     // glfw window creation
     // --------------------
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Water Color application", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -116,11 +117,11 @@ int main()
 
     // load models
     // -----------
-    //Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
+    Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
     //Model ourModel("objects/Duck/Duck.obj");
     //Model ourModel("objects/Goldfish/Goldfish.obj");
     //Model ourModel("objects/Swan/Swan.obj");
-    Model ourModel("objects/dolphin/dolphin.obj");
+    //Model ourModel("objects/dolphin/dolphin.obj");
     //Model ourModel("objects/Duck/Duck.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -246,9 +247,12 @@ int main()
 
     // load textures
     // -------------
-    //unsigned int woodTexture = loadTexture("textures/wood.png", true); // note that we're loading the texture as an SRGB texture
+    //unsigned int waterColorPaperTexture = loadTexture("textures/wood.png", true); // note that we're loading the texture as an SRGB texture
     unsigned int containerTexture = loadTexture("textures/container2.png", true); // note that we're loading the texture as an SRGB texture
-    unsigned int woodTexture = loadTexture("textures/watercolor paper.jpg", true);
+    unsigned int waterColorPaperTexture = loadTexture("textures/watercolor paper.jpg", true);
+    unsigned int paperHeightTexture = loadTexture("dicplacementMap/disp.png", true);
+    unsigned int paperTexture = loadTexture("textures/watercolor paper.jpg", true);
+    unsigned int woodTexture = loadTexture("textures/wood.jpg", true);
 
 
     // configure depth map FBO
@@ -280,9 +284,9 @@ int main()
     glGenFramebuffers(1, &hdrFBO);
     glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
     // create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
-    unsigned int colorBuffers[2];
-    glGenTextures(2, colorBuffers);
-    for (unsigned int i = 0; i < 2; i++)
+    unsigned int colorBuffers[3];
+    glGenTextures(3, colorBuffers);
+    for (unsigned int i = 0; i < 3; i++)
     {
         glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -300,8 +304,8 @@ int main()
     glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
     glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
     // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
-    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers(2, attachments);
+    unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3, attachments);
     // finally check if framebuffer is complete
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
         std::cout << "Framebuffer not complete!" << std::endl;
@@ -397,7 +401,7 @@ int main()
         glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
         glClear(GL_DEPTH_BUFFER_BIT);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, woodTexture);
+        glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
 
         simpleDepthShader.use();
         // floor
@@ -426,7 +430,7 @@ int main()
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shader.setBool("water", false);
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, woodTexture);
+        glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
 
@@ -467,6 +471,8 @@ int main()
             shaderBlur.setInt("horizontal", horizontal);
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongColorbuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, colorBuffers[2]);
             renderQuad();
             //renderScene(shaderBlur, ourModel, shaderBlur);
             horizontal = !horizontal;
@@ -480,6 +486,71 @@ int main()
 
         //// 4. now render floating point color buffer to 2D quad 
          //--------------------------------------------------------------------------------------------------------------------------
+
+        // calc tangent space for paper normals
+
+        // positions
+        glm::vec3 pos1(50.0f, -0.5f, -50.0f);
+        glm::vec3 pos2(-50.0f, -0.5f, -50.0f);
+        glm::vec3 pos3(-50.0f, 50.0f, -50.0f);
+        glm::vec3 pos4(50.0f, 50.0f, -50.0f);
+        // texture coordinates
+        glm::vec2 uv1(50.0f, 0.0f);
+        glm::vec2 uv2(0.0f, 0.0f);
+        glm::vec2 uv3(0.0f, 50.0f);
+        glm::vec2 uv4(50.0f, 50.0f);
+        // normal vector
+        glm::vec3 nm(0.0f, 0.0f, 1.0f);
+
+        // calculate tangent/bitangent vectors of both triangles
+        glm::vec3 tangent1, bitangent1;
+        glm::vec3 tangent2, bitangent2;
+        // triangle 1
+        // ----------
+        glm::vec3 edge1 = pos2 - pos1;
+        glm::vec3 edge2 = pos3 - pos1;
+        glm::vec2 deltaUV1 = uv2 - uv1;
+        glm::vec2 deltaUV2 = uv3 - uv1;
+
+        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+        bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+        // triangle 2
+        // ----------
+        edge1 = pos3 - pos1;
+        edge2 = pos4 - pos1;
+        deltaUV1 = uv3 - uv1;
+        deltaUV2 = uv4 - uv1;
+
+        f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
+
+        tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
+        tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
+        tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
+
+
+        bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
+        bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
+        bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
+
+        glm::vec3 T1 = glm::normalize(glm::vec3(model * glm::vec4(tangent1, 0.0)));
+        glm::vec3 B1 = glm::normalize(glm::vec3(model * glm::vec4(bitangent1, 0.0)));
+        glm::vec3 N1 = glm::normalize(glm::vec3(model * glm::vec4(nm, 0.0)));
+        glm::mat3 TBN1 = glm::mat3(T1, B1, N1);
+
+        glm::vec3 T2 = glm::normalize(glm::vec3(model * glm::vec4(tangent1, 0.0)));
+        glm::vec3 B2 = glm::normalize(glm::vec3(model * glm::vec4(bitangent1, 0.0)));
+        glm::vec3 N2 = glm::normalize(glm::vec3(model * glm::vec4(nm, 0.0)));
+        glm::mat3 TBN2 = glm::mat3(T2, B2, N2);
+
+
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         shaderBloomFinal.use();
         glActiveTexture(GL_TEXTURE0);
@@ -487,11 +558,20 @@ int main()
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
         glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, woodTexture);
+        glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
+        
+        /*glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, paperHeightTexture);*/
+        shaderBloomFinal.setInt("paper", 2);
         shaderBloomFinal.setInt("bloom", bloom);
         shaderBloomFinal.setFloat("exposure", exposure);
         shaderBloomFinal.setFloat("bleed", bleed);
         shaderBloomFinal.setFloat("darkEdge", darkEdge);
+        shaderBloomFinal.setFloat("granulation", granulation);
+        shaderBloomFinal.setMat3("TBN1", TBN1);
+        shaderBloomFinal.setMat3("TBN2", TBN2);
+        shaderBloomFinal.setVec3("viewPos", camera.Position);
+        shaderBloomFinal.setFloat("height_scale", 0.1f);
         //renderScene(shaderBloomFinal, ourModel, shaderBloomFinal);
         renderQuad();
 
@@ -706,6 +786,10 @@ void processInput(GLFWwindow* window)
         darkEdge = darkEdge * 0.99;
     if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
         darkEdge = darkEdge * 1.005;
+    if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
+        granulation = granulation * 0.99;
+    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+        granulation = granulation * 1.005;
 
 
 }
@@ -841,6 +925,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.use();
 
     // floor
+    shader.setFloat("wallFlag", 0.0f);
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("height_scale", 0.0f);
@@ -858,6 +943,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("height_scale", 0.0f);
+    shader.setFloat("wallFlag", 1.0f);
     shader.setFloat("diluteAreaVariable", 1);
     shader.setFloat("modelFlag", 0.0f);
     shader.setFloat("tremor", 0.0f);

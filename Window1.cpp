@@ -212,7 +212,7 @@
 //
 //    // load textures
 //    // -------------
-//    unsigned int woodTexture = loadTexture("textures/watercolor paper.jpg");
+//    unsigned int waterColorPaperTexture = loadTexture("textures/watercolor paper.jpg");
 //
 //
 //
@@ -294,7 +294,7 @@
 //        glBindFramebuffer(GL_FRAMEBUFFER, depthMapFBO);
 //        glClear(GL_DEPTH_BUFFER_BIT);
 //        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, woodTexture);
+//        glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
 //
 //        shader.use();
 //        // floor
@@ -325,7 +325,7 @@
 //        shader.setVec3("lightPos", lightPos);
 //        shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
 //        glActiveTexture(GL_TEXTURE0);
-//        glBindTexture(GL_TEXTURE_2D, woodTexture);
+//        glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
 //        glActiveTexture(GL_TEXTURE1);
 //        glBindTexture(GL_TEXTURE_2D, depthMap);
 //

@@ -1,6 +1,7 @@
 #version 330 core
 layout (location = 0) out vec4 FragColor;
 layout (location = 1) out vec4 BrightColor;
+layout (location = 2) out vec4 BleedingMask;
 
 in vec3 v_texCoord3D;
 
@@ -18,6 +19,7 @@ uniform sampler2D texture_specular;
 uniform sampler2D texture_normal;
 uniform sampler2D texture_height;
 uniform sampler2D texture_noise;
+uniform sampler2D texture_wood;
 uniform sampler2D shadowMap;
 uniform samplerCube skybox;
 
@@ -33,7 +35,8 @@ uniform vec3 cameraPos;
 uniform float height_scale;
 uniform float time;
 uniform bool water;
- 
+uniform float wallFlag = 0.0; 
+
 const float levels = 7.0;
 
 
@@ -162,10 +165,17 @@ void main()
         else
             FragColor = vec4(result, 1.0);
         BrightColor = vec4(result, 1.0);
+        BleedingMask = vec4(0.0);
     }
     else{
         FragColor = vec4(result, 1.0);
         BrightColor = vec4(result, 1.0);
+        //BleedingMask = vec4(result, 1.0);
+        BleedingMask = vec4(0.0);
+        if(fs_in.FragPos.z < -40)
+            BleedingMask = vec4(0.0);
+        if(fs_in.FragPos.y < -0.25)
+            BleedingMask = vec4(0.0);
     }
 }
 
@@ -188,9 +198,20 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
     // combine results
     vec3 ambient, diffuse, specular;
     if(modelFlag == 0){
-        ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, texCoords));
-        diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, texCoords));
-        specular = light.specular * spec * vec3(texture(material.texture_diffuse1, texCoords));
+        if(wallFlag == 0.0){
+            ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, texCoords));
+            diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, texCoords));
+            specular = light.specular * spec * vec3(texture(material.texture_diffuse1, texCoords));
+
+            //ambient  = light.ambient  * vec3(0.3);
+            //diffuse  = light.diffuse  * diff * vec3(0.3);
+            //specular = light.specular * spec * vec3(0.3);
+        }
+        else{
+            ambient  = light.ambient  * vec3(0.8);
+            diffuse  = light.diffuse  * diff * vec3(0.8);
+            specular = light.specular * spec * vec3(0.8);
+        }
     }
     else{
         ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
@@ -235,6 +256,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
     result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+    
 
     
 
