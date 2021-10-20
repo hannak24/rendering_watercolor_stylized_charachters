@@ -48,13 +48,14 @@ float modelYawAngle = 0.0f;
 float modelRollAngle = 0.0f;
 float modelPitchAngle = 0.0f;
 float modelScale = 0.005f;
-float turbulance = 2.9299;
+float turbulance = 3.2687;
 float density = 0.8942;
-float bleed = 0.5329;
+float bleed = 0.5673;
 float light = 1.1429;
 float darkEdge = 2.0867;
 float granulation = 0.22;
 
+bool wall = false;
 
 int main()
 {
@@ -127,15 +128,26 @@ int main()
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
+    //float planeVertices[] = {
+    //    // positions            // normals         // texcoords
+    //     50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+    //    -50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+    //    -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+
+    //     50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+    //    -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+    //     50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
+    //};
+
     float planeVertices[] = {
         // positions            // normals         // texcoords
-         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-        -50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+         50.0f, -2.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+        -50.0f, -2.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+        -50.0f, -2.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
 
-         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
-         50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
+         50.0f, -2.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+        -50.0f, -2.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+         50.0f, -2.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
     };
     // plane VAO
     unsigned int planeVBO;
@@ -152,15 +164,26 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glBindVertexArray(0);
 
+    //float wallVertices[] = {
+    //    // positions            // normals         // texcoords
+    //     50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
+    //    -50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,   0.0f,  0.0f,
+    //     -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
+
+    //     50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
+    //    -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
+    //     50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,  50.0f, 50.0f
+    //};
+
     float wallVertices[] = {
         // positions            // normals         // texcoords
-         50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
-        -50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,   0.0f,  0.0f,
-         -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
+         50.0f, -2.5f,  -20.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
+        -50.0f, -2.5f,  -20.0f,  0.0f, 0.0f, 1.0f,   0.0f,  0.0f,
+         -50.0f, 50.0f, -20.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
 
-         50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
-        -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
-         50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,  50.0f, 50.0f
+         50.0f, -2.5f,  -20.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
+        -50.0f, 50.0f, -20.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
+         50.0f, 50.0f, -20.0f,  0.0f, 0.0f, 1.0f,  50.0f, 50.0f
     };
     // wall VAO
     unsigned int wallVBO;
@@ -242,6 +265,12 @@ int main()
             "skyboxes/watercolor paper/bottom.jpg",
             "skyboxes/watercolor paper/front.jpg",
             "skyboxes/watercolor paper/back.jpg"
+            /*"textures/wood.png",
+            "textures/wood.png",
+            "textures/wood.png",
+            "textures/wood.png",
+            "textures/wood.png",
+            "textures/wood.png"*/
     };
     unsigned int cubemapTexture = loadCubemap(faces);
 
@@ -252,7 +281,7 @@ int main()
     unsigned int waterColorPaperTexture = loadTexture("textures/watercolor paper.jpg", true);
     unsigned int paperHeightTexture = loadTexture("dicplacementMap/disp.png", true);
     unsigned int paperTexture = loadTexture("textures/watercolor paper.jpg", true);
-    unsigned int woodTexture = loadTexture("textures/wood.jpg", true);
+    //unsigned int woodTexture = loadTexture("textures/wood.jpg", true);
 
 
     // configure depth map FBO
@@ -377,7 +406,9 @@ int main()
 
         // render
         // ------
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        //glClearColor(1.0f, 0.9922f, 0.8157f, 1.0f);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         /*glm::mat4 model = glm::mat4(1.0);
@@ -437,25 +468,25 @@ int main()
         shader.use();
         renderScene(shader, ourModel, shader);
 
-        glDepthFunc(GL_LEQUAL);
-        skyboxShader.use();
-        glDepthMask(GL_FALSE);
-        skyboxShader.use();
+        //glDepthFunc(GL_LEQUAL);
+        //skyboxShader.use();
+        //glDepthMask(GL_FALSE);
+        //skyboxShader.use();
 
-        // view/projection transformations
-        projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-        skyboxShader.setMat4("projection", projection);
-        skyboxShader.setMat4("view", view);
+        //// view/projection transformations
+        //projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+        //view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+        //skyboxShader.setMat4("projection", projection);
+        //skyboxShader.setMat4("view", view);
 
-        // render the loaded model
-        model = glm::mat4(1.0f);
-        skyboxShader.setMat4("model", model);
+        //// render the loaded model
+        //model = glm::mat4(1.0f);
+        //skyboxShader.setMat4("model", model);
 
-        glBindVertexArray(skyboxVAO);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-        glDepthMask(GL_TRUE);
+        //glBindVertexArray(skyboxVAO);
+        //glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        //glDepthMask(GL_TRUE);
 
         
         // 3. blur bright fragments with two-pass Gaussian Blur 
@@ -934,25 +965,25 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("tremor", 0.0f);
     shader.setInt("noise_texture", 3);
     glm::mat4 model = glm::mat4(1.0f);
-    shader.setVec3("dirLight.ambient", light * 0.2f, light * 0.2f, light * 0.2f);
+    shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    //glDrawArrays(GL_TRIANGLES, 0, 6);
 
-    //// wall
-    shader.setFloat("normalFlag", 0.0f);
-    shader.setFloat("parralaxFlag", 0.0f);
-    shader.setFloat("height_scale", 0.0f);
-    shader.setFloat("wallFlag", 1.0f);
-    shader.setFloat("diluteAreaVariable", 1);
-    shader.setFloat("modelFlag", 0.0f);
-    shader.setFloat("tremor", 0.0f);
-    shader.setInt("noise_texture", 3);
-    model = glm::mat4(1.0f);
-    shader.setVec3("dirLight.ambient", light * 0.2f, light * 0.2f, light * 0.2f);
-    shader.setMat4("model", model);
-    glBindVertexArray(wallVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6);
+    // wall
+    //shader.setFloat("normalFlag", 0.0f);
+    //shader.setFloat("parralaxFlag", 0.0f);
+    //shader.setFloat("height_scale", 0.0f);
+    //shader.setFloat("wallFlag", 1.0f);
+    //shader.setFloat("diluteAreaVariable", 1);
+    //shader.setFloat("modelFlag", 0.0f);
+    //shader.setFloat("tremor", 0.0f);
+    //shader.setInt("noise_texture", 3);
+    //model = glm::mat4(1.0f);
+    //shader.setVec3("dirLight.ambient", light * 0.2f, light * 0.2f, light * 0.2f);
+    //shader.setMat4("model", model);
+    //glBindVertexArray(wallVAO);
+    //glDrawArrays(GL_TRIANGLES, 0, 6);
 
     //model
     shader.setVec3("cameraPos", camera.Position);
@@ -976,9 +1007,9 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
     model = glm::scale(model, modelScale * glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
     shader.setMat4("model", model);
-    shader.setVec3("dirLight.ambient", light * 0.7f, light * 0.7f, light * 0.7f);
-    shader.setVec3("dirLight.diffuse", light * 1.0f, light * 1.0f, light * 1.0f);
-    shader.setVec3("dirLight.specular", light * 0.1f, light * 0.1f, light * 0.1f);
+    shader.setVec3("dirLight.ambient", 0.5 * light * 0.7f, 0.5 * light * 0.7f, 0.5 * light * 0.7f);
+    shader.setVec3("dirLight.diffuse", 0.5 * light * 1.0f, 0.5 * light * 1.0f, 0.5 * light * 1.0f);
+    shader.setVec3("dirLight.specular", 0.5 * light * 0.1f, 0.5 * light * 0.1f, 0.5 * light * 0.1f);
     shader.setFloat("dirLight.cangiante", 0.7);
     shader.setFloat("dirLight.dilution", 0.99);
     // point light 1

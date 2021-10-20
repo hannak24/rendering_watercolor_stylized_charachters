@@ -57,9 +57,9 @@ void main()
         //}
            
     // tone mapping
-    //vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
-    vec3 result = hdrColor;
-    result = powV(result,1+darkEdge * max(bloomColor));
+    vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
+    //vec3 result = hdrColor;
+    //result = powV(result,1+darkEdge * max(bloomColor));
     //result = result * (result - (1-texture(paper, TexCoords).rgb)) + powV((vec3(1.0)-result)* result,1 + (granulation * density)); 
     float W = 0.6;
     float P = 0.1;

@@ -208,9 +208,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
             //specular = light.specular * spec * vec3(0.3);
         }
         else{
-            ambient  = light.ambient  * vec3(0.8);
-            diffuse  = light.diffuse  * diff * vec3(0.8);
-            specular = light.specular * spec * vec3(0.8);
+            ambient  = 0.2 * texture(material.texture_diffuse1, texCoords).rgb;
+            diffuse  = 0.7 * texture(material.texture_diffuse1, texCoords).rgb;
+            specular = 0.1 * texture(material.texture_diffuse1, texCoords).rgb;
         }
     }
     else{
@@ -255,9 +255,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
 
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
-    
-
+    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+    //result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 0.9922f, 0.8157f)) + cangianteColor;
+    result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
     
 
 
@@ -269,7 +269,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
         result.z *= pow(result.z,power);
     }
     else{
-        result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
+        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
+        //result = (density - 0.5) * (vec3(1.0f, 0.9922f, 0.8157f) - result) + result;
+        result = (density - 0.5) * (vec3(1.0f, 1.0f, 1.0f) - result) + result;
     }
 
     
@@ -333,7 +335,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+     //result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 0.9922f, 0.8157f)) + cangianteColor;
+     result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
 
     //implement density control
     if(density < 0.5){
@@ -342,7 +346,9 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
         }
     }
     else{
-        result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
+        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
+        //result = (density - 0.5) * (vec3(1.0f, 0.9922f, 0.8157f) - result) + result;
+        result = (density - 0.5) * (vec3(1.0f, 1.0, 1.0f) - result) + result;
     }
     
     return result;
