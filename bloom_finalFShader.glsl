@@ -19,6 +19,7 @@ uniform float bleed = 1.0;
 uniform float darkEdge = 1.0;
 uniform float density = 0.8942;
 uniform float granulation = 0.22;
+uniform float finalTremor = 0.0125;
 
 uniform float height_scale;
 const float levels = 7.0;
@@ -33,8 +34,8 @@ void main()
     vec3 viewDir   = normalize(TangentViewPos - TangentFragPos);
     //vec3 viewDir   = viewDir1;
     //vec2 texCoords = ParallaxMapping(TexCoords,  viewDir);
-    vec2 texCoords = TexCoords;
-    //vec2 texCoords = TexCoords + (texture(texture_height, TexCoords).rg - 0.4) * 0.0125;
+    //vec2 texCoords = TexCoords;
+    vec2 texCoords = TexCoords + (texture(texture_height, TexCoords).rg - 0.4) * finalTremor;
     //if(texCoords.x > 1.0 || texCoords.y > 1.0 || texCoords.x < 0.0 || texCoords.y < 0.0)
        //discard;
     vec3 hdrColor = texture(scene, texCoords).rgb;      
@@ -65,7 +66,7 @@ void main()
     float P = 0.1;
     //result = (1-W) + W * result - P * texture(paper, TexCoords).rgb;
     result = mix(result,texture(paper, TexCoords).rgb,granulation);
-    //result = texture(paper, TexCoords).rgb;
+    //result = texture(texture_height, TexCoords).rgb;
     FragColor = vec4(result, 1.0);
     //FragColor = vec4(0.0,0.0,0.0,0.0);
 }

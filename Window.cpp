@@ -49,11 +49,12 @@ float modelRollAngle = 0.0f;
 float modelPitchAngle = 0.0f;
 float modelScale = 0.005f;
 float turbulance = 3.2687;
-float density = 0.8942;
-float bleed = 0.5673;
+float density = 0.934;
+float bleed = 0.53;
 float light = 1.1429;
 float darkEdge = 2.0867;
-float granulation = 0.22;
+float granulation = 0.493;
+float finalTremor = 0.00825;
 
 bool wall = false;
 
@@ -280,7 +281,7 @@ int main()
     unsigned int containerTexture = loadTexture("textures/container2.png", true); // note that we're loading the texture as an SRGB texture
     unsigned int waterColorPaperTexture = loadTexture("textures/watercolor paper.jpg", true);
     unsigned int paperHeightTexture = loadTexture("dicplacementMap/disp.png", true);
-    unsigned int paperTexture = loadTexture("textures/watercolor paper.jpg", true);
+    unsigned int paperTexture = loadTexture("dicplacementMap/disp.png", true);
     //unsigned int woodTexture = loadTexture("textures/wood.jpg", true);
 
 
@@ -590,15 +591,20 @@ int main()
         glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, paperHeightTexture);
+       
         
         /*glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, paperHeightTexture);*/
         shaderBloomFinal.setInt("paper", 2);
+        shaderBloomFinal.setInt("texture_height", 3);
         shaderBloomFinal.setInt("bloom", bloom);
         shaderBloomFinal.setFloat("exposure", exposure);
         shaderBloomFinal.setFloat("bleed", bleed);
         shaderBloomFinal.setFloat("darkEdge", darkEdge);
         shaderBloomFinal.setFloat("granulation", granulation);
+        shaderBloomFinal.setFloat("finalTremor", finalTremor);
         shaderBloomFinal.setMat3("TBN1", TBN1);
         shaderBloomFinal.setMat3("TBN2", TBN2);
         shaderBloomFinal.setVec3("viewPos", camera.Position);
@@ -821,6 +827,10 @@ void processInput(GLFWwindow* window)
         granulation = granulation * 0.99;
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
         granulation = granulation * 1.005;
+    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+        finalTremor = finalTremor * 0.99;
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+        finalTremor = finalTremor * 1.005;
 
 
 }
@@ -988,9 +998,9 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     //model
     shader.setVec3("cameraPos", camera.Position);
     shader.setFloat("normalFlag", 0.0f);
-    shader.setFloat("parralaxFlag", 1.0f);
+    shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("modelFlag", 1.0f);
-    shader.setFloat("toonShading", 0.0f);
+    shader.setFloat("toonShading", 1.0f);
     shader.setFloat("height_scale", 0.0f);
     shader.setFloat("time", glfwGetTime());
     shader.setFloat("frequency", 1 / deltaTime);
