@@ -27,6 +27,7 @@ const float levels = 7.0;
 float max(vec3 v);
 vec3 powV(vec3 v, float coef);
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir);
+vec3 calcSobelEdgeMap(vec2 texCoords);
 
 void main()
 {             
@@ -59,16 +60,23 @@ void main()
            
     // tone mapping
     vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
+    //vec3 sobel_color = result - texture(texture_height, TexCoords).rgb * texture(paper, TexCoords).rgb * 0.5;
+    
     //vec3 result = hdrColor;
     //result = powV(result,1+darkEdge * max(bloomColor));
+    vec3 sobel_color = result;
+    //result = powV(result,darkEdge * max(bloomColor));
     //result = result * (result - (1-texture(paper, TexCoords).rgb)) + powV((vec3(1.0)-result)* result,1 + (granulation * density)); 
     float W = 0.6;
     float P = 0.1;
-    //result = (1-W) + W * result - P * texture(paper, TexCoords).rgb;
-    result = mix(result,texture(paper, TexCoords).rgb,granulation);
-    //result = texture(texture_height, TexCoords).rgb;
+    float G = 0.3;
+    vec3 Sobel_edge_map = calcSobelEdgeMap(texCoords);
+    result = (1-(1-granulation-darkEdge)) + (1-granulation-darkEdge) * result - granulation * texture(paper, TexCoords).rgb - Sobel_edge_map * darkEdge;
+    //result = (1-W) + W * result - granulation * texture(paper, TexCoords).rgb;
+    //result = (sobel_color - result) * 400;
+    //result = mix(result,texture(paper, TexCoords).rgb,granulation);
     FragColor = vec4(result, 1.0);
-    //FragColor = vec4(0.0,0.0,0.0,0.0);
+    //FragColor = vec4(Sobel_edge_map,1.0);
 }
 
 float max(vec3 v){
@@ -93,41 +101,23 @@ vec3 powV(vec3 v, float coef){
     return vec;
 }
 
-vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir){
-    // number of depth layers
-    const float minLayers = 8.0;
-    const float maxLayers = 32.0;
-    float numLayers = mix(maxLayers, minLayers, max(dot(vec3(0.0, 0.0, 1.0), viewDir), 0.0));
-    // calculate the size of each layer
-    float layerDepth = 1.0 / numLayers;
-    // depth of current layer
-    float currentLayerDepth = 0.0;
-    // the amount to shift the texture coordinates per layer (from vector P)
-    vec2 P = viewDir.xy * height_scale; 
-    vec2 deltaTexCoords = P / numLayers;
-    vec2  currentTexCoords     = texCoords;
-    float currentDepthMapValue = texture(texture_height, currentTexCoords).r;
-  
-    //while(currentLayerDepth < currentDepthMapValue)
-    //{
-        // shift texture coordinates along direction of P
-        //currentTexCoords -= deltaTexCoords;
-        // get depthmap value at current texture coordinates
-        //currentDepthMapValue = texture(texture_height, currentTexCoords).r;  
-        // get depth of next layer
-        //currentLayerDepth += layerDepth;  
-    //}
 
-        // get texture coordinates before collision (reverse operations)
-    vec2 prevTexCoords = currentTexCoords + deltaTexCoords;
+vec3 calcSobelEdgeMap(vec2 texCoords){
+    vec2 offset = 1.0 / textureSize(scene, 0);
+    vec2 coord = TexCoords;
+    vec3 color00 = texture(scene,vec2(texCoords.x-offset.x,texCoords.y-offset.x)).rgb;
+    vec3 color01 = texture(scene,vec2(texCoords.x,texCoords.y-offset.x)).rgb;
+    vec3 color02 = texture(scene,vec2(texCoords.x+offset.x,texCoords.y-offset.x)).rgb;
+    vec3 color10 = texture(scene,vec2(texCoords.x-offset.x,texCoords.y)).rgb;
+    vec3 color11 = texture(scene,vec2(texCoords.x,texCoords.y)).rgb;
+    vec3 color12 = texture(scene,vec2(texCoords.x+offset.x,texCoords.y)).rgb;
+    vec3 color20 = texture(scene,vec2(texCoords.x-offset.x,texCoords.y+offset.x)).rgb;
+    vec3 color21 = texture(scene,vec2(texCoords.x,texCoords.y+offset.x)).rgb;
+    vec3 color22 = texture(scene,vec2(texCoords.x+offset.x,texCoords.y+offset.x)).rgb;
 
-    // get depth after and before collision for linear interpolation
-    float afterDepth  = currentDepthMapValue - currentLayerDepth;
-    float beforeDepth = texture(texture_height, prevTexCoords).r - currentLayerDepth + layerDepth;
- 
-    // interpolation of texture coordinates
-    float weight = afterDepth / (afterDepth - beforeDepth);
-    vec2 finalTexCoords = prevTexCoords * weight + currentTexCoords * (1.0 - weight);
-
-    return finalTexCoords; 
+    vec3 Sobel_x = (-1)*color00+(-2)*color01+(-1)*color02 +(1)*color20 + (2)*color21 + (1)*color22;
+    vec3 Sobel_y = (-1)*color00+(-2)*color10+(-1)*color20 + (1)*color02 + (2)*color12 + (1)*color22;
+    vec3 Sobel_edge_map = abs(Sobel_x)+abs(Sobel_y);
+    return Sobel_edge_map;
+    //return color11;
 }

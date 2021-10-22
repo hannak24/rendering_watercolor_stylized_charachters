@@ -1863,7 +1863,7 @@ static float* stbi__ldr_to_hdr(stbi_uc* data, int x, int y, int comp)
 #endif
 
 #ifndef STBI_NO_HDR
-#define stbi__float2int(x)   ((int) (x))
+#define stbi__vec2int(x)   ((int) (x))
 static stbi_uc* stbi__hdr_to_ldr(float* data, int x, int y, int comp)
 {
     int i, k, n;
@@ -1878,13 +1878,13 @@ static stbi_uc* stbi__hdr_to_ldr(float* data, int x, int y, int comp)
             float z = (float)pow(data[i * comp + k] * stbi__h2l_scale_i, stbi__h2l_gamma_i) * 255 + 0.5f;
             if (z < 0) z = 0;
             if (z > 255) z = 255;
-            output[i * comp + k] = (stbi_uc)stbi__float2int(z);
+            output[i * comp + k] = (stbi_uc)stbi__vec2int(z);
         }
         if (k < comp) {
             float z = data[i * comp + k] * 255 + 0.5f;
             if (z < 0) z = 0;
             if (z > 255) z = 255;
-            output[i * comp + k] = (stbi_uc)stbi__float2int(z);
+            output[i * comp + k] = (stbi_uc)stbi__vec2int(z);
         }
     }
     STBI_FREE(data);
@@ -3625,7 +3625,7 @@ static stbi_uc* stbi__resample_row_generic(stbi_uc* out, stbi_uc* in_near, stbi_
 
 // this is a reduced-precision calculation of YCbCr-to-RGB introduced
 // to make sure the code produces the same results in both SIMD and scalar
-#define stbi__float2fixed(x)  (((int) ((x) * 4096.0f + 0.5f)) << 8)
+#define stbi__vec2fixed(x)  (((int) ((x) * 4096.0f + 0.5f)) << 8)
 static void stbi__YCbCr_to_RGB_row(stbi_uc* out, const stbi_uc* y, const stbi_uc* pcb, const stbi_uc* pcr, int count, int step)
 {
     int i;
@@ -3634,9 +3634,9 @@ static void stbi__YCbCr_to_RGB_row(stbi_uc* out, const stbi_uc* y, const stbi_uc
         int r, g, b;
         int cr = pcr[i] - 128;
         int cb = pcb[i] - 128;
-        r = y_fixed + cr * stbi__float2fixed(1.40200f);
-        g = y_fixed + (cr * -stbi__float2fixed(0.71414f)) + ((cb * -stbi__float2fixed(0.34414f)) & 0xffff0000);
-        b = y_fixed + cb * stbi__float2fixed(1.77200f);
+        r = y_fixed + cr * stbi__vec2fixed(1.40200f);
+        g = y_fixed + (cr * -stbi__vec2fixed(0.71414f)) + ((cb * -stbi__vec2fixed(0.34414f)) & 0xffff0000);
+        b = y_fixed + cb * stbi__vec2fixed(1.77200f);
         r >>= 20;
         g >>= 20;
         b >>= 20;
@@ -3768,9 +3768,9 @@ static void stbi__YCbCr_to_RGB_simd(stbi_uc* out, stbi_uc const* y, stbi_uc cons
         int r, g, b;
         int cr = pcr[i] - 128;
         int cb = pcb[i] - 128;
-        r = y_fixed + cr * stbi__float2fixed(1.40200f);
-        g = y_fixed + cr * -stbi__float2fixed(0.71414f) + ((cb * -stbi__float2fixed(0.34414f)) & 0xffff0000);
-        b = y_fixed + cb * stbi__float2fixed(1.77200f);
+        r = y_fixed + cr * stbi__vec2fixed(1.40200f);
+        g = y_fixed + cr * -stbi__vec2fixed(0.71414f) + ((cb * -stbi__vec2fixed(0.34414f)) & 0xffff0000);
+        b = y_fixed + cb * stbi__vec2fixed(1.77200f);
         r >>= 20;
         g >>= 20;
         b >>= 20;

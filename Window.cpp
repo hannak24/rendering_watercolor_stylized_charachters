@@ -27,7 +27,7 @@ const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 bool bloom = true;
 bool bloomKeyPressed = false;
-float exposure = 1.0f;
+float exposure = 2.1999;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
@@ -48,13 +48,13 @@ float modelYawAngle = 0.0f;
 float modelRollAngle = 0.0f;
 float modelPitchAngle = 0.0f;
 float modelScale = 0.005f;
-float turbulance = 3.2687;
-float density = 0.934;
-float bleed = 0.53;
-float light = 1.1429;
-float darkEdge = 2.0867;
-float granulation = 0.493;
-float finalTremor = 0.00825;
+float turbulance = 5.6062;
+float density = 0.9208;
+float bleed = 0.232;
+float light = 2.8934;
+float darkEdge = 0.0627;
+float granulation = 0.4199;
+float finalTremor = 0.00804;
 
 bool wall = false;
 
@@ -119,11 +119,11 @@ int main()
 
     // load models
     // -----------
-    Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
+    //Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
     //Model ourModel("objects/Duck/Duck.obj");
     //Model ourModel("objects/Goldfish/Goldfish.obj");
     //Model ourModel("objects/Swan/Swan.obj");
-    //Model ourModel("objects/dolphin/dolphin.obj");
+    Model ourModel("objects/dolphin/dolphin.obj");
     //Model ourModel("objects/Duck/Duck.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
@@ -827,9 +827,9 @@ void processInput(GLFWwindow* window)
         granulation = granulation * 0.99;
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
         granulation = granulation * 1.005;
-    if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
         finalTremor = finalTremor * 0.99;
-    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
         finalTremor = finalTremor * 1.005;
 
 
@@ -1000,7 +1000,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("normalFlag", 0.0f);
     shader.setFloat("parralaxFlag", 0.0f);
     shader.setFloat("modelFlag", 1.0f);
-    shader.setFloat("toonShading", 1.0f);
+    shader.setFloat("toonShading", 0.0f);
     shader.setFloat("height_scale", 0.0f);
     shader.setFloat("time", glfwGetTime());
     shader.setFloat("frequency", 1 / deltaTime);
