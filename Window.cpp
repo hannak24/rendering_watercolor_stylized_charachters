@@ -20,7 +20,6 @@ unsigned int loadTexture(const char* path, bool gammaCorrection);
 void renderScene(Shader& shader, Model ourModel, Shader& modelShader);
 unsigned int loadCubemap(vector<std::string> faces);
 void renderQuad();
-void renderCube();
 
 // settings
 const unsigned int SCR_WIDTH = 800;
@@ -44,10 +43,10 @@ unsigned int planeVAO;
 unsigned int wallVAO;
 
 // model
-float modelYawAngle = 0.0f;
+float modelYawAngle = 87.4999f;
 float modelRollAngle = 0.0f;
-float modelPitchAngle = 0.0f;
-float modelScale = 0.005f;
+float modelPitchAngle = -6.2999f;
+float modelScale = 2.2282f;
 float turbulance = 5.6062;
 float density = 0.9208;
 float bleed = 0.232;
@@ -107,49 +106,35 @@ int main()
 
     // build and compile shaders
     // -------------------------
-    //Shader shader("bloomVShader.glsl", "bloomFShader.glsl");
-    //Shader shaderLight("bloomVShader.glsl", "light_boxFShader.glsl");
-    //Shader shaderBlur("blurVShader.glsl", "blurFShader.glsl");
     Shader shaderBlur("blurVShader.glsl", "paper_blurFShader.glsl");
     Shader shaderBloomFinal("bloom_finalVShader.glsl", "bloom_finalFShader.glsl");
     Shader shader("normalVShader.glsl", "normalFShader.glsl");
     Shader simpleDepthShader("shadeVShader.glsl", "shadeFShader.glsl");
-    Shader modelShader("3.1.2.shadow_mapping.vs", "3.1.2.shadow_mapping.fs");
     Shader skyboxShader("loadSkyBoxVshader.glsl", "loadSkyBoxFshader.glsl");
 
     // load models
     // -----------
-    //Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
+    Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
     //Model ourModel("objects/Duck/Duck.obj");
     //Model ourModel("objects/Goldfish/Goldfish.obj");
     //Model ourModel("objects/Swan/Swan.obj");
-    Model ourModel("objects/dolphin/dolphin.obj");
+    //Model ourModel("objects/dolphin/dolphin.obj");
     //Model ourModel("objects/Duck/Duck.obj");
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
 
-    //float planeVertices[] = {
-    //    // positions            // normals         // texcoords
-    //     50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-    //    -50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-    //    -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
-
-    //     50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-    //    -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
-    //     50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
-    //};
-
     float planeVertices[] = {
         // positions            // normals         // texcoords
-         50.0f, -2.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-        -50.0f, -2.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-        -50.0f, -2.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+        -50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
 
-         50.0f, -2.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-        -50.0f, -2.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
-         50.0f, -2.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
+         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+         50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
     };
+
     // plane VAO
     unsigned int planeVBO;
     glGenVertexArrays(1, &planeVAO);
@@ -165,27 +150,17 @@ int main()
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
     glBindVertexArray(0);
 
-    //float wallVertices[] = {
-    //    // positions            // normals         // texcoords
-    //     50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
-    //    -50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,   0.0f,  0.0f,
-    //     -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
-
-    //     50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
-    //    -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
-    //     50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,  50.0f, 50.0f
-    //};
-
     float wallVertices[] = {
         // positions            // normals         // texcoords
-         50.0f, -2.5f,  -20.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
-        -50.0f, -2.5f,  -20.0f,  0.0f, 0.0f, 1.0f,   0.0f,  0.0f,
-         -50.0f, 50.0f, -20.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
+         50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
+        -50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,   0.0f,  0.0f,
+         -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
 
-         50.0f, -2.5f,  -20.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
-        -50.0f, 50.0f, -20.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
-         50.0f, 50.0f, -20.0f,  0.0f, 0.0f, 1.0f,  50.0f, 50.0f
+         50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
+        -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
+         50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,  50.0f, 50.0f
     };
+
     // wall VAO
     unsigned int wallVBO;
     glGenVertexArrays(1, &wallVAO);
@@ -266,23 +241,15 @@ int main()
             "skyboxes/watercolor paper/bottom.jpg",
             "skyboxes/watercolor paper/front.jpg",
             "skyboxes/watercolor paper/back.jpg"
-            /*"textures/wood.png",
-            "textures/wood.png",
-            "textures/wood.png",
-            "textures/wood.png",
-            "textures/wood.png",
-            "textures/wood.png"*/
     };
     unsigned int cubemapTexture = loadCubemap(faces);
 
     // load textures
     // -------------
-    //unsigned int waterColorPaperTexture = loadTexture("textures/wood.png", true); // note that we're loading the texture as an SRGB texture
     unsigned int containerTexture = loadTexture("textures/container2.png", true); // note that we're loading the texture as an SRGB texture
     unsigned int waterColorPaperTexture = loadTexture("textures/watercolor paper.jpg", true);
     unsigned int paperHeightTexture = loadTexture("dicplacementMap/disp.png", true);
     unsigned int paperTexture = loadTexture("dicplacementMap/disp.png", true);
-    //unsigned int woodTexture = loadTexture("textures/wood.jpg", true);
 
 
     // configure depth map FBO
@@ -407,14 +374,9 @@ int main()
 
         // render
         // ------
-        //glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        //glClearColor(1.0f, 0.9922f, 0.8157f, 1.0f);
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        /*glm::mat4 model = glm::mat4(1.0);
-        shader.setMat4("model", model);
-        ourModel.Draw(shader);*/
 
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
@@ -469,6 +431,8 @@ int main()
         shader.use();
         renderScene(shader, ourModel, shader);
 
+        //add skybox
+
         //glDepthFunc(GL_LEQUAL);
         //skyboxShader.use();
         //glDepthMask(GL_FALSE);
@@ -493,10 +457,7 @@ int main()
         // 3. blur bright fragments with two-pass Gaussian Blur 
         // --------------------------------------------------
         bool horizontal = true, first_iteration = true;
-        unsigned int amount = 100;
         shaderBlur.use();
-        shaderBlur.setInt("amount", 5);
-        //for (unsigned int i = 0; i < 10; i++)
         for (unsigned int i = 0; i < 42; i++)
         {
             glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
@@ -506,82 +467,15 @@ int main()
             glActiveTexture(GL_TEXTURE1);
             glBindTexture(GL_TEXTURE_2D, colorBuffers[2]);
             renderQuad();
-            //renderScene(shaderBlur, ourModel, shaderBlur);
             horizontal = !horizontal;
             if (first_iteration)
                 first_iteration = false;
         }
 
-
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
-        
-
+       
         //// 4. now render floating point color buffer to 2D quad 
-         //--------------------------------------------------------------------------------------------------------------------------
-
-        // calc tangent space for paper normals
-
-        // positions
-        glm::vec3 pos1(50.0f, -0.5f, -50.0f);
-        glm::vec3 pos2(-50.0f, -0.5f, -50.0f);
-        glm::vec3 pos3(-50.0f, 50.0f, -50.0f);
-        glm::vec3 pos4(50.0f, 50.0f, -50.0f);
-        // texture coordinates
-        glm::vec2 uv1(50.0f, 0.0f);
-        glm::vec2 uv2(0.0f, 0.0f);
-        glm::vec2 uv3(0.0f, 50.0f);
-        glm::vec2 uv4(50.0f, 50.0f);
-        // normal vector
-        glm::vec3 nm(0.0f, 0.0f, 1.0f);
-
-        // calculate tangent/bitangent vectors of both triangles
-        glm::vec3 tangent1, bitangent1;
-        glm::vec3 tangent2, bitangent2;
-        // triangle 1
-        // ----------
-        glm::vec3 edge1 = pos2 - pos1;
-        glm::vec3 edge2 = pos3 - pos1;
-        glm::vec2 deltaUV1 = uv2 - uv1;
-        glm::vec2 deltaUV2 = uv3 - uv1;
-
-        float f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-        tangent1.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-        tangent1.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-        tangent1.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-
-        bitangent1.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-        bitangent1.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-        bitangent1.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-
-        // triangle 2
-        // ----------
-        edge1 = pos3 - pos1;
-        edge2 = pos4 - pos1;
-        deltaUV1 = uv3 - uv1;
-        deltaUV2 = uv4 - uv1;
-
-        f = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV2.x * deltaUV1.y);
-
-        tangent2.x = f * (deltaUV2.y * edge1.x - deltaUV1.y * edge2.x);
-        tangent2.y = f * (deltaUV2.y * edge1.y - deltaUV1.y * edge2.y);
-        tangent2.z = f * (deltaUV2.y * edge1.z - deltaUV1.y * edge2.z);
-
-
-        bitangent2.x = f * (-deltaUV2.x * edge1.x + deltaUV1.x * edge2.x);
-        bitangent2.y = f * (-deltaUV2.x * edge1.y + deltaUV1.x * edge2.y);
-        bitangent2.z = f * (-deltaUV2.x * edge1.z + deltaUV1.x * edge2.z);
-
-        glm::vec3 T1 = glm::normalize(glm::vec3(model * glm::vec4(tangent1, 0.0)));
-        glm::vec3 B1 = glm::normalize(glm::vec3(model * glm::vec4(bitangent1, 0.0)));
-        glm::vec3 N1 = glm::normalize(glm::vec3(model * glm::vec4(nm, 0.0)));
-        glm::mat3 TBN1 = glm::mat3(T1, B1, N1);
-
-        glm::vec3 T2 = glm::normalize(glm::vec3(model * glm::vec4(tangent1, 0.0)));
-        glm::vec3 B2 = glm::normalize(glm::vec3(model * glm::vec4(bitangent1, 0.0)));
-        glm::vec3 N2 = glm::normalize(glm::vec3(model * glm::vec4(nm, 0.0)));
-        glm::mat3 TBN2 = glm::mat3(T2, B2, N2);
-
+        //--------------------------------------------------------------------------------------------------------------------------
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         shaderBloomFinal.use();
@@ -594,9 +488,6 @@ int main()
         glActiveTexture(GL_TEXTURE3);
         glBindTexture(GL_TEXTURE_2D, paperHeightTexture);
        
-        
-        /*glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, paperHeightTexture);*/
         shaderBloomFinal.setInt("paper", 2);
         shaderBloomFinal.setInt("texture_height", 3);
         shaderBloomFinal.setInt("bloom", bloom);
@@ -605,16 +496,9 @@ int main()
         shaderBloomFinal.setFloat("darkEdge", darkEdge);
         shaderBloomFinal.setFloat("granulation", granulation);
         shaderBloomFinal.setFloat("finalTremor", finalTremor);
-        shaderBloomFinal.setMat3("TBN1", TBN1);
-        shaderBloomFinal.setMat3("TBN2", TBN2);
         shaderBloomFinal.setVec3("viewPos", camera.Position);
         shaderBloomFinal.setFloat("height_scale", 0.1f);
-        //renderScene(shaderBloomFinal, ourModel, shaderBloomFinal);
         renderQuad();
-
-
-
-        //std::cout << "bloom: " << (bloom ? "on" : "off") << "| exposure: " << exposure << std::endl;
 
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
@@ -631,80 +515,6 @@ int main()
     return 0;
 }
 
-// renderCube() renders a 1x1 3D cube in NDC.
-// -------------------------------------------------
-unsigned int cubeVAO = 0;
-unsigned int cubeVBO = 0;
-void renderCube()
-{
-    // initialize (if necessary)
-    if (cubeVAO == 0)
-    {
-        float vertices[] = {
-            // back face
-            -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-             1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-             1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 0.0f, // bottom-right         
-             1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 1.0f, 1.0f, // top-right
-            -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 0.0f, // bottom-left
-            -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, -1.0f, 0.0f, 1.0f, // top-left
-            // front face
-            -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-             1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 0.0f, // bottom-right
-             1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-             1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f, 1.0f, // top-right
-            -1.0f,  1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 1.0f, // top-left
-            -1.0f, -1.0f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f, 0.0f, // bottom-left
-            // left face
-            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-            -1.0f,  1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-left
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-            -1.0f, -1.0f, -1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-left
-            -1.0f, -1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-            -1.0f,  1.0f,  1.0f, -1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-right
-            // right face
-             1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-             1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-             1.0f,  1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 1.0f, // top-right         
-             1.0f, -1.0f, -1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 1.0f, // bottom-right
-             1.0f,  1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 1.0f, 0.0f, // top-left
-             1.0f, -1.0f,  1.0f,  1.0f,  0.0f,  0.0f, 0.0f, 0.0f, // bottom-left     
-            // bottom face
-            -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-             1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 1.0f, // top-left
-             1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-             1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 1.0f, 0.0f, // bottom-left
-            -1.0f, -1.0f,  1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 0.0f, // bottom-right
-            -1.0f, -1.0f, -1.0f,  0.0f, -1.0f,  0.0f, 0.0f, 1.0f, // top-right
-            // top face
-            -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-             1.0f,  1.0f , 1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-             1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 1.0f, // top-right     
-             1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 1.0f, 0.0f, // bottom-right
-            -1.0f,  1.0f, -1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 1.0f, // top-left
-            -1.0f,  1.0f,  1.0f,  0.0f,  1.0f,  0.0f, 0.0f, 0.0f  // bottom-left        
-        };
-        glGenVertexArrays(1, &cubeVAO);
-        glGenBuffers(1, &cubeVBO);
-        // fill buffer
-        glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        // link vertex attributes
-        glBindVertexArray(cubeVAO);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-    }
-    // render Cube
-    glBindVertexArray(cubeVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 36);
-    glBindVertexArray(0);
-}
 
 // renderQuad() renders a 1x1 XY quad in NDC
 // -----------------------------------------
@@ -831,8 +641,6 @@ void processInput(GLFWwindow* window)
         finalTremor = finalTremor * 0.99;
     if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
         finalTremor = finalTremor * 1.005;
-
-
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes

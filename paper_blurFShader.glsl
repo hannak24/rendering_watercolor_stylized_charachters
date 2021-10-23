@@ -5,7 +5,6 @@ in vec2 TexCoords;
 
 uniform sampler2D image;
 uniform sampler2D bleedingMask;
-
 uniform bool horizontal;
 uniform float weight[5] = float[] (0.2270270270, 0.1945945946, 0.1216216216, 0.0540540541, 0.0162162162);
 
@@ -29,8 +28,6 @@ void main()
              result += texture(image, TexCoords - vec2(0.0, tex_offset.y * i)).rgb * weight[i];
          }
      }
-     //result = texture(bleedingMask,TexCoords).rgb;
-     //result = texture(image,TexCoords).rgb;
      FragColor = vec4(result, 1.0);
 }
 

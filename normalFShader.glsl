@@ -1,10 +1,8 @@
 #version 330 core
 layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec4 BrightColor;
-layout (location = 2) out vec4 BleedingMask;
+layout (location = 1) out vec4 BlurColor;
 
 in vec3 v_texCoord3D;
-
 in VS_OUT {
     vec3 FragPos;
     vec3 Normal;
@@ -13,32 +11,7 @@ in VS_OUT {
     mat3 TBN;
 } fs_in;
 
-uniform sampler2D diffuseTexture;
-uniform sampler2D texture_diffuse;
-uniform sampler2D texture_specular;
-uniform sampler2D texture_normal;
-uniform sampler2D texture_height;
-uniform sampler2D texture_noise;
-uniform sampler2D texture_wood;
-uniform sampler2D shadowMap;
-uniform samplerCube skybox;
-
-uniform float diluteAreaVariable;
-uniform float cangiante;
-uniform float dilution;
-uniform float density;
-uniform float turbulance;
-
-uniform vec3 lightPos;
-uniform vec3 viewPos;
-uniform vec3 cameraPos;
-uniform float height_scale;
-uniform float time;
-uniform bool water;
-uniform float wallFlag = 0.0; 
-
-const float levels = 7.0;
-
+#define NR_POINT_LIGHTS 4
 
 struct Material {
     sampler2D texture_diffuse1;
@@ -47,65 +20,73 @@ struct Material {
     float shininess;
 }; 
 
-
-uniform Material material;
-
-
 struct DirLight {
     vec3 direction;
-  
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+    float cangiante;
+    float dilution;
+};
 
+struct PointLight {    
+    vec3 position;
+    float constant;
+    float linear;
+    float quadratic;  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
     float cangiante;
     float dilution;
 };  
+ 
+struct SpotLight {
+    vec3 position;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+    float constant;
+    float linear;
+    float quadratic;
+    float cangiante;
+    float dilution;
+};
 
+
+uniform sampler2D diffuseTexture;
+uniform sampler2D texture_diffuse;
+uniform sampler2D texture_specular;
+uniform sampler2D texture_normal;
+uniform sampler2D texture_height;
+uniform sampler2D texture_noise;
+uniform sampler2D shadowMap;
+uniform samplerCube skybox;
+uniform float diluteAreaVariable;
+uniform float cangiante;
+uniform float dilution;
+uniform float density;
+uniform float turbulance;
+uniform vec3 lightPos;
+uniform vec3 viewPos;
+uniform vec3 cameraPos;
+uniform float height_scale;
+uniform float time;
+uniform bool water;
+uniform float wallFlag = 0.0; 
+uniform Material material;
 uniform DirLight dirLight;
-
 uniform float normalFlag;
 uniform float parralaxFlag;
 uniform float modelFlag;
 uniform float toonShading;
-
-struct PointLight {    
-    vec3 position;
-    
-    float constant;
-    float linear;
-    float quadratic;  
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-
-    float cangiante;
-    float dilution;
-};  
-#define NR_POINT_LIGHTS 4  
 uniform PointLight pointLights[NR_POINT_LIGHTS];
-
-struct SpotLight {
-    vec3 position;
-    vec3 direction;
-
-    float cutOff;
-    float outerCutOff;
-  
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
-	
-    float constant;
-    float linear;
-    float quadratic;
-
-    float cangiante;
-    float dilution;
-};
 uniform SpotLight spotLight;
 
+const float levels = 7.0;
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords);
@@ -114,7 +95,7 @@ float ShadowCalculation(vec4 fragPosLightSpace, float bias);
 vec2 ParallaxMapping(vec2 texCoords, vec3 viewDir);
 float snoise(vec3 v);
 float noise(vec3 p);
-
+float computeNoise(vec3 uvw);
 
 void main()
 {   
@@ -148,35 +129,17 @@ void main()
     vec3 uvw = v_texCoord3D + 0.1*vec3(snoise(v_texCoord3D + vec3(0.0, 0.0, time)),
     snoise(v_texCoord3D + vec3(43.0, 17.0, time)),
 	snoise(v_texCoord3D + vec3(-17.0, -43.0, time)));
-    // Six components of noise in a fractal sum
-    float n = snoise(uvw - vec3(0.0, 0.0, time));
-    n += 0.5 * snoise(uvw * 2.0 - vec3(0.0, 0.0, time*1.4)); 
-    n += 0.25 * snoise(uvw * 4.0 - vec3(0.0, 0.0, time*2.0)); 
-    n += 0.125 * snoise(uvw * 8.0 - vec3(0.0, 0.0, time*2.8)); 
-    
-    n += 0.0625 * snoise(uvw * 16.0 - vec3(0.0, 0.0, time*4.0)); 
-    float s = 0.0625 * snoise(uvw * 16.0 - vec3(0.0, 0.0, 4.0));
-    n += 0.03125 * snoise(uvw * 32.0 - vec3(0.0, 0.0, time*5.6)); 
-    n = n * 0.7;
-
+    float n = computeNoise(uvw);
     if(modelFlag == 0){
         if(water)
             FragColor = vec4(0.4 * result + 0.2 * vec3(n, n, n)+ 0.6 * vec3(0.2824,0.749,0.7686), 1.0);
         else
             FragColor = vec4(result, 1.0);
-        BrightColor = vec4(result, 1.0);
-        BleedingMask = vec4(0.0);
     }
     else{
         FragColor = vec4(result, 1.0);
-        BrightColor = vec4(result, 1.0);
-        //BleedingMask = vec4(result, 1.0);
-        BleedingMask = vec4(0.0);
-        if(fs_in.FragPos.z < -40)
-            BleedingMask = vec4(0.0);
-        if(fs_in.FragPos.y < -0.25)
-            BleedingMask = vec4(0.0);
     }
+    BlurColor = vec4(result, 1.0);
 }
 
 
@@ -190,11 +153,13 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
             lightDir =  normalize(fs_in.TBN * (lightPos - fs_in.FragPos));
     }
     float diff = max(dot(lightDir, normal), 0.0);
+
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = 0.0;
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     spec = pow(max(dot(normal, halfwayDir), 0.0), 64.0);
+
     // combine results
     vec3 ambient, diffuse, specular;
     if(modelFlag == 0){
@@ -202,10 +167,6 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
             ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, texCoords));
             diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, texCoords));
             specular = light.specular * spec * vec3(texture(material.texture_diffuse1, texCoords));
-
-            //ambient  = light.ambient  * vec3(0.3);
-            //diffuse  = light.diffuse  * diff * vec3(0.3);
-            //specular = light.specular * spec * vec3(0.3);
         }
         else{
             ambient  = 0.2 * texture(material.texture_diffuse1, texCoords).rgb;
@@ -219,8 +180,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
         specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
     }
 
-    
-
+    //apply toon shading if required
     if(toonShading == 1){
         float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
         float brightness = max(nDot1,0.0);
@@ -228,7 +188,6 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
         brightness = level / levels;
    
        // combine results
-
         ambient = 0.45 *(light.ambient * brightness) + 0.6*light.ambient * vec3(texture(material.texture_diffuse1, texCoords));
         diffuse = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff * vec3(texture(material.texture_diffuse1, texCoords));
         specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec *vec3(texture(material.texture_specular1, texCoords));
@@ -242,8 +201,6 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
     }
     result = mix(texture(texture_specular, texCoords).rgb,result ,turbulance);
 
-    
-
     //calc light dilution
     float ratio = 1.0;
     vec3 I = normalize(fs_in.FragPos - cameraPos);
@@ -255,12 +212,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
 
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
-    //result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 0.9922f, 0.8157f)) + cangianteColor;
+    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor; //if skybox applied
     result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
     
-
-
     //implement density control
     if(density < 0.5){
         float power = 3 - density * 4;
@@ -269,14 +223,13 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
         result.z *= pow(result.z,power);
     }
     else{
-        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
-        //result = (density - 0.5) * (vec3(1.0f, 0.9922f, 0.8157f) - result) + result;
+        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result; //if skybox applied
         result = (density - 0.5) * (vec3(1.0f, 1.0f, 1.0f) - result) + result;
-    }
-
-    
+    } 
     return result;
 }
+
+
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords)
 {
@@ -286,15 +239,19 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     if(normalFlag == 1.0f){
             lightDir = fs_in.TBN * normalize(light.position - fs_in.FragPos);
     }
+
     // diffuse shading
     float diff = max(dot(normal, lightDir), 0.0);
+
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
+
     // attenuation
     float distance    = length(light.position - fragPos);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
-  			     light.quadratic * (distance * distance));    
+  			     light.quadratic * (distance * distance));  
+                 
     // combine results
     vec3 ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, texCoords));
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, texCoords));
@@ -303,11 +260,11 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     diffuse  *= attenuation;
     specular *= attenuation;
     vec3 result = ambient + diffuse + specular;
-
     if(modelFlag == 0){
         return result;
     }
 
+    //apply toon shading if needed
     if(toonShading == 1){
         float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
         float brightness = max(nDot1,0.0);
@@ -315,7 +272,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
         brightness = level / levels;
    
        // combine results
-
         ambient = 0.45 *(light.ambient * brightness) + 0.6*light.ambient * vec3(texture(material.texture_diffuse1, texCoords));
         diffuse = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff * vec3(texture(material.texture_diffuse1, texCoords));
         specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec *vec3(texture(material.texture_specular1, texCoords));
@@ -332,12 +288,10 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
         I = normalize(fragPos - cameraPos);
     }
     vec3 R = refract(I, normal, ratio);
-
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
-     //result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 0.9922f, 0.8157f)) + cangianteColor;
-     result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
+    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor; //if skybox relevant
+    result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
 
     //implement density control
     if(density < 0.5){
@@ -346,13 +300,12 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
         }
     }
     else{
-        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
-        //result = (density - 0.5) * (vec3(1.0f, 0.9922f, 0.8157f) - result) + result;
+        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result; //if skybox is relevant
         result = (density - 0.5) * (vec3(1.0f, 1.0, 1.0f) - result) + result;
     }
-    
     return result;
 } 
+
 
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords)
 {
@@ -365,11 +318,13 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
             lightDir = normalize(fs_in.TBN * (light.position - fs_in.FragPos));
     }
     float diff = max(dot(light.direction, normal), 0.0);
+
     // specular shading
     vec3 reflectDir = reflect(-lightDir, normal);
     float spec = 0.0;
     vec3 halfwayDir = normalize(lightDir + viewDir);  
     spec = pow(max(dot(normal, halfwayDir), 0.0), material.shininess);
+
     // combine results
     vec3 ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, texCoords));
     vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, texCoords));
@@ -377,7 +332,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias); 
    
-    
     // spotlight (soft edges)
     float theta = dot(lightDir, normalize(-light.direction)); 
     float epsilon = (light.cutOff - light.outerCutOff);
@@ -398,6 +352,7 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
         return result;
     }
 
+    //apply toon shaiding if required
     if(toonShading == 1){
     float nDot1 = normal.x * lightDir.x + normal.y * lightDir.y + normal.z * lightDir.z;
     float brightness = max(nDot1,0.0);
@@ -405,7 +360,6 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     brightness = level / levels;
    
     // combine results
-
     ambient = 0.4 *(light.ambient * brightness) + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
     diffuse = 0.4 *(light.diffuse *  brightness) * diff + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
     specular = 0.4 *(light.specular * brightness) * spec + 0.1 *vec3(mix(texture(texture_specular, texCoords),texture(material.texture_specular1, texCoords),0.65));
@@ -419,10 +373,10 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
         I = normalize(fragPos - cameraPos);
     }
     vec3 R = refract(I, normal, ratio);
-
     areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
     vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor;
+    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor; //if skybox required
+    result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
 
     //implement density control
     if(density < 0.5){
@@ -431,12 +385,12 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
         }
     }
     else{
-        result = (density - 0.5) * (texture(skybox, R).rgb - result) + result;
+        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result; //if skybox is required
+        result = (density - 0.5) * (vec3(1.0f, 1.0, 1.0f) - result) + result;
     }
-
-
     return (result);
 } 
+
 
 float ShadowCalculation(vec4 fragPosLightSpace, float bias)
 {
@@ -524,7 +478,6 @@ vec4 mod30(vec4 x) {
 
 vec4 permute(vec4 x) {
      return mod289(((x*34.0)+1.0)*x);
-     //return mod30(((x*34.0)+1.0)*x);
 }
 
 vec4 taylorInvSqrt(vec4 r)
@@ -608,3 +561,16 @@ float snoise(vec3 v)
                                 dot(p2,x2), dot(p3,x3) ) );
   }
 
+
+  float computeNoise(vec3 uvw){
+    // Six components of noise in a fractal sum
+    float n = snoise(uvw - vec3(0.0, 0.0, time));
+    n += 0.5 * snoise(uvw * 2.0 - vec3(0.0, 0.0, time*1.4)); 
+    n += 0.25 * snoise(uvw * 4.0 - vec3(0.0, 0.0, time*2.0)); 
+    n += 0.125 * snoise(uvw * 8.0 - vec3(0.0, 0.0, time*2.8)); 
+    n += 0.0625 * snoise(uvw * 16.0 - vec3(0.0, 0.0, time*4.0)); 
+    float s = 0.0625 * snoise(uvw * 16.0 - vec3(0.0, 0.0, 4.0));
+    n += 0.03125 * snoise(uvw * 32.0 - vec3(0.0, 0.0, time*5.6)); 
+    n = n * 0.7;
+    return n;
+  }

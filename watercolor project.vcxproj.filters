@@ -24,29 +24,11 @@
     <ClCompile Include="stb_image.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Window1.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="vShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="fShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="lightCubefShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="loadModelvShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="loadModelFShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="loadSkyBoxVShader.glsl">
       <Filter>Shaders</Filter>
     </None>
@@ -59,34 +41,13 @@
     <None Include="shadeFShader.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="3.1.2.shadow_mapping.vs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="3.1.2.shadow_mapping.fs">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="shadowMappingFShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="normalVShader.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="normalFShader.glsl">
       <Filter>Shaders</Filter>
     </None>
-    <None Include="bloomVShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="bloomFShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
     <None Include="blurVShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="blurFShader.glsl">
-      <Filter>Shaders</Filter>
-    </None>
-    <None Include="light_boxFShader.glsl">
       <Filter>Shaders</Filter>
     </None>
     <None Include="bloom_finalVShader.glsl">
