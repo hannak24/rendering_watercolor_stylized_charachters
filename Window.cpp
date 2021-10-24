@@ -1,16 +1,26 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include "stb_image.h"
-
+#include <imgui/imgui.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include <iostream>
+#include <imgui/imgui.h>
+#include <imgui/imgui_impl_glfw.h>
+#include <imgui/imgui_impl_opengl3.h>
+#include <stdio.h>
+#if defined(IMGUI_IMPL_OPENGL_ES2)
+#include <GLES2/gl2.h>
+#endif
+#include <GLFW/glfw3.h> // Will drag system OpenGL headers
 
+
+#include "stb_image.h"
 #include "Shader.h"
 #include "Camera.h"
 #include "Model.h"
 
-#include <iostream>
+
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -27,6 +37,14 @@ const unsigned int SCR_HEIGHT = 600;
 bool bloom = true;
 bool bloomKeyPressed = false;
 float exposure = 2.1999;
+float turbulance = 5.6062;
+float density = 0.9208;
+float bleed = 0.232;
+float light = 2.8934;
+float darkEdge = 0.0627;
+float granulation = 0.4199;
+float finalTremor = 0.00804;
+bool wall = false;
 
 // camera
 Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
@@ -47,20 +65,13 @@ float modelYawAngle = 87.4999f;
 float modelRollAngle = 0.0f;
 float modelPitchAngle = -6.2999f;
 float modelScale = 2.2282f;
-float turbulance = 5.6062;
-float density = 0.9208;
-float bleed = 0.232;
-float light = 2.8934;
-float darkEdge = 0.0627;
-float granulation = 0.4199;
-float finalTremor = 0.00804;
 
-bool wall = false;
 
 int main()
 {
     // glfw: initialize and configure
     // ------------------------------
+    const char* glsl_version = "#version 330";
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -95,6 +106,17 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+
+    // Setup Dear ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    // Setup Platform/Renderer bindings
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+    // Setup Dear ImGui style
+    ImGui::StyleColorsDark();
+
 
    // tell stb_image.h to flip loaded texture's on the y-axis (before loading model).
    //stbi_set_flip_vertically_on_load(true);
@@ -377,6 +399,11 @@ int main()
         glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        // feed inputs to dear imgui, start new frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
 
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
@@ -500,6 +527,15 @@ int main()
         shaderBloomFinal.setFloat("height_scale", 0.1f);
         renderQuad();
 
+        // render GUI
+        ImGui::Begin("Demo window");
+        ImGui::Button("Hello!");
+        ImGui::End();
+
+        // Render dear imgui into screen
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
         // glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
@@ -510,8 +546,10 @@ int main()
     // ------------------------------------------------------------------------
     glDeleteVertexArrays(1, &planeVAO);
     glDeleteBuffers(1, &planeVBO);
-
     glfwTerminate();
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
     return 0;
 }
 

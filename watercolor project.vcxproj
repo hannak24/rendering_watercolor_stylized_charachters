@@ -142,6 +142,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\..\..\Program Files\OpenGL\includes\imgui\imgui.cpp" />
+    <ClCompile Include="..\..\..\..\..\Program Files\OpenGL\includes\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\..\..\..\..\Program Files\OpenGL\includes\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\..\..\..\..\Program Files\OpenGL\includes\imgui\imgui_impl_glfw.cpp" />
+    <ClCompile Include="..\..\..\..\..\Program Files\OpenGL\includes\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\..\..\..\..\Program Files\OpenGL\includes\imgui\imgui_tables.cpp" />
+    <ClCompile Include="..\..\..\..\..\Program Files\OpenGL\includes\imgui\imgui_widgets.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="stb_image.cpp" />
     <ClCompile Include="Window.cpp" />
