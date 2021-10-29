@@ -19,7 +19,8 @@
 #include "Camera.h"
 #include "Model.h"
 
-
+enum Shading { PHONG, TOON, GRID};
+enum Primitives { CUBE, SPHERE, PYRAMID};
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -34,6 +35,7 @@ void renderQuad();
 static void ShowExampleMenuFile();
 void ImGui::ShowDemoWindow(bool* p_open);
 static void ShowExampleAppMainMenuBar();
+static void ShowObjectMenu();
 
 
 bool show_app_main_menu_bar = true;
@@ -44,13 +46,13 @@ const unsigned int SCR_HEIGHT = 600;
 bool bloom = true;
 bool bloomKeyPressed = false;
 float exposure = 2.1999;
-float turbulance = 5.6062;
-float density = 0.9208;
-float bleed = 0.232;
-float light = 2.8934;
-float darkEdge = 0.0627;
-float granulation = 0.4199;
-float finalTremor = 0.00804;
+float turbulance = 3.5349;
+float density = 0.4438;
+float bleed = 0.1977;
+float light = 3.5866;
+float darkEdge = 0.0677;
+float granulation = 0.5129;
+float finalTremor = 0.0080;
 bool wall = false;
 
 // camera
@@ -71,7 +73,13 @@ unsigned int wallVAO;
 float modelYawAngle = 87.4999f;
 float modelRollAngle = 0.0f;
 float modelPitchAngle = -6.2999f;
-float modelScale = 2.2282f;
+float modelScale = 2.1997f;
+
+//GUI
+bool modelEnabled = true;
+static char defaultModel[128] = "objects/Penguin/PenguinBaseMesh.obj";
+int shadowing = PHONG;
+int primitive = SPHERE;
 
 
 int main()
@@ -981,28 +989,128 @@ static void ShowExampleMenuFile()
 }
 
 
+static void ShowObjectMenu()
+{    
+    if (ImGui::BeginMenu("Open Recent"))
+    {
+
+        ImGui::MenuItem("fish_hat.c");
+        ImGui::MenuItem("fish_hat.inl");
+        ImGui::MenuItem("fish_hat.h");
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("texture"))
+    {
+        ShowExampleMenuFile();
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("material"))
+    {
+        ShowExampleMenuFile();
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("shadowing"))
+    {
+        ImGui::Combo("shadowing", &shadowing, "Phong\0Toon\0Grid\0\0");
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("transformations"))
+    {
+        ShowExampleMenuFile();
+        ImGui::EndMenu();
+    }
+}
+
+
 static void ShowExampleAppMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
-        if (ImGui::BeginMenu("File"))
+        if (ImGui::BeginMenu("file"))
+        {
+            if (ImGui::BeginMenu("object"))
+            {
+                if (ImGui::BeginMenu("model"))
+                {
+                    ImGui::InputText("obj file", defaultModel, IM_ARRAYSIZE(defaultModel));
+                    ShowObjectMenu();
+                    ImGui::EndMenu();
+                }
+                if (ImGui::BeginMenu("primitive"))
+                {
+                    ImGui::Combo("primitives", &primitive, "Cube\0Sphere\0Pyramid\0\0");
+                    ShowObjectMenu();
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("floor"))
+            {
+                ShowExampleMenuFile();
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("wall"))
+            {
+                ShowExampleMenuFile();
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("cubeBox"))
+            {
+                ShowExampleMenuFile();
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("scene"))
+        {
+            if (ImGui::BeginMenu("cameras"))
+            {
+                ShowExampleMenuFile();
+                ImGui::EndMenu();
+            }
+            if (ImGui::BeginMenu("lights"))
+            {
+                ShowExampleMenuFile();
+                ImGui::EndMenu();
+            }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("watercolor filter"))
         {
             ShowExampleMenuFile();
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("Edit"))
+        if (ImGui::BeginMenu("settings"))
         {
-            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
-            ImGui::Separator();
-            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+            ShowExampleMenuFile();
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
     }
 }
+
+//static void ShowExampleAppMainMenuBar()
+//{
+//    if (ImGui::BeginMainMenuBar())
+//    {
+//        if (ImGui::BeginMenu("File"))
+//        {
+//            ShowExampleMenuFile();
+//            ImGui::EndMenu();
+//        }
+//        if (ImGui::BeginMenu("Edit"))
+//        {
+//            if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+//            if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+//            ImGui::Separator();
+//            if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+//            if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+//            if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+//            ImGui::EndMenu();
+//        }
+//        ImGui::EndMainMenuBar();
+//    }
+//}
 
 
 
