@@ -36,7 +36,10 @@ static void ShowExampleMenuFile();
 void ImGui::ShowDemoWindow(bool* p_open);
 static void ShowExampleAppMainMenuBar();
 static void ShowObjectMenu();
-
+static void ShowTextureMenu();
+static void ShowMaterialMenu();
+static void ShowTransformationsMenu();
+static void ShowCubeBoxMenu();
 
 bool show_app_main_menu_bar = true;
 
@@ -80,6 +83,37 @@ bool modelEnabled = true;
 static char defaultModel[128] = "objects/Penguin/PenguinBaseMesh.obj";
 int shadowing = PHONG;
 int primitive = SPHERE;
+char diffuseTexture[128] = "";
+char normalMap[128] = "";
+char heightMap[128] = "";
+bool textureEnabled = true;
+bool normalMapEnabled = false;
+bool heightMapEnabled = false;
+int heightLevels = 7;
+bool watercolorEnabled = true;
+float Shininess = 64.0f;
+bool materialEnabled = false;
+float materialAmbient[3] = { 1.0f, 0.5f, 0.31f };
+float materialDiffuse[3] = { 1.0f, 0.5f, 0.31f };
+float materialSpecular[3] = { 0.5f, 0.5f, 0.5f };
+float translateX = 0.0f;
+float translateY = 0.0f;
+float translateZ = 0.0f;
+float scaleX = 2.2281;
+float scaleY = 2.2281;
+float scaleZ = 2.2281;
+bool cubeBoxEnabled = false;
+char cubeBoxRight[128] = "skyboxes/watercolor paper/right.jpg";
+char cubeBoxLeft[128] = "skyboxes/watercolor paper/left.jpg";
+char cubeBoxTop[128] = "skyboxes/watercolor paper/top.jpg";
+char cubeBoxBottom[128] = "skyboxes/watercolor paper/bottom.jpg";
+char cubeBoxFront[128] = "skyboxes/watercolor paper/front.jpg";
+char cubeBoxBack[128] = "skyboxes/watercolor paper/back.jpg";
+bool wallEnabled = false;
+bool floorEnabled = false;
+
+
+
 
 
 int main()
@@ -108,11 +142,11 @@ int main()
     }
     glfwMakeContextCurrent(window);
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-    glfwSetCursorPosCallback(window, mouse_callback);
+    //glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
     // tell GLFW to capture our mouse
-    glfwSetInputMode(window, GLFW_CURSOR, 1);
+    //glfwSetInputMode(window, GLFW_CURSOR, 1);
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -991,34 +1025,89 @@ static void ShowExampleMenuFile()
 
 static void ShowObjectMenu()
 {    
-    if (ImGui::BeginMenu("Open Recent"))
-    {
-
-        ImGui::MenuItem("fish_hat.c");
-        ImGui::MenuItem("fish_hat.inl");
-        ImGui::MenuItem("fish_hat.h");
-        ImGui::EndMenu();
-    }
     if (ImGui::BeginMenu("texture"))
     {
-        ShowExampleMenuFile();
+        ShowTextureMenu();
         ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("material"))
     {
-        ShowExampleMenuFile();
-        ImGui::EndMenu();
-    }
-    if (ImGui::BeginMenu("shadowing"))
-    {
-        ImGui::Combo("shadowing", &shadowing, "Phong\0Toon\0Grid\0\0");
+        ShowMaterialMenu();
         ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("transformations"))
     {
-        ShowExampleMenuFile();
+        ShowTransformationsMenu();
         ImGui::EndMenu();
     }
+}
+
+static void ShowTextureMenu()
+{   
+    ImGui::Checkbox("texture enabled", &textureEnabled);
+    ImGui::SameLine(); ImGui::InputText("diffuse texture", diffuseTexture, IM_ARRAYSIZE(diffuseTexture));
+    ImGui::Checkbox("normal map enabeled", &normalMapEnabled);
+    ImGui::SameLine(); ImGui::InputText("normal map", normalMap, IM_ARRAYSIZE(normalMap));
+    ImGui::Checkbox("height map enabled", &heightMapEnabled);
+    ImGui::SameLine(); ImGui::InputText("height map", heightMap, IM_ARRAYSIZE(heightMap));
+    ImGui::InputInt("height levels", &heightLevels, 1.0f);
+}
+
+static void ShowMaterialMenu()
+{
+    ImGui::Checkbox("material enabled", &materialEnabled);
+    ImGui::ColorEdit3("ambient color", materialAmbient); 
+    ImGui::ColorEdit3("diffuse color", materialDiffuse);
+    ImGui::ColorEdit3("specular color", materialSpecular);
+    ImGui::InputFloat("Shininess", &Shininess, 5.0f);
+}
+
+static void ShowTransformationsMenu()
+{
+    if (ImGui::BeginMenu("translate"))
+    {
+        ImGui::InputFloat("x", &translateX, 1.0f); 
+        ImGui::InputFloat("y", &translateY, 1.0f); 
+        ImGui::InputFloat("z", &translateZ, 1.0f);
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("scale"))
+    {
+        ImGui::InputFloat("x", &scaleX, 1.0f);
+        ImGui::InputFloat("y", &scaleY, 1.0f);
+        ImGui::InputFloat("z", &scaleZ, 1.0f);
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("rotate"))
+    {
+        ImGui::InputFloat("yaw", &modelYawAngle, 1.0f);
+        ImGui::InputFloat("pitch", &modelPitchAngle, 1.0f);
+        ImGui::InputFloat("roll", &modelRollAngle, 1.0f);
+        ImGui::EndMenu();
+    }
+}
+
+static void ShowCubeBoxMenu()
+{
+    ImGui::Checkbox("CubeBox enabled", &cubeBoxEnabled);
+    ImGui::InputText("right", cubeBoxRight, IM_ARRAYSIZE(cubeBoxRight));
+    ImGui::InputText("left", cubeBoxLeft, IM_ARRAYSIZE(cubeBoxLeft));
+    ImGui::InputText("back", cubeBoxBack, IM_ARRAYSIZE(cubeBoxBack));
+    ImGui::InputText("front", cubeBoxFront, IM_ARRAYSIZE(cubeBoxFront));
+    ImGui::InputText("top", cubeBoxTop, IM_ARRAYSIZE(cubeBoxTop));
+    ImGui::InputText("bottom", cubeBoxBottom, IM_ARRAYSIZE(cubeBoxBottom));
+}
+
+static void ShowWatercolorMenu()
+{
+    ImGui::Checkbox("Watercolor filter enabled", &watercolorEnabled);
+    ImGui::InputFloat("turbulance", &turbulance, 0.01f);
+    ImGui::InputFloat("density", &density, 0.01f);
+    ImGui::InputFloat("bleed", &bleed, 0.01f);
+    ImGui::InputFloat("light", &light, 0.01f);
+    ImGui::InputFloat("dark edge", &darkEdge, 0.001f);
+    ImGui::InputFloat("paper granulation", &granulation, 0.01f);
+    ImGui::InputFloat("tremor", &finalTremor, 0.001f);    
 }
 
 
@@ -1033,12 +1122,22 @@ static void ShowExampleAppMainMenuBar()
                 if (ImGui::BeginMenu("model"))
                 {
                     ImGui::InputText("obj file", defaultModel, IM_ARRAYSIZE(defaultModel));
+                    if (ImGui::BeginMenu("shadowing"))
+                    {
+                        ImGui::Combo("shadowing", &shadowing, "Phong\0Toon\0Grid\0\0");
+                        ImGui::EndMenu();
+                    }
                     ShowObjectMenu();
                     ImGui::EndMenu();
                 }
                 if (ImGui::BeginMenu("primitive"))
                 {
                     ImGui::Combo("primitives", &primitive, "Cube\0Sphere\0Pyramid\0\0");
+                    if (ImGui::BeginMenu("shadowing"))
+                    {
+                        ImGui::Combo("shadowing", &shadowing, "Phong\0Toon\0Grid\0\0");
+                        ImGui::EndMenu();
+                    }
                     ShowObjectMenu();
                     ImGui::EndMenu();
                 }
@@ -1046,17 +1145,19 @@ static void ShowExampleAppMainMenuBar()
             }
             if (ImGui::BeginMenu("floor"))
             {
-                ShowExampleMenuFile();
+                ImGui::Checkbox("floor enabled", &floorEnabled);
+                ShowObjectMenu(); 
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("wall"))
             {
-                ShowExampleMenuFile();
+                ImGui::Checkbox("wall enabled", &wallEnabled);
+                ShowObjectMenu();
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("cubeBox"))
             {
-                ShowExampleMenuFile();
+                ShowCubeBoxMenu();
                 ImGui::EndMenu();
             }
             ImGui::EndMenu();
@@ -1075,9 +1176,9 @@ static void ShowExampleAppMainMenuBar()
             }
             ImGui::EndMenu();
         }
-        if (ImGui::BeginMenu("watercolor filter"))
+        if (ImGui::BeginMenu("watercolor"))
         {
-            ShowExampleMenuFile();
+            ShowWatercolorMenu();
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("settings"))
