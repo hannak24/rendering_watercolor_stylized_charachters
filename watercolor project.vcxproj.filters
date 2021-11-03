@@ -51,6 +51,12 @@
     <ClCompile Include="..\..\..\..\..\Program Files\OpenGL\includes\imgui\imgui_widgets.cpp">
       <Filter>Source Files\imgui</Filter>
     </ClCompile>
+    <ClCompile Include="ImGuiFileBrowser.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="dirent.h">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="loadSkyBoxVShader.glsl">
@@ -98,6 +104,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Model.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ImGuiFileBrowser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

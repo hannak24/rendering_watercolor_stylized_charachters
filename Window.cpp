@@ -8,6 +8,7 @@
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
+#include "ImGuiFileBrowser.h"
 #include <stdio.h>
 #if defined(IMGUI_IMPL_OPENGL_ES2)
 #include <GLES2/gl2.h>
@@ -83,7 +84,7 @@ float modelScale = 2.1997f;
 
 //GUI
 bool modelEnabled = true;
-static char defaultModel[128] = "objects/Penguin/PenguinBaseMesh.obj";
+char defaultModel[128] = "objects/Penguin/PenguinBaseMesh.obj";
 int shadowing = PHONG;
 int primitive = SPHERE;
 char diffuseTextureObject[128] = "";
@@ -233,7 +234,7 @@ float wallTranslateZ = 0.0;
 float floorTranslateX = 0.0;
 float floorTranslateY = 0.0;
 float floorTranslateZ = 0.0;
-
+bool show_open_dialog = false;
 
 
 int main()
@@ -1425,6 +1426,8 @@ static void ShowExampleAppMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
+        static imgui_addons::ImGuiFileBrowser file_dialog;
+
         if (ImGui::BeginMenu("file"))
         {
             if (ImGui::BeginMenu("object"))
@@ -1432,6 +1435,19 @@ static void ShowExampleAppMainMenuBar()
                 if (ImGui::BeginMenu("model"))
                 {
                     ImGui::InputText("obj file", defaultModel, IM_ARRAYSIZE(defaultModel));
+                    //if (ImGui::MenuItem("Open", "Ctrl+O")) { show_open_dialog = true; }
+                    if (show_open_dialog)
+                    {
+                        ImGui::OpenPopup("Open File");
+                        
+                    }
+                    if (file_dialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(600, 300), "."))
+                    {
+                        printf("%s\n", file_dialog.selected_fn.c_str());
+                        printf("%s\n", file_dialog.selected_path.c_str());
+                        ImGui::InputText(file_dialog.selected_fn.c_str(), defaultModel, IM_ARRAYSIZE(defaultModel));
+                        show_open_dialog = false;
+                    }
                     if (ImGui::BeginMenu("shadowing"))
                     {
                         ImGui::Combo("shadowing", &shadowing, "Phong\0Toon\0Grid\0\0");
