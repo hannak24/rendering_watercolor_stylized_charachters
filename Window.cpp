@@ -36,10 +36,13 @@ static void ShowExampleMenuFile();
 void ImGui::ShowDemoWindow(bool* p_open);
 static void ShowExampleAppMainMenuBar();
 static void ShowObjectMenu();
-static void ShowTextureMenu();
+static void ShowObjectTextureMenu();
 static void ShowMaterialMenu();
 static void ShowTransformationsMenu();
 static void ShowCubeBoxMenu();
+static void ShowCamerasMenu();
+static void ShowLightsMenu();
+static void ShowSettingsMenu();
 
 bool show_app_main_menu_bar = true;
 
@@ -83,13 +86,17 @@ bool modelEnabled = true;
 static char defaultModel[128] = "objects/Penguin/PenguinBaseMesh.obj";
 int shadowing = PHONG;
 int primitive = SPHERE;
-char diffuseTexture[128] = "";
-char normalMap[128] = "";
-char heightMap[128] = "";
-bool textureEnabled = true;
-bool normalMapEnabled = false;
-bool heightMapEnabled = false;
-int heightLevels = 7;
+char diffuseTextureObject[128] = "";
+char diffuseTextureWall[128] = "";
+char diffuseTextureFloor[128] = "";
+char normalMapObject[128] = "";
+char heightMapObject[128] = "";
+bool textureObjectEnabled = true;
+bool textureFloorEnabled = true;
+bool textureWallEnabled = true;
+bool normalMapObjectEnabled = false;
+bool heightMapObjectEnabled = false;
+int heightLevelsObject = 7;
 bool watercolorEnabled = true;
 float Shininess = 64.0f;
 bool materialEnabled = false;
@@ -111,8 +118,121 @@ char cubeBoxFront[128] = "skyboxes/watercolor paper/front.jpg";
 char cubeBoxBack[128] = "skyboxes/watercolor paper/back.jpg";
 bool wallEnabled = false;
 bool floorEnabled = false;
-
-
+float cameraRight = 0.0;
+float cameraLeft = 0.0;
+float cameraUp = 0.0;
+float cameraDown = 0.0;
+float cameraForward = 0.0;
+float cameraBackward = 0.0;
+bool waterEnabled = false;
+bool dirLightEnabled = true;
+float dirLightDirectionX = 0.0;
+float dirLightDirectionY = 0.0;
+float dirLightDirectionZ = 0.0;
+float dirLightAmbient[3] = { 0.5 * light * 0.7f, 0.5 * light * 0.7f, 0.5 * light * 0.7f };
+float dirLightDiffuse[3] = { 0.5 * light * 1.0f, 0.5 * light * 1.0f, 0.5 * light * 1.0f };
+float dirLightSpecular[3] = { 0.5 * light * 1.0f, 0.5 * light * 1.0f, 0.5 * light * 1.0f};
+float dirLightCangiante = 0.7;
+float dirLightDilution = 0.99;
+bool keyBoardEnabled = true;
+bool mouseCaptureEnabled = false;
+float yawIncrease = 0.7;
+float yawDecrease = 0.7;
+float pitchIncrease = 0.7;
+float pitchDecrease = 0.7;
+float rollIncrease = 0.7;
+float rollDecrease = 0.7;
+float scaleIncrease = 1.01;
+float scaleDecrease = 0.99;
+float turbulanceIncrease = 1.01;
+float turbulanceDecrease = 0.99;
+float densityIncrease = 1.005;
+float densityDecrease = 0.99;
+float bleedIncrease = 1.005;
+float bleedDecrease = 0.99;
+float lightIncrease = 1.005;
+float lightDecrease = 0.99;
+float darkEdgeIncrease = 1.005;
+float darkEdgeDecrease = 0.99;
+float granulationIncrease = 1.005;
+float granulationDecrease = 0.99;
+float tremorIncrease = 1.005;
+float tremorDecrease = 0.99;
+bool spotLightEnabled = false;
+float spotLightPositionX = 0.0;
+float spotLightPositionY = 0.0;
+float spotLightPositionZ = 0.0;
+float spotLightAmbient[3] = { 0.2, 0.2, 0.2};
+float spotLightDiffuse[3] = { 1.0, 1.0, 1.0};
+float spotLightSpecular[3] = { 0.5, 0.5, 0.5};
+float spotLightCangiante = 0.7;
+float spotLightDilution = 0.8;
+float spotLightCutoff = glm::cos(glm::radians(12.5f));
+float spotLightOuterCutoff = glm::cos(glm::radians(15.0f));
+float spotLightConstant = 1.0;
+float spotLightLinear = 0.09;
+float spotLightQuadratic = 0.032;
+bool  pointLight0Enabled = true;
+float pointLight0PositionX = 0.0;
+float pointLight0PositionY = 0.5;
+float pointLight0PositionZ = 1.5;
+float pointLight0Ambient[3] = {0.05, 0.05, 0.05 };
+float pointLight0Diffuse[3] = { 0.8, 0.8, 0.8};
+float pointLight0Specular[3] = { 1.0, 1.0, 1.0 };
+float pointLight0Cangiante = 0.7;
+float pointLight0Dilution = 0.3;
+float pointLight0Constant = 1.0;
+float pointLight0Linear = 0.09;
+float pointLight0Quadratic = 0.032;
+bool  pointLight1Enabled = true;
+float pointLight1PositionX = -4.0;
+float pointLight1PositionY = 0.5;
+float pointLight1PositionZ = -3.0;
+float pointLight1Ambient[3] = {0.05, 0.05, 0.05 };
+float pointLight1Diffuse[3] = { 0.8, 0.8, 0.8 };
+float pointLight1Specular[3] = { 1.0, 1.0, 1.0 };
+float pointLight1Cangiante = 0.7;
+float pointLight1Dilution = 0.6;
+float pointLight1Constant = 1.0;
+float pointLight1Linear = 0.09;
+float pointLight1Quadratic = 0.032;
+bool  pointLight2Enabled = true;
+float pointLight2PositionX = 3.0;
+float pointLight2PositionY = 0.5;
+float pointLight2PositionZ = 1.0;
+float pointLight2Ambient[3] = {0.05, 0.05, 0.05 };
+float pointLight2Diffuse[3] = { 0.8, 0.8, 0.8 };
+float pointLight2Specular[3] = { 1.0, 1.0, 1.0 };
+float pointLight2Cangiante = 0.7;
+float pointLight2Dilution = 0.3;
+float pointLight2Constant = 1.0;
+float pointLight2Linear = 0.09;
+float pointLight2Quadratic = 0.032;
+bool  pointLight3Enabled = true;
+float pointLight3PositionX = -0.8;
+float pointLight3PositionY = 2.4;
+float pointLight3PositionZ = -1.0;
+float pointLight3Ambient[3] = { 0.05, 0.05, 0.05 };
+float pointLight3Diffuse[3] = { 0.8, 0.8, 0.8 };
+float pointLight3Specular[3] = { 1.0, 1.0, 1.0 };
+float pointLight3Cangiante = 0.7;
+float pointLight3Dilution = 0.3;
+float pointLight3Constant = 1.0;
+float pointLight3Linear = 0.09;
+float pointLight3Quadratic = 0.032;
+float pointLight0RelativeWeight = 0.15f;
+float pointLight1RelativeWeight = 0.15f;
+float pointLight2RelativeWeight = 0.15f;
+float pointLight3RelativeWeight = 0.15f;
+float cameraPositionX = 0.0;
+float cameraPositionY = 0.0;
+float cameraPositionZ = 0.0;
+float wallTranslateX = 0.0;
+float wallTranslateY = 0.0;
+float wallTranslateZ = 0.0;
+float floorTranslateX = 0.0;
+float floorTranslateY = 0.0;
+float floorTranslateZ = 0.0;
 
 
 
@@ -1027,7 +1147,7 @@ static void ShowObjectMenu()
 {    
     if (ImGui::BeginMenu("texture"))
     {
-        ShowTextureMenu();
+        ShowObjectTextureMenu();
         ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("material"))
@@ -1042,16 +1162,31 @@ static void ShowObjectMenu()
     }
 }
 
-static void ShowTextureMenu()
-{   
-    ImGui::Checkbox("texture enabled", &textureEnabled);
-    ImGui::SameLine(); ImGui::InputText("diffuse texture", diffuseTexture, IM_ARRAYSIZE(diffuseTexture));
-    ImGui::Checkbox("normal map enabeled", &normalMapEnabled);
-    ImGui::SameLine(); ImGui::InputText("normal map", normalMap, IM_ARRAYSIZE(normalMap));
-    ImGui::Checkbox("height map enabled", &heightMapEnabled);
-    ImGui::SameLine(); ImGui::InputText("height map", heightMap, IM_ARRAYSIZE(heightMap));
-    ImGui::InputInt("height levels", &heightLevels, 1.0f);
+static void ShowFloorMenu()
+{
+    if (ImGui::BeginMenu("material"))
+    {
+        ShowMaterialMenu();
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("transformations"))
+    {
+        ShowTransformationsMenu();
+        ImGui::EndMenu();
+    }
 }
+
+static void ShowObjectTextureMenu()
+{   
+    ImGui::Checkbox("texture enabled", &textureObjectEnabled);
+    ImGui::SameLine(); ImGui::InputText("diffuse texture", diffuseTextureObject, IM_ARRAYSIZE(diffuseTextureObject));
+    ImGui::Checkbox("normal map enabeled", &normalMapObjectEnabled);
+    ImGui::SameLine(); ImGui::InputText("normal map", normalMapObject, IM_ARRAYSIZE(normalMapObject));
+    ImGui::Checkbox("height map enabled", &heightMapObjectEnabled);
+    ImGui::SameLine(); ImGui::InputText("height map", heightMapObject, IM_ARRAYSIZE(heightMapObject));
+    ImGui::InputInt("height levels", &heightLevelsObject, 1.0f);
+}
+
 
 static void ShowMaterialMenu()
 {
@@ -1098,6 +1233,153 @@ static void ShowCubeBoxMenu()
     ImGui::InputText("bottom", cubeBoxBottom, IM_ARRAYSIZE(cubeBoxBottom));
 }
 
+static void ShowCamerasMenu()
+{
+    if (ImGui::BeginMenu("position"))
+    {
+        ImGui::InputFloat("x", &cameraPositionX, 1.0f);
+        ImGui::InputFloat("y", &cameraPositionY, 1.0f);
+        ImGui::InputFloat("z", &cameraPositionZ, 1.0f);
+        ImGui::EndMenu();
+    }
+    ImGui::InputFloat("move right (key D)", &cameraRight, deltaTime);
+    ImGui::InputFloat("move left (key A)", &cameraLeft, deltaTime);
+    ImGui::InputFloat("move up (key W)", &cameraUp, deltaTime);
+    ImGui::InputFloat("move down (key S)", &cameraDown, deltaTime);
+    ImGui::InputFloat("move forward (key E)", &cameraForward, deltaTime);
+    ImGui::InputFloat("move backward (key Q)", &cameraBackward, deltaTime);
+}
+
+static void ShowLightsMenu()
+{
+    if (ImGui::BeginMenu("direct light"))
+    {
+        ImGui::Checkbox("direct light enabled", &dirLightEnabled);
+        if (ImGui::BeginMenu("direction"))
+        {
+            ImGui::InputFloat("x", &dirLightDirectionX, 1.0f);
+            ImGui::InputFloat("y", &dirLightDirectionY, 1.0f);
+            ImGui::InputFloat("z", &dirLightDirectionZ, 1.0f);
+            ImGui::EndMenu();
+        }
+        ImGui::ColorEdit3("ambient color", dirLightAmbient);
+        ImGui::ColorEdit3("diffuse color", dirLightDiffuse);
+        ImGui::ColorEdit3("specular color", dirLightSpecular);
+        ImGui::InputFloat("cangiante", &dirLightCangiante, 0.01f);
+        ImGui::InputFloat("dilution", &dirLightDilution, 0.01f);
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("point lights"))
+    {
+        if (ImGui::BeginMenu("point light 0"))
+        {
+            ImGui::Checkbox("point light 0 enabled", &pointLight0Enabled);
+            ImGui::InputFloat("relative weight", &pointLight0RelativeWeight, 0.05f);
+            if (ImGui::BeginMenu("position"))
+            {
+                ImGui::InputFloat("x", &pointLight0PositionX, 1.0f);
+                ImGui::InputFloat("y", &pointLight0PositionY, 1.0f);
+                ImGui::InputFloat("z", &pointLight0PositionZ, 1.0f);
+                ImGui::EndMenu();
+            }
+            ImGui::ColorEdit3("ambient color", pointLight0Ambient);
+            ImGui::ColorEdit3("diffuse color", pointLight0Diffuse);
+            ImGui::ColorEdit3("specular color", pointLight0Specular);
+            ImGui::InputFloat("cangiante", &pointLight0Cangiante, 0.01f);
+            ImGui::InputFloat("dilution", &pointLight0Dilution, 0.01f);
+            ImGui::InputFloat("constant", &pointLight0Constant, 0.01f);
+            ImGui::InputFloat("linear", &pointLight0Linear, 0.01f);
+            ImGui::InputFloat("quadratic", &pointLight0Quadratic, 0.01f);
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("point light 1"))
+        {
+            ImGui::Checkbox("point light 1 enabled", &pointLight1Enabled);
+            ImGui::InputFloat("relative weight", &pointLight1RelativeWeight, 0.05f);
+            if (ImGui::BeginMenu("position"))
+            {
+                ImGui::InputFloat("x", &pointLight1PositionX, 1.0f);
+                ImGui::InputFloat("y", &pointLight1PositionY, 1.0f);
+                ImGui::InputFloat("z", &pointLight1PositionZ, 1.0f);
+                ImGui::EndMenu();
+            }
+            ImGui::ColorEdit3("ambient color", pointLight1Ambient);
+            ImGui::ColorEdit3("diffuse color", pointLight1Diffuse);
+            ImGui::ColorEdit3("specular color", pointLight1Specular);
+            ImGui::InputFloat("cangiante", &pointLight1Cangiante, 0.01f);
+            ImGui::InputFloat("dilution", &pointLight1Dilution, 0.01f);
+            ImGui::InputFloat("constant", &pointLight1Constant, 0.01f);
+            ImGui::InputFloat("linear", &pointLight1Linear, 0.01f);
+            ImGui::InputFloat("quadratic", &pointLight1Quadratic, 0.01f);
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("point light 2"))
+        {
+            ImGui::Checkbox("point light 2 enabled", &pointLight2Enabled);
+            ImGui::InputFloat("relative weight", &pointLight2RelativeWeight, 0.05f);
+            if (ImGui::BeginMenu("position"))
+            {
+                ImGui::InputFloat("x", &pointLight2PositionX, 1.0f);
+                ImGui::InputFloat("y", &pointLight2PositionY, 1.0f);
+                ImGui::InputFloat("z", &pointLight2PositionZ, 1.0f);
+                ImGui::EndMenu();
+            }
+            ImGui::ColorEdit3("ambient color", pointLight2Ambient);
+            ImGui::ColorEdit3("diffuse color", pointLight2Diffuse);
+            ImGui::ColorEdit3("specular color", pointLight2Specular);
+            ImGui::InputFloat("cangiante", &pointLight2Cangiante, 0.01f);
+            ImGui::InputFloat("dilution", &pointLight2Dilution, 0.01f);
+            ImGui::InputFloat("constant", &pointLight2Constant, 0.01f);
+            ImGui::InputFloat("linear", &pointLight2Linear, 0.01f);
+            ImGui::InputFloat("quadratic", &pointLight2Quadratic, 0.01f);
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("point light 3"))
+        {
+            ImGui::Checkbox("point light 3 enabled", &pointLight3Enabled);
+            ImGui::InputFloat("relative weight", &pointLight3RelativeWeight, 0.05f);
+            if (ImGui::BeginMenu("position"))
+            {
+                ImGui::InputFloat("x", &pointLight3PositionX, 1.0f);
+                ImGui::InputFloat("y", &pointLight3PositionY, 1.0f);
+                ImGui::InputFloat("z", &pointLight3PositionZ, 1.0f);
+                ImGui::EndMenu();
+            }
+            ImGui::ColorEdit3("ambient color", pointLight3Ambient);
+            ImGui::ColorEdit3("diffuse color", pointLight3Diffuse);
+            ImGui::ColorEdit3("specular color", pointLight3Specular);
+            ImGui::InputFloat("cangiante", &pointLight3Cangiante, 0.01f);
+            ImGui::InputFloat("dilution", &pointLight3Dilution, 0.01f);
+            ImGui::InputFloat("constant", &pointLight3Constant, 0.01f);
+            ImGui::InputFloat("linear", &pointLight3Linear, 0.01f);
+            ImGui::InputFloat("quadratic", &pointLight3Quadratic, 0.01f);
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenu();
+    }
+    if (ImGui::BeginMenu("spot light")){
+        ImGui::Checkbox("spot light enabled", &spotLightEnabled);
+        if (ImGui::BeginMenu("position"))
+        {
+            ImGui::InputFloat("x", &spotLightPositionX, 1.0f);
+            ImGui::InputFloat("y", &spotLightPositionY, 1.0f);
+            ImGui::InputFloat("z", &spotLightPositionZ, 1.0f);
+            ImGui::EndMenu();
+        }
+        ImGui::ColorEdit3("ambient color", spotLightAmbient);
+        ImGui::ColorEdit3("diffuse color", spotLightDiffuse);
+        ImGui::ColorEdit3("specular color", spotLightSpecular);
+        ImGui::InputFloat("cangiante", &spotLightCangiante, 0.01f);
+        ImGui::InputFloat("dilution", &spotLightDilution, 0.01f);
+        ImGui::InputFloat("cutoff", &spotLightCutoff, 0.01f);
+        ImGui::InputFloat("outer cutoff", &spotLightOuterCutoff, 0.01f);
+        ImGui::InputFloat("constant", &spotLightConstant, 0.01f);
+        ImGui::InputFloat("linear", &spotLightLinear, 0.01f);
+        ImGui::InputFloat("quadratic", &spotLightQuadratic, 0.01f);
+        ImGui::EndMenu();
+    }
+}
+
 static void ShowWatercolorMenu()
 {
     ImGui::Checkbox("Watercolor filter enabled", &watercolorEnabled);
@@ -1108,6 +1390,34 @@ static void ShowWatercolorMenu()
     ImGui::InputFloat("dark edge", &darkEdge, 0.001f);
     ImGui::InputFloat("paper granulation", &granulation, 0.01f);
     ImGui::InputFloat("tremor", &finalTremor, 0.001f);    
+}
+
+static void ShowSettingsMenu()
+{
+    ImGui::Checkbox("Keyboard control enabled", &keyBoardEnabled);
+    ImGui::Checkbox("mouse capture enabled", &mouseCaptureEnabled);
+    ImGui::InputFloat("change increase yaw angle jump (key ->)", &yawIncrease, 1.000f);
+    ImGui::InputFloat("change decrease yaw angle jump (key <-)", &yawDecrease, 1.000f);
+    ImGui::InputFloat("change increase pitch angle jump (key UP)", &pitchIncrease, 1.000f);
+    ImGui::InputFloat("change decrease pitch angle jump (key DOWN)", &pitchDecrease, 1.000f);
+    ImGui::InputFloat("change increase roll angle jump (key PgDn)", &rollIncrease, 1.000f);
+    ImGui::InputFloat("change decrease roll angle jump (key PgUp)", &rollDecrease, 1.000f);
+    ImGui::InputFloat("change increase scale jump (key Z)", &scaleIncrease, 0.001f);
+    ImGui::InputFloat("change decrease scale jump (key X)", &scaleDecrease, 0.001f);
+    ImGui::InputFloat("change increase turbulance jump (key T)", &turbulanceIncrease, 0.001f);
+    ImGui::InputFloat("change decrease turbulance jump (key R)", &turbulanceDecrease, 0.001f);
+    ImGui::InputFloat("change increase density jump (key G)", &densityIncrease, 0.001f);
+    ImGui::InputFloat("change decrease density jump (key F)", &densityDecrease, 0.001f);
+    ImGui::InputFloat("change increase bleed jump (key B)", &bleedIncrease, 0.001f);
+    ImGui::InputFloat("change decrease bleed jump (key N)", &bleedDecrease, 0.001f);
+    ImGui::InputFloat("change increase light jump (key L)", &lightIncrease, 0.001f);
+    ImGui::InputFloat("change decrease light jump (key K)", &lightDecrease, 0.001f);
+    ImGui::InputFloat("change increase dark edge jump (key C)", &darkEdgeIncrease, 0.001f);
+    ImGui::InputFloat("change decrease dark edge jump (key V)", &darkEdgeDecrease, 0.001f);
+    ImGui::InputFloat("change increase paper granulation jump (key J)", &granulationIncrease, 0.001f);
+    ImGui::InputFloat("change decrease paper granulation jump (key H)", &granulationDecrease, 0.001f);
+    ImGui::InputFloat("change increase tremor jump (key U)", &tremorIncrease, 0.001f);
+    ImGui::InputFloat("change decrease tremor jump (key Y)", &tremorDecrease, 0.001f);
 }
 
 
@@ -1146,13 +1456,30 @@ static void ShowExampleAppMainMenuBar()
             if (ImGui::BeginMenu("floor"))
             {
                 ImGui::Checkbox("floor enabled", &floorEnabled);
-                ShowObjectMenu(); 
+                ImGui::Checkbox("texture enabled", &textureFloorEnabled);
+                ImGui::SameLine(); ImGui::InputText("diffuse texture", diffuseTextureFloor, IM_ARRAYSIZE(diffuseTextureFloor));
+                if (ImGui::BeginMenu("translation"))
+                {
+                    ImGui::InputFloat("x", &floorTranslateX, 1.0f);
+                    ImGui::InputFloat("y", &floorTranslateY, 1.0f);
+                    ImGui::InputFloat("z", &floorTranslateZ, 1.0f);
+                    ImGui::EndMenu();
+                }
+                ImGui::Checkbox("water enabled", &waterEnabled);
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("wall"))
             {
                 ImGui::Checkbox("wall enabled", &wallEnabled);
-                ShowObjectMenu();
+                ImGui::Checkbox("texture enabled", &textureWallEnabled);
+                ImGui::SameLine(); ImGui::InputText("diffuse texture", diffuseTextureWall, IM_ARRAYSIZE(diffuseTextureWall));
+                if (ImGui::BeginMenu("translation"))
+                {
+                    ImGui::InputFloat("x", &wallTranslateX, 1.0f);
+                    ImGui::InputFloat("y", &wallTranslateY, 1.0f);
+                    ImGui::InputFloat("z", &wallTranslateZ, 1.0f);
+                    ImGui::EndMenu();
+                }
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("cubeBox"))
@@ -1166,12 +1493,12 @@ static void ShowExampleAppMainMenuBar()
         {
             if (ImGui::BeginMenu("cameras"))
             {
-                ShowExampleMenuFile();
+                ShowCamerasMenu();
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("lights"))
             {
-                ShowExampleMenuFile();
+                ShowLightsMenu();
                 ImGui::EndMenu();
             }
             ImGui::EndMenu();
@@ -1183,7 +1510,7 @@ static void ShowExampleAppMainMenuBar()
         }
         if (ImGui::BeginMenu("settings"))
         {
-            ShowExampleMenuFile();
+            ShowSettingsMenu();
             ImGui::EndMenu();
         }
         ImGui::EndMainMenuBar();
