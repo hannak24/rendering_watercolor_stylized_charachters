@@ -85,6 +85,8 @@ uniform float modelFlag;
 uniform float toonShading;
 uniform PointLight pointLights[NR_POINT_LIGHTS];
 uniform SpotLight spotLight;
+uniform vec4 pointLightsEnable;
+uniform vec4 pointLightsWeights;
 
 const float levels = 7.0;
 
@@ -118,8 +120,9 @@ void main()
     vec3 result = vec3(0.0);
     result = CalcDirLight(dirLight, normal, viewDir, texCoords);
     // phase 2: Point lights
-    for(int i = 0; i < NR_POINT_LIGHTS; i++)
-        result += 0.15 * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
+    for(int i = 0; i < NR_POINT_LIGHTS; i++){
+            result += pointLightsEnable[i] * pointLightsWeights[i] * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
+        }
     // phase 3: Spot light
     //result += CalcSpotLight(spotLight, normal, fs_in.FragPos, viewDir, texCoords);
 

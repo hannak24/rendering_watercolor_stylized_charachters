@@ -56,14 +56,14 @@ float exposure = 2.1999;
 float turbulance = 3.5349;
 float density = 0.4438;
 float bleed = 0.1977;
-float light = 3.5866;
+float light = 0.877;
 float darkEdge = 0.0677;
 float granulation = 0.5129;
 float finalTremor = 0.0080;
 bool wall = false;
 
 // camera
-Camera camera(glm::vec3(0.0f, 0.0f, 5.0f));
+Camera camera(glm::vec3(0.0f, 1.268f, 5.046f));
 float lastX = (float)SCR_WIDTH / 2.0;
 float lastY = (float)SCR_HEIGHT / 2.0;
 bool firstMouse = true;
@@ -80,7 +80,7 @@ unsigned int wallVAO;
 float modelYawAngle = 87.4999f;
 float modelRollAngle = 0.0f;
 float modelPitchAngle = -6.2999f;
-float modelScale = 2.1997f;
+float modelScale = 1.0f;
 
 //GUI
 bool modelEnabled = true;
@@ -130,9 +130,9 @@ bool dirLightEnabled = true;
 float dirLightDirectionX = 0.0;
 float dirLightDirectionY = 0.0;
 float dirLightDirectionZ = 0.0;
-float dirLightAmbient[3] = { 0.5 * light * 0.7f, 0.5 * light * 0.7f, 0.5 * light * 0.7f };
-float dirLightDiffuse[3] = { 0.5 * light * 1.0f, 0.5 * light * 1.0f, 0.5 * light * 1.0f };
-float dirLightSpecular[3] = { 0.5 * light * 1.0f, 0.5 * light * 1.0f, 0.5 * light * 1.0f};
+float dirLightAmbient[3] = { 1.0, 1.0, 1.0 };
+float dirLightDiffuse[3] = { 1.0f, 1.0f, 1.0f };
+float dirLightSpecular[3] = { 0.5 , 0.5 , 0.5};
 float dirLightCangiante = 0.7;
 float dirLightDilution = 0.99;
 bool keyBoardEnabled = true;
@@ -443,6 +443,7 @@ int main()
     unsigned int paperHeightTexture = loadTexture("dicplacementMap/disp.png", true);
     unsigned int paperTexture = loadTexture("dicplacementMap/disp.png", true);
 
+   
 
     // configure depth map FBO
     // -----------------------
@@ -573,6 +574,20 @@ int main()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
+
+        //initialisations
+        /*camera.Position.x += cameraRight - cameraLeft;
+        camera.Position.y += cameraUp - cameraDown;
+        camera.Position.z += cameraForward - cameraBackward;*/
+        cameraPositionX = camera.Position.x;
+        cameraPositionY = camera.Position.y;
+        cameraPositionZ = camera.Position.z;
+        /*cameraRight = 0;
+        cameraLeft = 0;
+        cameraUp = 0;
+        cameraDown = 0;
+        cameraForward = 0;
+        cameraBackward = 0;*/
 
 
         // 1. render depth of scene to texture (from light's perspective)
@@ -1013,86 +1028,91 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     //glDrawArrays(GL_TRIANGLES, 0, 6);
 
     //model
+
+
+
     shader.setVec3("cameraPos", camera.Position);
-    shader.setFloat("normalFlag", 0.0f);
-    shader.setFloat("parralaxFlag", 0.0f);
+    shader.setFloat("normalFlag", normalMapObjectEnabled);
+    shader.setFloat("parralaxFlag", heightMapObjectEnabled);
     shader.setFloat("modelFlag", 1.0f);
-    shader.setFloat("toonShading", 0.0f);
-    shader.setFloat("height_scale", 0.0f);
+    shader.setFloat("toonShading", shadowing);
+    shader.setFloat("height_scale", heightLevelsObject);
     shader.setFloat("time", glfwGetTime());
     shader.setFloat("frequency", 1 / deltaTime);
     shader.setFloat("speed", deltaTime);
-    shader.setFloat("tremor", 0.009f);
+    shader.setFloat("tremor", 0.000f);
     shader.setFloat("diluteAreaVariable", 1);
-    shader.setInt("skybox", 0);
+    shader.setInt("skybox", cubeBoxEnabled);
     shader.setInt("noise_texture", 3);
     shader.setFloat("density", density);
     shader.setFloat("turbulance", turbulance);
     model = glm::rotate(model, glm::radians(modelYawAngle), glm::vec3(0.0, 1.0, 0.0));
     model = glm::rotate(model, glm::radians(modelRollAngle), glm::vec3(0.0, 0.0, 1.0));
     model = glm::rotate(model, glm::radians(modelPitchAngle), glm::vec3(1.0, 0.0, 0.0));
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f)); // translate it down so it's at the center of the scene
-    model = glm::scale(model, modelScale * glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+    model = glm::translate(model, glm::vec3(translateX, translateY, translateZ)); // translate it down so it's at the center of the scene
+    model = glm::scale(model, modelScale * glm::vec3(scaleX, scaleY, scaleZ));	// it's a bit too big for our scene, so scale it down
     shader.setMat4("model", model);
-    shader.setVec3("dirLight.ambient", 0.5 * light * 0.7f, 0.5 * light * 0.7f, 0.5 * light * 0.7f);
-    shader.setVec3("dirLight.diffuse", 0.5 * light * 1.0f, 0.5 * light * 1.0f, 0.5 * light * 1.0f);
-    shader.setVec3("dirLight.specular", 0.5 * light * 0.1f, 0.5 * light * 0.1f, 0.5 * light * 0.1f);
-    shader.setFloat("dirLight.cangiante", 0.7);
-    shader.setFloat("dirLight.dilution", 0.99);
+    shader.setVec3("dirLight.ambient", light * dirLightAmbient[0], light * dirLightAmbient[1], light * dirLightAmbient[2]);
+    shader.setVec3("dirLight.diffuse", light * dirLightDiffuse[0], light * dirLightDiffuse[1], light * dirLightDiffuse[2]);
+    shader.setVec3("dirLight.specular", light * dirLightSpecular[0], light * dirLightSpecular[1], light * dirLightSpecular[2]);
+    shader.setFloat("dirLight.cangiante", dirLightCangiante);
+    shader.setFloat("dirLight.dilution", dirLightDilution);
+    shader.setFloat("dirLight.enable", dirLightEnabled);
     // point light 1
-    shader.setVec3("pointLights[0].position", pointLightPositions[0]);
-    shader.setVec3("pointLights[0].ambient", 0.05f, 0.05f, 0.05f);
-    //shader.setVec3("pointLights[0].ambient", 0.95f, 0.45f, 0.05f);
-    shader.setVec3("pointLights[0].diffuse", 0.8f, 0.8f, 0.8f);
-    shader.setVec3("pointLights[0].specular", 1.0f, 1.0f, 1.0f);
-    shader.setFloat("pointLights[0].constant", 1.0f);
-    shader.setFloat("pointLights[0].linear", 0.09);
-    shader.setFloat("pointLights[0].quadratic", 0.032);
-    shader.setFloat("pointLights[0].cangiante", 0.7);
-    shader.setFloat("pointLights[0].dilution", 0.3);
+    shader.setVec3("pointLights[0].position", glm::vec3(pointLight0PositionX, pointLight0PositionY, pointLight0PositionZ));
+    shader.setVec3("pointLights[0].ambient", pointLight0Ambient[0], pointLight0Ambient[1], pointLight0Ambient[2]);
+    shader.setVec3("pointLights[0].diffuse", pointLight0Diffuse[0], pointLight0Diffuse[1], pointLight0Diffuse[2]);
+    shader.setVec3("pointLights[0].specular", pointLight0Specular[0], pointLight0Specular[1], pointLight0Specular[2]);
+    shader.setFloat("pointLights[0].constant", pointLight0Constant);
+    shader.setFloat("pointLights[0].linear", pointLight0Linear);
+    shader.setFloat("pointLights[0].quadratic", pointLight0Quadratic);
+    shader.setFloat("pointLights[0].cangiante", pointLight0Cangiante);
+    shader.setFloat("pointLights[0].dilution", pointLight0Dilution);
     // point light 2
-    shader.setVec3("pointLights[1].position", pointLightPositions[1]);
-    shader.setVec3("pointLights[1].ambient", 0.05f, 0.05f, 0.05f);
-    shader.setVec3("pointLights[1].diffuse", 0.8f, 0.8f, 0.8f);
-    shader.setVec3("pointLights[1].specular", 1.0f, 1.0f, 1.0f);
-    shader.setFloat("pointLights[1].constant", 1.0f);
-    shader.setFloat("pointLights[1].linear", 0.09);
-    shader.setFloat("pointLights[1].quadratic", 0.032);
-    shader.setFloat("pointLights[1].cangiante", 0.7);
-    shader.setFloat("pointLights[1].dilution", 0.6);
+    shader.setVec3("pointLights[1].position", glm::vec3(pointLight1PositionX, pointLight1PositionY, pointLight1PositionZ));
+    shader.setVec3("pointLights[1].ambient", pointLight1Ambient[0], pointLight1Ambient[1], pointLight1Ambient[2]);
+    shader.setVec3("pointLights[1].diffuse", pointLight1Diffuse[0], pointLight1Diffuse[1], pointLight1Diffuse[2]);
+    shader.setVec3("pointLights[1].specular", pointLight1Specular[0], pointLight1Specular[1], pointLight1Specular[2]);
+    shader.setFloat("pointLights[1].constant", pointLight1Constant);
+    shader.setFloat("pointLights[1].linear", pointLight1Linear);
+    shader.setFloat("pointLights[1].quadratic", pointLight1Quadratic);
+    shader.setFloat("pointLights[1].cangiante", pointLight1Cangiante);
+    shader.setFloat("pointLights[1].dilution", pointLight1Dilution);
     // point light 3
-    shader.setVec3("pointLights[2].position", pointLightPositions[2]);
-    shader.setVec3("pointLights[2].ambient", 0.05f, 0.05f, 0.05f);
-    shader.setVec3("pointLights[2].diffuse", 0.8f, 0.8f, 0.8f);
-    shader.setVec3("pointLights[2].specular", 1.0f, 1.0f, 1.0f);
-    shader.setFloat("pointLights[2].constant", 1.0f);
-    shader.setFloat("pointLights[2].linear", 0.09);
-    shader.setFloat("pointLights[2].quadratic", 0.032);
-    shader.setFloat("pointLights[2].cangiante", 0.7);
-    shader.setFloat("pointLights[2].dilution", 0.3);
+    shader.setVec3("pointLights[2].position", glm::vec3(pointLight2PositionX, pointLight2PositionY, pointLight2PositionZ));
+    shader.setVec3("pointLights[2].ambient", pointLight2Ambient[0], pointLight2Ambient[1], pointLight2Ambient[2]);
+    shader.setVec3("pointLights[2].diffuse", pointLight2Diffuse[0], pointLight2Diffuse[1], pointLight2Diffuse[2]);
+    shader.setVec3("pointLights[2].specular", pointLight2Specular[0], pointLight2Specular[1], pointLight2Specular[2]);
+    shader.setFloat("pointLights[2].constant", pointLight2Constant);
+    shader.setFloat("pointLights[2].linear", pointLight2Linear);
+    shader.setFloat("pointLights[2].quadratic", pointLight2Quadratic);
+    shader.setFloat("pointLights[2].cangiante", pointLight2Cangiante);
+    shader.setFloat("pointLights[2].dilution", pointLight2Dilution);
     // point light 4
-    shader.setVec3("pointLights[3].position", pointLightPositions[3]);
-    shader.setVec3("pointLights[3].ambient", 0.05f, 0.05f, 0.05f);
-    shader.setVec3("pointLights[3].diffuse", 0.8f, 0.8f, 0.8f);
-    shader.setVec3("pointLights[3].specular", 1.0f, 1.0f, 1.0f);
-    shader.setFloat("pointLights[3].constant", 1.0f);
-    shader.setFloat("pointLights[3].linear", 0.09);
-    shader.setFloat("pointLights[3].quadratic", 0.032);
-    shader.setFloat("pointLights[3].cangiante", 0.7);
-    shader.setFloat("pointLights[3].dilution", 0.3);
+    shader.setVec3("pointLights[3].position", glm::vec3(pointLight3PositionX, pointLight3PositionY, pointLight3PositionZ));
+    shader.setVec3("pointLights[3].ambient", pointLight3Ambient[0], pointLight3Ambient[1], pointLight3Ambient[2]);
+    shader.setVec3("pointLights[3].diffuse", pointLight3Diffuse[0], pointLight3Diffuse[1], pointLight3Diffuse[2]);
+    shader.setVec3("pointLights[3].specular", pointLight3Specular[0], pointLight3Specular[1], pointLight3Specular[2]);
+    shader.setFloat("pointLights[3].constant", pointLight3Constant);
+    shader.setFloat("pointLights[3].linear", pointLight3Linear);
+    shader.setFloat("pointLights[3].quadratic", pointLight3Quadratic);
+    shader.setFloat("pointLights[3].cangiante", pointLight3Cangiante);
+    shader.setFloat("pointLights[3].dilution", pointLight3Dilution);
+    shader.setVec4("pointLightsEnable", glm::vec4(pointLight0Enabled, pointLight1Enabled, pointLight2Enabled, pointLight3Enabled));
+    shader.setVec4("pointLightsWeights", glm::vec4(pointLight0RelativeWeight, pointLight1RelativeWeight, pointLight2RelativeWeight, pointLight3RelativeWeight));
     //// spotLight
     shader.setVec3("spotLight.position", camera.Position);
     shader.setVec3("spotLight.direction", camera.Front);
-    shader.setVec3("spotLight.ambient", 0.2f, 0.2f, 0.2f);
-    shader.setVec3("spotLight.diffuse", 1.0f, 1.0f, 1.0f);
-    shader.setVec3("spotLight.specular", 0.5f, 0.5f, 0.5f);
-    shader.setFloat("spotLight.constant", 1.0f);
-    shader.setFloat("spotLight.linear", 0.09);
-    shader.setFloat("spotLight.quadratic", 0.032);
-    shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-    shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
-    shader.setFloat("spotLight.cangiante", 0.7);
-    shader.setFloat("spotLight.dilution", 0.8);
+    shader.setVec3("spotLight.ambient", spotLightAmbient[0], spotLightAmbient[1], spotLightAmbient[2]);
+    shader.setVec3("spotLight.diffuse", spotLightDiffuse[0], spotLightDiffuse[1], spotLightDiffuse[2]);
+    shader.setVec3("spotLight.specular", spotLightSpecular[0], spotLightSpecular[1], spotLightSpecular[2]);
+    shader.setFloat("spotLight.constant", spotLightConstant);
+    shader.setFloat("spotLight.linear", spotLightLinear);
+    shader.setFloat("spotLight.quadratic", spotLightQuadratic);
+    shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(spotLightCutoff)));
+    shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(spotLightOuterCutoff)));
+    shader.setFloat("spotLight.cangiante", spotLightConstant);
+    shader.setFloat("spotLight.dilution", spotLightDilution);
     shader.setFloat("material.shininess", 64.0f);
     ourModel.Draw(shader);
 
@@ -1202,9 +1222,9 @@ static void ShowTransformationsMenu()
 {
     if (ImGui::BeginMenu("translate"))
     {
-        ImGui::InputFloat("x", &translateX, 1.0f); 
-        ImGui::InputFloat("y", &translateY, 1.0f); 
-        ImGui::InputFloat("z", &translateZ, 1.0f);
+        ImGui::InputFloat("x", &translateZ, 0.1f); 
+        ImGui::InputFloat("y", &translateY, 0.1f); 
+        ImGui::InputFloat("z", &translateX, 0.1f);
         ImGui::EndMenu();
     }
     if (ImGui::BeginMenu("scale"))
@@ -1435,19 +1455,17 @@ static void ShowExampleAppMainMenuBar()
                 if (ImGui::BeginMenu("model"))
                 {
                     ImGui::InputText("obj file", defaultModel, IM_ARRAYSIZE(defaultModel));
-                    //if (ImGui::MenuItem("Open", "Ctrl+O")) { show_open_dialog = true; }
-                    if (show_open_dialog)
+                    //if (ImGui::MenuItem("Open", "Ctrl+O")) { show_open_dialog = true; } //not working, permissions problem :/
+                    /*if (show_open_dialog)
                     {
                         ImGui::OpenPopup("Open File");
                         
                     }
                     if (file_dialog.showFileDialog("Open File", imgui_addons::ImGuiFileBrowser::DialogMode::OPEN, ImVec2(600, 300), "."))
                     {
-                        printf("%s\n", file_dialog.selected_fn.c_str());
-                        printf("%s\n", file_dialog.selected_path.c_str());
                         ImGui::InputText(file_dialog.selected_fn.c_str(), defaultModel, IM_ARRAYSIZE(defaultModel));
                         show_open_dialog = false;
-                    }
+                    }*/
                     if (ImGui::BeginMenu("shadowing"))
                     {
                         ImGui::Combo("shadowing", &shadowing, "Phong\0Toon\0Grid\0\0");
