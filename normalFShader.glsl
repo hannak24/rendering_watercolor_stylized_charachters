@@ -27,6 +27,7 @@ struct DirLight {
     vec3 specular;
     float cangiante;
     float dilution;
+    float enable;
 };
 
 struct PointLight {    
@@ -54,6 +55,7 @@ struct SpotLight {
     float quadratic;
     float cangiante;
     float dilution;
+    float enable;
 };
 
 
@@ -118,13 +120,13 @@ void main()
         viewDir   = normalize(TangentViewPos - TangentFragPos);
     }
     vec3 result = vec3(0.0);
-    result = CalcDirLight(dirLight, normal, viewDir, texCoords);
+    result = dirLight.enable * CalcDirLight(dirLight, normal, viewDir, texCoords);
     // phase 2: Point lights
     for(int i = 0; i < NR_POINT_LIGHTS; i++){
             result += pointLightsEnable[i] * pointLightsWeights[i] * CalcPointLight(pointLights[i], normal, fs_in.FragPos, viewDir, texCoords);
         }
     // phase 3: Spot light
-    //result += CalcSpotLight(spotLight, normal, fs_in.FragPos, viewDir, texCoords);
+    result += spotLight.enable * CalcSpotLight(spotLight, normal, fs_in.FragPos, viewDir, texCoords);
 
     // implement turbulance
 

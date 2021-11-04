@@ -588,7 +588,9 @@ int main()
         cameraDown = 0;
         cameraForward = 0;
         cameraBackward = 0;*/
-
+        spotLightPositionX = camera.Position.x;
+        spotLightPositionY = camera.Position.y;
+        spotLightPositionZ = camera.Position.z;
 
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
@@ -1101,7 +1103,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setVec4("pointLightsEnable", glm::vec4(pointLight0Enabled, pointLight1Enabled, pointLight2Enabled, pointLight3Enabled));
     shader.setVec4("pointLightsWeights", glm::vec4(pointLight0RelativeWeight, pointLight1RelativeWeight, pointLight2RelativeWeight, pointLight3RelativeWeight));
     //// spotLight
-    shader.setVec3("spotLight.position", camera.Position);
+    shader.setVec3("spotLight.position", glm::vec3(spotLightPositionX, spotLightPositionY, spotLightPositionZ));
     shader.setVec3("spotLight.direction", camera.Front);
     shader.setVec3("spotLight.ambient", spotLightAmbient[0], spotLightAmbient[1], spotLightAmbient[2]);
     shader.setVec3("spotLight.diffuse", spotLightDiffuse[0], spotLightDiffuse[1], spotLightDiffuse[2]);
@@ -1113,6 +1115,7 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(spotLightOuterCutoff)));
     shader.setFloat("spotLight.cangiante", spotLightConstant);
     shader.setFloat("spotLight.dilution", spotLightDilution);
+    shader.setFloat("spotLight.enable", spotLightEnabled);
     shader.setFloat("material.shininess", 64.0f);
     ourModel.Draw(shader);
 
