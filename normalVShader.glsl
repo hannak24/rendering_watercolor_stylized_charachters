@@ -18,6 +18,7 @@ out VS_OUT {
 uniform mat4 projection;
 uniform mat4 view;
 uniform mat4 model;
+uniform mat4 wallModel;
 uniform mat4 lightSpaceMatrix;
 uniform vec3 viewPos;
 uniform float time;

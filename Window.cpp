@@ -28,7 +28,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
 unsigned int loadTexture(const char* path, bool gammaCorrection);
-void renderScene(Shader& shader, Model ourModel, Shader& modelShader);
+void renderScene(Shader& shader, Model ourModel, Shader& modelShader, int wall_texture);
 unsigned int loadCubemap(vector<std::string> faces);
 void renderQuad();
 
@@ -85,6 +85,7 @@ float modelScale = 1.0f;
 //GUI
 bool modelEnabled = true;
 char defaultModel[128] = "objects/Penguin/PenguinBaseMesh.obj";
+string previousModel= "objects/Penguin/PenguinBaseMesh.obj";
 int shadowing = PHONG;
 int primitive = SPHERE;
 char diffuseTextureObject[128] = "";
@@ -237,6 +238,8 @@ float floorTranslateZ = 0.0;
 bool show_open_dialog = false;
 
 
+
+
 int main()
 {
     // glfw: initialize and configure
@@ -312,6 +315,7 @@ int main()
     //Model ourModel("objects/Swan/Swan.obj");
     //Model ourModel("objects/dolphin/dolphin.obj");
     //Model ourModel("objects/Duck/Duck.obj");
+    //Model ourModel(defaultModel);
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -427,12 +431,12 @@ int main()
 
     vector<std::string> faces =
     {
-            "skyboxes/watercolor paper/right.jpg",
-            "skyboxes/watercolor paper/left.jpg",
-            "skyboxes/watercolor paper/top.jpg",
-            "skyboxes/watercolor paper/bottom.jpg",
-            "skyboxes/watercolor paper/front.jpg",
-            "skyboxes/watercolor paper/back.jpg"
+            cubeBoxRight,
+            cubeBoxLeft,
+            cubeBoxTop,
+            cubeBoxBottom,
+            cubeBoxFront,
+            cubeBoxBack
     };
     unsigned int cubemapTexture = loadCubemap(faces);
 
@@ -442,6 +446,7 @@ int main()
     unsigned int waterColorPaperTexture = loadTexture("textures/watercolor paper.jpg", true);
     unsigned int paperHeightTexture = loadTexture("dicplacementMap/disp.png", true);
     unsigned int paperTexture = loadTexture("dicplacementMap/disp.png", true);
+    
 
    
 
@@ -592,6 +597,19 @@ int main()
         spotLightPositionY = camera.Position.y;
         spotLightPositionZ = camera.Position.z;
 
+        //update textures
+        unsigned int wall_texture = 0;
+        unsigned int floor_texture = 0;
+        if(wallEnabled)
+            unsigned int wall_texture = loadTexture(diffuseTextureWall, true);
+        if(floorEnabled)
+            unsigned int floor_texture = loadTexture("textures/watercolor paper.jpg", true);
+        if (strcmp(previousModel.c_str(), defaultModel) != 0) {
+            ourModel = Model(defaultModel);
+            previousModel = defaultModel;
+        }
+        
+
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
         glCullFace(GL_FRONT);
@@ -614,7 +632,7 @@ int main()
         simpleDepthShader.use();
         // floor
         glm::mat4 model = glm::mat4(1.0f);
-        renderScene(simpleDepthShader, ourModel, simpleDepthShader);
+        renderScene(simpleDepthShader, ourModel, simpleDepthShader, wall_texture);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
         glCullFace(GL_BACK);
 
@@ -636,36 +654,39 @@ int main()
         shader.setVec3("viewPos", camera.Position);
         shader.setVec3("lightPos", lightPos);
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
-        shader.setBool("water", false);
+        shader.setBool("water", waterEnabled);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
         glActiveTexture(GL_TEXTURE1);
         glBindTexture(GL_TEXTURE_2D, depthMap);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, wall_texture);
 
         shader.use();
-        renderScene(shader, ourModel, shader);
+        renderScene(shader, ourModel, shader, wall_texture);
 
         //add skybox
+        if (cubeBoxEnabled) {
+            glDepthFunc(GL_LEQUAL);
+            skyboxShader.use();
+            glDepthMask(GL_FALSE);
+            skyboxShader.use();
 
-        //glDepthFunc(GL_LEQUAL);
-        //skyboxShader.use();
-        //glDepthMask(GL_FALSE);
-        //skyboxShader.use();
+            // view/projection transformations
+            projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
+            view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
+            skyboxShader.setMat4("projection", projection);
+            skyboxShader.setMat4("view", view);
 
-        //// view/projection transformations
-        //projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
-        //view = glm::mat4(glm::mat3(camera.GetViewMatrix()));
-        //skyboxShader.setMat4("projection", projection);
-        //skyboxShader.setMat4("view", view);
+            // render the loaded model
+            model = glm::mat4(1.0f);
+            skyboxShader.setMat4("model", model);
 
-        //// render the loaded model
-        //model = glm::mat4(1.0f);
-        //skyboxShader.setMat4("model", model);
-
-        //glBindVertexArray(skyboxVAO);
-        //glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
-        //glDepthMask(GL_TRUE);
+            glBindVertexArray(skyboxVAO);
+            glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+            glDepthMask(GL_TRUE);
+        }
 
         
         // 3. blur bright fragments with two-pass Gaussian Blur 
@@ -987,16 +1008,8 @@ unsigned int loadCubemap(vector<std::string> faces)
 
 // renders the 3D scene
 // --------------------
-void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
+void renderScene(Shader& shader, Model ourModel, Shader& modelShader, int wall_texture)
 {
-    // positions of the point lights
-    glm::vec3 pointLightPositions[] = {
-        glm::vec3(0.7f,  0.2f,  2.0f),
-        glm::vec3(2.3f, -3.3f, -4.0f),
-        glm::vec3(-4.0f,  2.0f, -12.0f),
-        glm::vec3(0.0f,  0.0f, -3.0f)
-    };
-
     shader.use();
 
     // floor
@@ -1012,26 +1025,32 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader)
     shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
     shader.setMat4("model", model);
     glBindVertexArray(planeVAO);
-    //glDrawArrays(GL_TRIANGLES, 0, 6);
+    if (floorEnabled) {
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
 
-    // wall
-    //shader.setFloat("normalFlag", 0.0f);
-    //shader.setFloat("parralaxFlag", 0.0f);
-    //shader.setFloat("height_scale", 0.0f);
-    //shader.setFloat("wallFlag", 1.0f);
-    //shader.setFloat("diluteAreaVariable", 1);
-    //shader.setFloat("modelFlag", 0.0f);
-    //shader.setFloat("tremor", 0.0f);
-    //shader.setInt("noise_texture", 3);
-    //model = glm::mat4(1.0f);
-    //shader.setVec3("dirLight.ambient", light * 0.2f, light * 0.2f, light * 0.2f);
-    //shader.setMat4("model", model);
-    //glBindVertexArray(wallVAO);
-    //glDrawArrays(GL_TRIANGLES, 0, 6);
+    //wall
+    if (wallEnabled) {
+        shader.setFloat("normalFlag", 0.0f);
+        shader.setFloat("parralaxFlag", 0.0f);
+        shader.setFloat("height_scale", 0.0f);
+        shader.setFloat("wallFlag", 1.0f);
+        shader.setFloat("diluteAreaVariable", 1);
+        shader.setFloat("modelFlag", 0.0f);
+        shader.setFloat("tremor", 0.0f);
+        shader.setInt("noise_texture", 3);
+        shader.setInt("wall_texture", 0);
+        model = glm::mat4(1.0f);
+        model = glm::translate(model, glm::vec3(wallTranslateX, wallTranslateY, wallTranslateZ)); // translate it down so it's at the center of the scene
+        shader.setMat4("wallModel", model);
+        model = glm::mat4(1.0);
+        shader.setVec3("dirLight.ambient", light * 0.2f, light * 0.2f, light * 0.2f);
+        shader.setMat4("model", model);
+        glBindVertexArray(wallVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+    }
 
     //model
-
-
 
     shader.setVec3("cameraPos", camera.Position);
     shader.setFloat("normalFlag", normalMapObjectEnabled);
