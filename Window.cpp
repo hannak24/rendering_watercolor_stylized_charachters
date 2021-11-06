@@ -85,7 +85,10 @@ float modelScale = 1.0f;
 //GUI
 bool modelEnabled = true;
 char defaultModel[128] = "objects/Penguin/PenguinBaseMesh.obj";
-string previousModel= "objects/Penguin/PenguinBaseMesh.obj";
+string previousModel = "objects/Penguin/PenguinBaseMesh.obj";
+char defaultPrimitive[128] = "primitives/sphere/sphere.obj";
+string previousPrimitive = "primitives/sphere/sphere.obj";
+string previousObject = "objects/Penguin/PenguinBaseMesh.obj";
 int shadowing = PHONG;
 int primitive = SPHERE;
 char diffuseTextureObject[128] = "";
@@ -128,16 +131,15 @@ float cameraForward = 0.0;
 float cameraBackward = 0.0;
 bool waterEnabled = false;
 bool dirLightEnabled = true;
-float dirLightDirectionX = 0.0;
-float dirLightDirectionY = 0.0;
-float dirLightDirectionZ = 0.0;
+float dirLightDirectionX = -2.0;
+float dirLightDirectionY = 4.0;
+float dirLightDirectionZ = -1.0;
 float dirLightAmbient[3] = { 1.0, 1.0, 1.0 };
 float dirLightDiffuse[3] = { 1.0f, 1.0f, 1.0f };
 float dirLightSpecular[3] = { 0.5 , 0.5 , 0.5};
 float dirLightCangiante = 0.7;
 float dirLightDilution = 0.99;
 bool keyBoardEnabled = true;
-bool mouseCaptureEnabled = false;
 float yawIncrease = 0.7;
 float yawDecrease = 0.7;
 float pitchIncrease = 0.7;
@@ -236,6 +238,7 @@ float floorTranslateX = 0.0;
 float floorTranslateY = 0.0;
 float floorTranslateZ = 0.0;
 bool show_open_dialog = false;
+int objectType = 0;
 
 
 
@@ -269,8 +272,7 @@ int main()
     //glfwSetCursorPosCallback(window, mouse_callback);
     glfwSetScrollCallback(window, scroll_callback);
 
-    // tell GLFW to capture our mouse
-    //glfwSetInputMode(window, GLFW_CURSOR, 1);
+    
 
     // glad: load all OpenGL function pointers
     // ---------------------------------------
@@ -310,12 +312,9 @@ int main()
     // load models
     // -----------
     Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
-    //Model ourModel("objects/Duck/Duck.obj");
-    //Model ourModel("objects/Goldfish/Goldfish.obj");
-    //Model ourModel("objects/Swan/Swan.obj");
-    //Model ourModel("objects/dolphin/dolphin.obj");
-    //Model ourModel("objects/Duck/Duck.obj");
-    //Model ourModel(defaultModel);
+    if(objectType != 0)
+        ourModel = Model("primitives/sphere/sphere.obj");
+
 
     // set up vertex data (and buffer(s)) and configure vertex attributes
     // ------------------------------------------------------------------
@@ -529,7 +528,7 @@ int main()
     // lighting info
     // -------------
     // positions
-    glm::vec3 lightPos(-2.0f, 4.0f, -1.0f);
+    glm::vec3 lightPos(dirLightDirectionX, dirLightDirectionY, dirLightDirectionZ);
 
     std::vector<glm::vec3> lightPositions;
     lightPositions.push_back(glm::vec3(0.0f, 0.5f, 1.5f));
@@ -568,7 +567,8 @@ int main()
 
         // input
         // -----
-        processInput(window);
+        if(keyBoardEnabled)
+            processInput(window);
 
         // render
         // ------
@@ -604,11 +604,31 @@ int main()
             unsigned int wall_texture = loadTexture(diffuseTextureWall, true);
         if(floorEnabled)
             unsigned int floor_texture = loadTexture("textures/watercolor paper.jpg", true);
-        if (strcmp(previousModel.c_str(), defaultModel) != 0) {
-            ourModel = Model(defaultModel);
-            previousModel = defaultModel;
+        if (objectType == 0) {
+            if (strcmp(previousObject.c_str(), defaultModel) != 0) {
+                ourModel = Model(defaultModel);
+                previousModel = defaultModel;
+                previousObject = defaultModel;
+            }
+            if (strcmp(previousModel.c_str(), defaultModel) != 0) {
+                ourModel = Model(defaultModel);
+                previousModel = defaultModel;
+            }
+        }
+        else {
+            if (strcmp(previousObject.c_str(), defaultPrimitive) != 0) {
+                ourModel = Model(defaultPrimitive);
+                previousPrimitive = defaultPrimitive;
+                previousObject = defaultPrimitive;
+            }
+            if (strcmp(previousPrimitive.c_str(), defaultPrimitive) != 0) {
+                ourModel = Model(defaultPrimitive);
+                previousPrimitive = defaultPrimitive;
+            }
         }
         
+        lightPos = glm::vec3(dirLightDirectionX, dirLightDirectionY, dirLightDirectionZ);
+
 
         // 1. render depth of scene to texture (from light's perspective)
         // --------------------------------------------------------------
@@ -845,49 +865,49 @@ void processInput(GLFWwindow* window)
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
         camera.ProcessKeyboard(BACKWARD, deltaTime);
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        modelPitchAngle = modelPitchAngle - 0.7;
+        modelPitchAngle = modelPitchAngle - pitchDecrease;
     if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        modelPitchAngle = modelPitchAngle + 0.7;
+        modelPitchAngle = modelPitchAngle + pitchDecrease;
     if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        modelYawAngle = modelYawAngle + 0.7;
+        modelYawAngle = modelYawAngle + yawIncrease;
     if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        modelYawAngle = modelYawAngle - 0.7;
+        modelYawAngle = modelYawAngle - yawDecrease;
     if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS)
-        modelRollAngle = modelRollAngle + 0.7;
+        modelRollAngle = modelRollAngle + rollIncrease;
     if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS)
-        modelRollAngle = modelRollAngle - 0.7;
+        modelRollAngle = modelRollAngle - rollDecrease;
     if (glfwGetKey(window, GLFW_KEY_Z) == GLFW_PRESS)
-        modelScale = modelScale * 1.01;
+        modelScale = modelScale * scaleIncrease;
     if (glfwGetKey(window, GLFW_KEY_X) == GLFW_PRESS)
-        modelScale = modelScale * 0.99;
+        modelScale = modelScale * scaleDecrease;
     if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
-        turbulance = turbulance * 1.01;
+        turbulance = turbulance * turbulanceIncrease;
     if (glfwGetKey(window, GLFW_KEY_T) == GLFW_PRESS)
-        turbulance = turbulance * 0.99;
+        turbulance = turbulance * turbulanceDecrease;
     if (glfwGetKey(window, GLFW_KEY_G) == GLFW_PRESS)
-        density = density * 0.99;
+        density = density * densityIncrease;
     if (glfwGetKey(window, GLFW_KEY_F) == GLFW_PRESS)
-        density = density * 1.005;
+        density = density * densityDecrease;
     if (glfwGetKey(window, GLFW_KEY_N) == GLFW_PRESS)
-        bleed = bleed * 0.99;
+        bleed = bleed * bleedIncrease;
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
-        bleed = bleed * 1.005;
+        bleed = bleed * bleedDecrease;
     if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
-        light = light * 0.99;
+        light = light * lightDecrease;
     if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-        light = light * 1.005;
+        light = light * lightIncrease;
     if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS)
-        darkEdge = darkEdge * 0.99;
+        darkEdge = darkEdge * darkEdgeDecrease;
     if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-        darkEdge = darkEdge * 1.005;
+        darkEdge = darkEdge * darkEdgeIncrease;
     if (glfwGetKey(window, GLFW_KEY_H) == GLFW_PRESS)
-        granulation = granulation * 0.99;
+        granulation = granulation * granulationDecrease;
     if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
-        granulation = granulation * 1.005;
+        granulation = granulation * granulationIncrease;
     if (glfwGetKey(window, GLFW_KEY_Y) == GLFW_PRESS)
-        finalTremor = finalTremor * 0.99;
+        finalTremor = finalTremor * tremorDecrease;
     if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
-        finalTremor = finalTremor * 1.005;
+        finalTremor = finalTremor * tremorIncrease;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -1135,9 +1155,29 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader, int wall_t
     shader.setFloat("spotLight.cangiante", spotLightConstant);
     shader.setFloat("spotLight.dilution", spotLightDilution);
     shader.setFloat("spotLight.enable", spotLightEnabled);
+    //material
+    shader.setVec3("material.ambient", materialAmbient[0], materialAmbient[1], materialAmbient[2]);
+    shader.setVec3("material.diffuse", materialDiffuse[0], materialDiffuse[1], materialDiffuse[2]);
+    shader.setVec3("material.specular", materialSpecular[0], materialSpecular[1], materialSpecular[2]);
     shader.setFloat("material.shininess", 64.0f);
+    //texture/material/both
+    shader.setInt("textureEnabled", textureObjectEnabled);
+    shader.setInt("materialEnabled", materialEnabled);
     ourModel.Draw(shader);
 
+}
+
+static void HelpMarker(const char* desc)
+{
+    ImGui::TextDisabled("(?)");
+    if (ImGui::IsItemHovered())
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(desc);
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
 }
 
 
@@ -1438,7 +1478,6 @@ static void ShowWatercolorMenu()
 static void ShowSettingsMenu()
 {
     ImGui::Checkbox("Keyboard control enabled", &keyBoardEnabled);
-    ImGui::Checkbox("mouse capture enabled", &mouseCaptureEnabled);
     ImGui::InputFloat("change increase yaw angle jump (key ->)", &yawIncrease, 1.000f);
     ImGui::InputFloat("change decrease yaw angle jump (key <-)", &yawDecrease, 1.000f);
     ImGui::InputFloat("change increase pitch angle jump (key UP)", &pitchIncrease, 1.000f);
@@ -1474,6 +1513,8 @@ static void ShowExampleAppMainMenuBar()
         {
             if (ImGui::BeginMenu("object"))
             {
+                ImGui::RadioButton("model", &objectType, 0); ImGui::SameLine();
+                ImGui::RadioButton("primitive", &objectType, 1);
                 if (ImGui::BeginMenu("model"))
                 {
                     ImGui::InputText("obj file", defaultModel, IM_ARRAYSIZE(defaultModel));
@@ -1494,6 +1535,9 @@ static void ShowExampleAppMainMenuBar()
                         ImGui::EndMenu();
                     }
                     ShowObjectMenu();
+                    HelpMarker(
+                        "remember to properly scale your model,\n"
+                        "or it may not be seen on the screen");
                     ImGui::EndMenu();
                 }
                 if (ImGui::BeginMenu("primitive"))
@@ -1505,6 +1549,9 @@ static void ShowExampleAppMainMenuBar()
                         ImGui::EndMenu();
                     }
                     ShowObjectMenu();
+                    HelpMarker(
+                        "remember to properly scale your model,\n"
+                        "or it may not be seen on the screen");
                     ImGui::EndMenu();
                 }
                 ImGui::EndMenu();

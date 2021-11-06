@@ -1,0 +1,1354 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v3.1.187496374)
+
+newmtl Brick_Rough_Tan
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\Brick_Rough_Tan.jpg
+
+newmtl dirty_stone
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\dirty_stone.jpg
+
+newmtl material
+Kd 1 1 1
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl gold_wall
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\gold_wall.jpg
+
+newmtl pyramid_wall
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\pyramid_wall.jpg
+
+newmtl Stone_Vein_Gray
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\Stone_Vein_Gray.jpg
+
+newmtl Groundcover_Gravel_1inch
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\Groundcover_Gravel_1inch.jpg
+
+newmtl __Brick_Tumbled_1
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\__Brick_Tumbled_1.jpg
+
+newmtl Tile_Ceramic_Natural
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\Tile_Ceramic_Natural.jpg
+
+newmtl gold_137
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\gold_137.jpg
+
+newmtl Steve_Glasses_Black
+Kd 0.168628 0.168628 0.168628
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Edges
+Kd 0 0 0
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Skin
+Kd 0.792157 0.654902 0.521569
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Glasses_Amber
+Kd 0.568627 0.121569 0.0823529
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Jacket
+Kd 0.270588 0.407843 0.4
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Jacket2
+Kd 0.227451 0.313726 0.407843
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Book
+Kd 0.780392 0.780392 0.780392
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Shirt
+Kd 0.772549 0.886275 0.870588
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Hair
+Kd 0.898039 0.898039 0.882353
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Shoes2
+Kd 0.364706 0.364706 0.364706
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Shoes
+Kd 0.2 0.176471 0.156863
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Steve_Pants
+Kd 0.203922 0.243137 0.247059
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl gold
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\gold.jpg
+
+newmtl alt_torch_white
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\alt_torch_white.jpg
+
+newmtl material_1
+Kd 0.188235 0.152941 0.109804
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl Color_D04
+Kd 1 0.898039 0.6
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl earthmap1k
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\earthmap1k.jpg
+
+newmtl material_3
+Kd 0.835294 0.807843 0.741176
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl material_4
+Kd 0.309804 0.72549 0.396078
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+
+newmtl diamond
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\diamond.jpg
+
+newmtl greenlabel1
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\greenlabel1.jpg
+
+newmtl Metal_Aluminum_Anodized
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\Metal_Aluminum_Anodized.jpg
+
+newmtl carbon_fiber
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\carbon_fiber.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_0
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_0.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_1
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_1.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_2
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_2.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_3
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_3.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_4
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_4.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_5
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_5.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_6
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_6.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_7
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_7.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_8
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_8.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_9
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_9.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_10
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_10.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_11
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_11.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_12
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_12.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_13
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_13.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_14
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_14.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_15
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_15.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_16
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_16.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_17
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_17.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_18
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_18.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_19
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_19.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_20
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_20.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_21
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_21.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_22
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_22.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_23
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_23.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_24
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_24.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_25
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_25.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_26
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_26.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_27
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_27.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_28
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_28.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_29
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_29.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_30
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_30.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_31
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_31.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_32
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_32.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_33
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_33.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_34
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_34.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_35
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_35.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_36
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_36.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_37
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_37.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_38
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_38.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_39
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_39.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_40
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_40.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_41
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_41.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_42
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_42.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_43
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_43.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_44
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_44.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_45
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_45.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_46
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_46.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_47
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_47.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_48
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_48.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_49
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_49.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_50
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_50.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_51
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_51.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_52
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_52.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_53
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_53.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_54
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_54.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_55
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_55.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_56
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_56.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_57
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_57.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_58
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_58.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_59
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_59.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_60
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_60.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_61
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_61.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_62
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_62.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_63
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_63.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_64
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_64.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_65
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_65.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_66
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_66.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_67
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_67.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_68
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_68.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_69
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_69.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_70
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_70.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_71
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_71.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_72
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_72.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_73
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_73.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_74
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_74.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_75
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_75.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_76
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_76.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_77
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_77.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_78
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_78.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_79
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_79.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_80
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_80.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_81
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_81.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_82
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_82.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_83
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_83.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_84
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_84.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_85
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_85.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_86
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_86.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_87
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_87.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_88
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_88.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_89
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_89.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_90
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_90.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_91
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_91.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_92
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_92.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_93
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_93.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_94
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_94.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_95
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_95.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_96
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_96.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_97
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_97.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_98
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_98.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_99
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_99.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_100
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_100.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_101
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_101.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_102
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_102.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_103
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_103.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_104
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_104.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_105
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_105.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_106
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_106.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_107
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_107.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_108
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_108.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_109
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_109.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_110
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_110.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_111
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_111.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_112
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_112.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_113
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_113.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_114
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_114.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_115
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_115.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_116
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_116.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_117
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_117.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_118
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_118.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_119
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_119.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_120
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_120.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_121
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_121.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_122
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_122.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_123
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_123.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_124
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_124.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_125
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_125.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_126
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_126.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_127
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_127.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_128
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_128.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_129
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_129.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_130
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_130.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_131
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_131.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_132
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_132.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_133
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_133.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_134
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_134.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_135
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_135.jpg
+
+newmtl front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_136
+Kd 0.8 0.8 0.8
+Ka 0.2 0.2 0.2
+Ke 0 0 0
+d 1
+illum 1
+map_Kd illuminati pyramid\front_png6206dbd4-7508-4ada-b065-d4bfa5d381e8Larger_136.jpg
+
