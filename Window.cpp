@@ -21,7 +21,7 @@
 #include "Model.h"
 
 enum Shading { PHONG, TOON, GRID};
-enum Primitives { CUBE, SPHERE, PYRAMID};
+enum Primitives { CUBE, SPHERE};
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -86,7 +86,7 @@ float modelScale = 1.0f;
 bool modelEnabled = true;
 char defaultModel[128] = "objects/Penguin/PenguinBaseMesh.obj";
 string previousModel = "objects/Penguin/PenguinBaseMesh.obj";
-char defaultPrimitive[128] = "primitives/sphere/sphere.obj";
+string defaultPrimitive = "primitives/sphere/sphere.obj";
 string previousPrimitive = "primitives/sphere/sphere.obj";
 string previousObject = "objects/Penguin/PenguinBaseMesh.obj";
 int shadowing = PHONG;
@@ -229,8 +229,8 @@ float pointLight1RelativeWeight = 0.15f;
 float pointLight2RelativeWeight = 0.15f;
 float pointLight3RelativeWeight = 0.15f;
 float cameraPositionX = 0.0;
-float cameraPositionY = 0.0;
-float cameraPositionZ = 0.0;
+float cameraPositionY = 1.268;
+float cameraPositionZ = 5.046;
 float wallTranslateX = 0.0;
 float wallTranslateY = 0.0;
 float wallTranslateZ = 0.0;
@@ -316,60 +316,9 @@ int main()
         ourModel = Model("primitives/sphere/sphere.obj");
 
 
-    // set up vertex data (and buffer(s)) and configure vertex attributes
-    // ------------------------------------------------------------------
+    
 
-    float planeVertices[] = {
-        // positions            // normals         // texcoords
-         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-        -50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
-        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
-
-         50.0f, -0.5f,  50.0f,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
-        -50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
-         50.0f, -0.5f, -50.0f,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
-    };
-
-    // plane VAO
-    unsigned int planeVBO;
-    glGenVertexArrays(1, &planeVAO);
-    glGenBuffers(1, &planeVBO);
-    glBindVertexArray(planeVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glBindVertexArray(0);
-
-    float wallVertices[] = {
-        // positions            // normals         // texcoords
-         50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
-        -50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,   0.0f,  0.0f,
-         -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
-
-         50.0f, -0.5f,  -50.0f,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
-        -50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
-         50.0f, 50.0f, -50.0f,  0.0f, 0.0f, 1.0f,  50.0f, 50.0f
-    };
-
-    // wall VAO
-    unsigned int wallVBO;
-    glGenVertexArrays(1, &wallVAO);
-    glGenBuffers(1, &wallVBO);
-    glBindVertexArray(wallVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, wallVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(wallVertices), wallVertices, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
-    glBindVertexArray(0);
+    
 
     float skyboxVertices[] = {
         // positions          
@@ -581,18 +530,7 @@ int main()
         ImGui::NewFrame();
 
         //initialisations
-        /*camera.Position.x += cameraRight - cameraLeft;
-        camera.Position.y += cameraUp - cameraDown;
-        camera.Position.z += cameraForward - cameraBackward;*/
-        cameraPositionX = camera.Position.x;
-        cameraPositionY = camera.Position.y;
-        cameraPositionZ = camera.Position.z;
-        /*cameraRight = 0;
-        cameraLeft = 0;
-        cameraUp = 0;
-        cameraDown = 0;
-        cameraForward = 0;
-        cameraBackward = 0;*/
+        camera.Position = glm::vec3(cameraPositionX, cameraPositionY, cameraPositionZ);
         spotLightPositionX = camera.Position.x;
         spotLightPositionY = camera.Position.y;
         spotLightPositionZ = camera.Position.z;
@@ -616,18 +554,77 @@ int main()
             }
         }
         else {
-            if (strcmp(previousObject.c_str(), defaultPrimitive) != 0) {
+            if (primitive == SPHERE)
+                defaultPrimitive = "primitives/sphere/sphere.obj";
+            else 
+                defaultPrimitive = "primitives/cube/cube.obj";
+            if (strcmp(previousObject.c_str(), defaultPrimitive.c_str()) != 0) {
                 ourModel = Model(defaultPrimitive);
                 previousPrimitive = defaultPrimitive;
                 previousObject = defaultPrimitive;
             }
-            if (strcmp(previousPrimitive.c_str(), defaultPrimitive) != 0) {
+            if (strcmp(previousPrimitive.c_str(), defaultPrimitive.c_str()) != 0) {
                 ourModel = Model(defaultPrimitive);
                 previousPrimitive = defaultPrimitive;
             }
         }
         
         lightPos = glm::vec3(dirLightDirectionX, dirLightDirectionY, dirLightDirectionZ);
+
+        // set up vertex data (and buffer(s)) and configure vertex attributes
+    // ------------------------------------------------------------------
+
+        float planeVertices[] = {
+            // positions                                                                  // normals         // texcoords
+             50.0f + floorTranslateX, -0.5f + floorTranslateY,  50.0f + floorTranslateZ,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+            -50.0f + floorTranslateX, -0.5f + floorTranslateY,  50.0f + floorTranslateZ,  0.0f, 1.0f, 0.0f,   0.0f,  0.0f,
+            -50.0f + floorTranslateX, -0.5f + floorTranslateY, -50.0f + floorTranslateZ,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+
+             50.0f + floorTranslateX, -0.5f + floorTranslateY,  50.0f + floorTranslateZ,  0.0f, 1.0f, 0.0f,  50.0f,  0.0f,
+            -50.0f + floorTranslateX, -0.5f + floorTranslateY, -50.0f + floorTranslateZ,  0.0f, 1.0f, 0.0f,   0.0f, 50.0f,
+             50.0f + floorTranslateX, -0.5f + floorTranslateY, -50.0f + floorTranslateZ,  0.0f, 1.0f, 0.0f,  50.0f, 50.0f
+        };
+
+        // plane VAO
+        unsigned int planeVBO;
+        glGenVertexArrays(1, &planeVAO);
+        glGenBuffers(1, &planeVBO);
+        glBindVertexArray(planeVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, planeVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(planeVertices), planeVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glBindVertexArray(0);
+
+        float wallVertices[] = {
+            // positions            // normals         // texcoords
+             50.0f + wallTranslateX, -0.5f + wallTranslateY,  -50.0f + wallTranslateZ,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
+            -50.0f + wallTranslateX, -0.5f + wallTranslateY,  -50.0f + wallTranslateZ,  0.0f, 0.0f, 1.0f,   0.0f,  0.0f,
+             -50.0f + wallTranslateX, 50.0 + wallTranslateY, -50.0f + wallTranslateZ,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
+
+             50.0f + wallTranslateX, -0.5f + wallTranslateY,  -50.0f + wallTranslateZ,  0.0f, 0.0f, 1.0f,  50.0f,  0.0f,
+            -50.0f + wallTranslateX, 50.0f + wallTranslateY, -50.0f + wallTranslateZ,  0.0f, 0.0f, 1.0f,   0.0f, 50.0f,
+             50.0f + wallTranslateX, 50.0f + wallTranslateY, -50.0f + wallTranslateZ,  0.0f, 0.0f, 1.0f,  50.0f, 50.0f
+        };
+
+        // wall VAO
+        unsigned int wallVBO;
+        glGenVertexArrays(1, &wallVAO);
+        glGenBuffers(1, &wallVBO);
+        glBindVertexArray(wallVAO);
+        glBindBuffer(GL_ARRAY_BUFFER, wallVBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(wallVertices), wallVertices, GL_STATIC_DRAW);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
+        glBindVertexArray(0);
 
 
         // 1. render depth of scene to texture (from light's perspective)
@@ -769,12 +766,16 @@ int main()
         // -------------------------------------------------------------------------------
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        glDeleteVertexArrays(1, &planeVAO);
+        glDeleteBuffers(1, &planeVBO);
+        glDeleteVertexArrays(1, &wallVAO);
+        glDeleteBuffers(1, &wallVBO);
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
     // ------------------------------------------------------------------------
-    glDeleteVertexArrays(1, &planeVAO);
-    glDeleteBuffers(1, &planeVBO);
+    
     glfwTerminate();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
@@ -1163,8 +1164,10 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader, int wall_t
     //texture/material/both
     shader.setInt("textureEnabled", textureObjectEnabled);
     shader.setInt("materialEnabled", materialEnabled);
-    ourModel.Draw(shader);
-
+    if(shadowing == GRID)
+        ourModel.Draw(shader,1);
+    else
+        ourModel.Draw(shader, 0);
 }
 
 static void HelpMarker(const char* desc)
@@ -1318,19 +1321,9 @@ static void ShowCubeBoxMenu()
 
 static void ShowCamerasMenu()
 {
-    if (ImGui::BeginMenu("position"))
-    {
-        ImGui::InputFloat("x", &cameraPositionX, 1.0f);
-        ImGui::InputFloat("y", &cameraPositionY, 1.0f);
-        ImGui::InputFloat("z", &cameraPositionZ, 1.0f);
-        ImGui::EndMenu();
-    }
-    ImGui::InputFloat("move right (key D)", &cameraRight, deltaTime);
-    ImGui::InputFloat("move left (key A)", &cameraLeft, deltaTime);
-    ImGui::InputFloat("move up (key W)", &cameraUp, deltaTime);
-    ImGui::InputFloat("move down (key S)", &cameraDown, deltaTime);
-    ImGui::InputFloat("move forward (key E)", &cameraForward, deltaTime);
-    ImGui::InputFloat("move backward (key Q)", &cameraBackward, deltaTime);
+    ImGui::InputFloat("x", &cameraPositionX, 0.2f);
+    ImGui::InputFloat("y", &cameraPositionY, 0.2f);
+    ImGui::InputFloat("z", &cameraPositionZ, 0.2f);
 }
 
 static void ShowLightsMenu()
@@ -1542,7 +1535,7 @@ static void ShowExampleAppMainMenuBar()
                 }
                 if (ImGui::BeginMenu("primitive"))
                 {
-                    ImGui::Combo("primitives", &primitive, "Cube\0Sphere\0Pyramid\0\0");
+                    ImGui::Combo("primitives", &primitive, "Cube\0Sphere\0\0");
                     if (ImGui::BeginMenu("shadowing"))
                     {
                         ImGui::Combo("shadowing", &shadowing, "Phong\0Toon\0Grid\0\0");
@@ -1563,9 +1556,9 @@ static void ShowExampleAppMainMenuBar()
                 ImGui::SameLine(); ImGui::InputText("diffuse texture", diffuseTextureFloor, IM_ARRAYSIZE(diffuseTextureFloor));
                 if (ImGui::BeginMenu("translation"))
                 {
-                    ImGui::InputFloat("x", &floorTranslateX, 1.0f);
-                    ImGui::InputFloat("y", &floorTranslateY, 1.0f);
-                    ImGui::InputFloat("z", &floorTranslateZ, 1.0f);
+                    ImGui::InputFloat("x", &floorTranslateX, 0.1f);
+                    ImGui::InputFloat("y", &floorTranslateY, 0.1f);
+                    ImGui::InputFloat("z", &floorTranslateZ, 0.1f);
                     ImGui::EndMenu();
                 }
                 ImGui::Checkbox("water enabled", &waterEnabled);

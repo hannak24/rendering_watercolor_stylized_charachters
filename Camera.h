@@ -8,6 +8,10 @@
 
 #include <vector>
 
+extern float cameraPositionX;
+extern float cameraPositionY;
+extern float cameraPositionZ;
+
 // Defines several possible options for camera movement. Used as abstraction to stay away from window-system specific input methods
 enum Camera_Movement {
     FORWARD,
@@ -73,18 +77,30 @@ public:
     void ProcessKeyboard(Camera_Movement direction, float deltaTime)
     {
         float velocity = MovementSpeed * deltaTime;
-        if (direction == FORWARD)
+        if (direction == FORWARD) {
             Position -= Front * velocity;
-        if (direction == BACKWARD)
+            cameraPositionZ -= (Front * velocity).z;
+        }
+        if (direction == BACKWARD) {
             Position += Front * velocity;
-        if (direction == LEFT)
+            cameraPositionZ += (Front * velocity).z;
+        }
+        if (direction == LEFT) {
             Position -= Right * velocity;
-        if (direction == RIGHT)
+            cameraPositionX -= (Right * velocity).x;
+        }
+        if (direction == RIGHT) {
             Position += Right * velocity;
-        if (direction == UP)
+            cameraPositionX += (Right * velocity).x;
+        }
+        if (direction == UP) {
             Position += Up * velocity;
-        if (direction == DOWN)
+            cameraPositionY += (Up * velocity).y;
+        }
+        if (direction == DOWN) {
             Position -= Up * velocity;
+            cameraPositionY -= (Up * velocity).y;
+        }
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
