@@ -164,6 +164,7 @@
     <None Include="normalFShader.glsl" />
     <None Include="normalVShader.glsl" />
     <None Include="paper_blurFShader.glsl" />
+    <None Include="regularFShader.glsl" />
     <None Include="shadeFShader.glsl" />
     <None Include="shadeVShader.glsl" />
   </ItemGroup>

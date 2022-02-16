@@ -31,6 +31,7 @@ unsigned int loadTexture(const char* path, bool gammaCorrection);
 void renderScene(Shader& shader, Model ourModel, Shader& modelShader, int wall_texture);
 unsigned int loadCubemap(vector<std::string> faces);
 void renderQuad();
+void adjustScale(float maxX, float maxY, float maxZ);
 
 //GUI functions
 static void ShowExampleMenuFile();
@@ -171,9 +172,9 @@ float spotLightDiffuse[3] = { 1.0, 1.0, 1.0};
 float spotLightSpecular[3] = { 0.5, 0.5, 0.5};
 float spotLightCangiante = 0.7;
 float spotLightDilution = 0.8;
-float spotLightCutoff = glm::cos(glm::radians(12.5f));
-float spotLightOuterCutoff = glm::cos(glm::radians(15.0f));
-float spotLightConstant = 1.0;
+float spotLightCutoff = glm::cos(glm::radians(73.14204f));
+float spotLightOuterCutoff = glm::cos(glm::radians(90.0f));
+float spotLightConstant = 0.69;
 float spotLightLinear = 0.09;
 float spotLightQuadratic = 0.032;
 bool  pointLight0Enabled = true;
@@ -308,13 +309,16 @@ int main()
     Shader shader("normalVShader.glsl", "normalFShader.glsl");
     Shader simpleDepthShader("shadeVShader.glsl", "shadeFShader.glsl");
     Shader skyboxShader("loadSkyBoxVshader.glsl", "loadSkyBoxFshader.glsl");
+    Shader regular("normalVShader.glsl", "regularFShader.glsl");
 
     // load models
     // -----------
     Model ourModel("objects/Penguin/PenguinBaseMesh.obj");
     if(objectType != 0)
         ourModel = Model("primitives/sphere/sphere.obj");
-
+    scaleX = 2.4 / ourModel.verticesMaxY;
+    scaleY = 2.4 / ourModel.verticesMaxY;
+    scaleZ = 2.4 / ourModel.verticesMaxY;
 
     
 
@@ -547,10 +551,12 @@ int main()
                 ourModel = Model(defaultModel);
                 previousModel = defaultModel;
                 previousObject = defaultModel;
+                adjustScale(ourModel.verticesMaxX, ourModel.verticesMaxY, ourModel.verticesMaxZ);
             }
             if (strcmp(previousModel.c_str(), defaultModel) != 0) {
                 ourModel = Model(defaultModel);
                 previousModel = defaultModel;
+                adjustScale(ourModel.verticesMaxX, ourModel.verticesMaxY, ourModel.verticesMaxZ);
             }
         }
         else {
@@ -562,10 +568,12 @@ int main()
                 ourModel = Model(defaultPrimitive);
                 previousPrimitive = defaultPrimitive;
                 previousObject = defaultPrimitive;
+                adjustScale(ourModel.verticesMaxX, ourModel.verticesMaxY, ourModel.verticesMaxZ);
             }
             if (strcmp(previousPrimitive.c_str(), defaultPrimitive.c_str()) != 0) {
                 ourModel = Model(defaultPrimitive);
                 previousPrimitive = defaultPrimitive;
+                adjustScale(ourModel.verticesMaxX, ourModel.verticesMaxY, ourModel.verticesMaxZ);
             }
         }
         
@@ -679,8 +687,15 @@ int main()
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, wall_texture);
 
-        shader.use();
-        renderScene(shader, ourModel, shader, wall_texture);
+        if (watercolorEnabled) {
+            shader.use();
+            renderScene(shader, ourModel, shader, wall_texture);
+        }
+        else {
+            regular.use();
+            renderScene(regular, ourModel, regular, wall_texture);
+            renderQuad();
+        }
 
         //add skybox
         if (cubeBoxEnabled) {
@@ -705,52 +720,53 @@ int main()
             glDepthMask(GL_TRUE);
         }
 
-        
-        // 3. blur bright fragments with two-pass Gaussian Blur 
-        // --------------------------------------------------
-        bool horizontal = true, first_iteration = true;
-        shaderBlur.use();
-        for (unsigned int i = 0; i < 42; i++)
-        {
-            glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
-            shaderBlur.setInt("horizontal", horizontal);
+        if (watercolorEnabled) {
+            // 3. blur bright fragments with two-pass Gaussian Blur 
+            // --------------------------------------------------
+            bool horizontal = true, first_iteration = true;
+            shaderBlur.use();
+            for (unsigned int i = 0; i < 42; i++)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+                shaderBlur.setInt("horizontal", horizontal);
+                glActiveTexture(GL_TEXTURE0);
+                glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongColorbuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
+                glActiveTexture(GL_TEXTURE1);
+                glBindTexture(GL_TEXTURE_2D, colorBuffers[2]);
+                renderQuad();
+                horizontal = !horizontal;
+                if (first_iteration)
+                    first_iteration = false;
+            }
+
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            //// 4. now render floating point color buffer to 2D quad 
+            //--------------------------------------------------------------------------------------------------------------------------
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            shaderBloomFinal.use();
             glActiveTexture(GL_TEXTURE0);
-            glBindTexture(GL_TEXTURE_2D, first_iteration ? colorBuffers[1] : pingpongColorbuffers[!horizontal]);  // bind texture of other framebuffer (or scene if first iteration)
+            glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
             glActiveTexture(GL_TEXTURE1);
-            glBindTexture(GL_TEXTURE_2D, colorBuffers[2]);
+            glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
+            glActiveTexture(GL_TEXTURE3);
+            glBindTexture(GL_TEXTURE_2D, paperHeightTexture);
+
+            shaderBloomFinal.setInt("paper", 2);
+            shaderBloomFinal.setInt("texture_height", 3);
+            shaderBloomFinal.setInt("bloom", bloom);
+            shaderBloomFinal.setFloat("exposure", exposure);
+            shaderBloomFinal.setFloat("bleed", bleed);
+            shaderBloomFinal.setFloat("darkEdge", darkEdge);
+            shaderBloomFinal.setFloat("granulation", granulation);
+            shaderBloomFinal.setFloat("finalTremor", finalTremor);
+            shaderBloomFinal.setVec3("viewPos", camera.Position);
+            shaderBloomFinal.setFloat("height_scale", 0.1f);
             renderQuad();
-            horizontal = !horizontal;
-            if (first_iteration)
-                first_iteration = false;
         }
-
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
-       
-        //// 4. now render floating point color buffer to 2D quad 
-        //--------------------------------------------------------------------------------------------------------------------------
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        shaderBloomFinal.use();
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, colorBuffers[0]);
-        glActiveTexture(GL_TEXTURE1);
-        glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[!horizontal]);
-        glActiveTexture(GL_TEXTURE2);
-        glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
-        glActiveTexture(GL_TEXTURE3);
-        glBindTexture(GL_TEXTURE_2D, paperHeightTexture);
-       
-        shaderBloomFinal.setInt("paper", 2);
-        shaderBloomFinal.setInt("texture_height", 3);
-        shaderBloomFinal.setInt("bloom", bloom);
-        shaderBloomFinal.setFloat("exposure", exposure);
-        shaderBloomFinal.setFloat("bleed", bleed);
-        shaderBloomFinal.setFloat("darkEdge", darkEdge);
-        shaderBloomFinal.setFloat("granulation", granulation);
-        shaderBloomFinal.setFloat("finalTremor", finalTremor);
-        shaderBloomFinal.setVec3("viewPos", camera.Position);
-        shaderBloomFinal.setFloat("height_scale", 0.1f);
-        renderQuad();
 
 
         // render GUI
@@ -909,6 +925,22 @@ void processInput(GLFWwindow* window)
         finalTremor = finalTremor * tremorDecrease;
     if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS)
         finalTremor = finalTremor * tremorIncrease;
+}
+
+void adjustScale(float maxX, float maxY, float maxZ) {
+    scaleX = 1.8 / maxX;
+    scaleY = 1.8 / maxY;
+    scaleZ = 1.8 / maxZ;
+    float min = scaleX;
+    if(min > scaleY) {
+        min = scaleY;
+    }
+    if (min > scaleZ) {
+        min = scaleZ;
+    }
+    scaleX = min;
+    scaleY = min;
+    scaleZ = min;
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -1266,11 +1298,11 @@ static void ShowObjectTextureMenu()
 {   
     ImGui::Checkbox("texture enabled", &textureObjectEnabled);
     ImGui::SameLine(); ImGui::InputText("diffuse texture", diffuseTextureObject, IM_ARRAYSIZE(diffuseTextureObject));
-    ImGui::Checkbox("normal map enabeled", &normalMapObjectEnabled);
-    ImGui::SameLine(); ImGui::InputText("normal map", normalMapObject, IM_ARRAYSIZE(normalMapObject));
-    ImGui::Checkbox("height map enabled", &heightMapObjectEnabled);
-    ImGui::SameLine(); ImGui::InputText("height map", heightMapObject, IM_ARRAYSIZE(heightMapObject));
-    ImGui::InputInt("height levels", &heightLevelsObject, 1.0f);
+    //ImGui::Checkbox("normal map enabeled", &normalMapObjectEnabled); TODO: not working
+    //ImGui::SameLine(); ImGui::InputText("normal map", normalMapObject, IM_ARRAYSIZE(normalMapObject)); TODO: not working
+    //ImGui::Checkbox("height map enabled", &heightMapObjectEnabled); TODO: not working
+    //ImGui::SameLine(); ImGui::InputText("height map", heightMapObject, IM_ARRAYSIZE(heightMapObject)); TODO: not working
+    //ImGui::InputInt("height levels", &heightLevelsObject, 1.0f); TODO: not working
 }
 
 
@@ -1458,9 +1490,12 @@ static void ShowLightsMenu()
 
 static void ShowWatercolorMenu()
 {
-    ImGui::Checkbox("Watercolor filter enabled", &watercolorEnabled);
-    ImGui::InputFloat("turbulance", &turbulance, 0.01f);
-    ImGui::InputFloat("density", &density, 0.01f);
+    //ImGui::Checkbox("Watercolor filter enabled", &watercolorEnabled);  TODO: not working for now.
+    ImGui::InputFloat("turbulance decrease", &turbulance, 0.01f);
+    ImGui::SameLine(); HelpMarker(
+        "Increase or decrease the hue of the object,\n"
+        "due to turbulance");
+    ImGui::InputFloat("dilution", &density, 0.01f);
     ImGui::InputFloat("bleed", &bleed, 0.01f);
     ImGui::InputFloat("light", &light, 0.01f);
     ImGui::InputFloat("dark edge", &darkEdge, 0.001f);

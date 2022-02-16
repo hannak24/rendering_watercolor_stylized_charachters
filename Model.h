@@ -19,6 +19,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <limits.h>
 using namespace std;
 
 unsigned int TextureFromFile(const char* path, const string& directory, bool gamma = false);
@@ -31,6 +32,12 @@ public:
     vector<Mesh>    meshes;
     string directory;
     bool gammaCorrection;
+    float verticesMaxX = FLT_MIN;
+    float verticesMaxY = FLT_MIN;
+    float verticesMaxZ = FLT_MIN;
+    float verticesMinX = FLT_MAX;
+    float verticesMinY = FLT_MAX;
+    float verticesMinZ = FLT_MAX;
 
     // constructor, expects a filepath to a 3D model.
     Model(string const& path, bool gamma = false) : gammaCorrection(gamma)
@@ -90,6 +97,7 @@ private:
         vector<Vertex> vertices;
         vector<unsigned int> indices;
         vector<Texture> textures;
+        
 
         // walk through each of the mesh's vertices
         for (unsigned int i = 0; i < mesh->mNumVertices; i++)
@@ -98,9 +106,28 @@ private:
             glm::vec3 vector; // we declare a placeholder vector since assimp uses its own vector class that doesn't directly convert to glm's vec3 class so we transfer the data to this placeholder glm::vec3 first.
             // positions
             vector.x = mesh->mVertices[i].x;
+            if (vector.x > verticesMaxX) {
+                verticesMaxX = vector.x;
+            }
+            if (vector.x < verticesMinX) {
+                verticesMinX = vector.x;
+            }
             vector.y = mesh->mVertices[i].y;
+            if (vector.y > verticesMaxY) {
+                verticesMaxY = vector.y;
+            }
+            if (vector.y < verticesMinY) {
+                verticesMinY = vector.y;
+            }
             vector.z = mesh->mVertices[i].z;
+            if (vector.z > verticesMaxZ) {
+                verticesMaxZ = vector.z;
+            }
+            if (vector.z < verticesMinZ) {
+                verticesMinZ = vector.z;
+            }
             vertex.Position = vector;
+            
             // normals
             if (mesh->HasNormals())
             {

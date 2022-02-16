@@ -89,6 +89,9 @@
     <None Include="paper_blurFShader.glsl">
       <Filter>Shaders</Filter>
     </None>
+    <None Include="regularFShader.glsl">
+      <Filter>Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Shader.h">

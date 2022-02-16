@@ -1,6 +1,6 @@
 #version 330 core
 layout (location = 0) out vec4 FragColor;
-layout (location = 1) out vec4 BlurColor;
+
 
 in vec3 v_texCoord3D;
 in VS_OUT {
@@ -150,7 +150,6 @@ void main()
     else{
         FragColor = vec4(result, 1.0);
     }
-    BlurColor = vec4(result, 1.0);
 }
 
 
@@ -187,19 +186,19 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
     }
     else{ // it's a model
         if((materialEnabled == 0) && (textureEnabled == 1)){
-            ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-            diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-            specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
+            ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, texCoords));
+            diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, texCoords));
+            specular = light.specular * spec * vec3(texture(material.texture_specular2, texCoords));
         }
         if((materialEnabled == 1) && (textureEnabled == 0)){
-            ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65));
-            diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65));
-            specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65));
+            ambient  = light.ambient  * material.ambient;
+            diffuse  = light.diffuse  * diff * material.diffuse;
+            specular = light.specular * spec * material.specular;
         }
         if((materialEnabled == 1) && (textureEnabled == 1)){
-            ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65)) * texture(material.texture_diffuse1, texCoords).rgb;
-            diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65))* texture(material.texture_diffuse1, texCoords).rgb;
-            specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65))* texture(material.texture_specular2, texCoords).rgb;
+            ambient  = light.ambient  * material.ambient * texture(material.texture_diffuse1, texCoords).rgb;
+            diffuse  = light.diffuse  * diff * material.diffuse * texture(material.texture_diffuse1, texCoords).rgb;
+            specular = light.specular * spec * material.specular * texture(material.texture_specular2, texCoords).rgb;
         }
 
     }
@@ -214,56 +213,25 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
        // combine results
 
         if((materialEnabled == 0) && (textureEnabled == 1)){
-            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-            diffuse  = 0.45 *(light.diffuse *  brightness)  + 0.6*light.diffuse * diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(texture(material.texture_diffuse1, texCoords));
+            diffuse  = 0.45 *(light.diffuse *  brightness)  + 0.6*light.diffuse * diff * vec3(texture(material.texture_diffuse1, texCoords));
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * vec3(texture(material.texture_specular2, texCoords));
         }
         if((materialEnabled == 1) && (textureEnabled == 0)){
-            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65));
-            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65));
-            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular *spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65));
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * material.ambient;
+            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse * diff * material.diffuse;
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * material.specular;
         }
         if((materialEnabled == 1) && (textureEnabled == 1)){
-            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65)) * texture(material.texture_diffuse1, texCoords).rgb;
-            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff* vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65))* texture(material.texture_diffuse1, texCoords).rgb;
-            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65))* texture(material.texture_specular2, texCoords).rgb;
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * material.ambient * texture(material.texture_diffuse1, texCoords).rgb;
+            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff* material.diffuse * texture(material.texture_diffuse1, texCoords).rgb;
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * material.specular * texture(material.texture_specular2, texCoords).rgb;
         }
     }
 
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias); 
     vec3 result = ambient + (1.0 - shadow) * (diffuse) + specular;
-    if(modelFlag == 0){
-        return result;
-    }
-    result = mix(texture(texture_specular, texCoords).rgb,result ,turbulance);
-
-
-    //calc light dilution
-    float ratio = 1.0;
-    vec3 I = normalize(fs_in.FragPos - cameraPos);
-    if (normalFlag == 1.0f){
-        vec3 fragPos = fs_in.TBN * fs_in.FragPos;
-        I = normalize(fragPos - cameraPos);
-    }
-    vec3 R = refract(I, normal, ratio);
-
-    areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
-    vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor; //if skybox applied
-    result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
-    
-    //implement density control
-    if(density < 0.5){
-        float power = 3 - density * 4;
-        result.x *= pow(result.x,power);
-        result.y *= pow(result.y,power);
-        result.z *= pow(result.z,power);
-    }
-    else{
-        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result; //if skybox applied
-        result = (density - 0.5) * (vec3(1.0f, 1.0f, 1.0f) - result) + result;
-    } 
     return result;
 }
 
@@ -271,8 +239,6 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords)
 {
-    float areaOfDilution;
-
     vec3 lightDir = normalize(light.position - fragPos);
     if(normalFlag == 1.0f){
             lightDir = fs_in.TBN * normalize(light.position - fs_in.FragPos);
@@ -293,19 +259,19 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     // combine results
     vec3 ambient, diffuse, specular;
     if((materialEnabled == 0) && (textureEnabled == 1)){
-       ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-       diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-       specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
+       ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, texCoords));
+       diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, texCoords));
+       specular = light.specular * spec * vec3(texture(material.texture_specular2, texCoords));
     }
     if((materialEnabled == 1) && (textureEnabled == 0)){
-       ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65));
-       diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65));
-       specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65));
+       ambient  = light.ambient  * material.ambient;
+       diffuse  = light.diffuse  * diff * material.diffuse;
+       specular = light.specular * spec * material.specular;
     }
     if((materialEnabled == 1) && (textureEnabled == 1)){
-       ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65)) * texture(material.texture_diffuse1, texCoords).rgb;
-       diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65))* texture(material.texture_diffuse1, texCoords).rgb;
-       specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65))* texture(material.texture_specular2, texCoords).rgb;
+       ambient  = light.ambient  * material.ambient * texture(material.texture_diffuse1, texCoords).rgb;
+       diffuse  = light.diffuse  * diff * material.diffuse * texture(material.texture_diffuse1, texCoords).rgb;
+       specular = light.specular * spec * material.specular * texture(material.texture_specular2, texCoords).rgb;
     }
 
     //apply toon shading if required
@@ -318,19 +284,19 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
        // combine results
 
         if((materialEnabled == 0) && (textureEnabled == 1)){
-            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-            diffuse  = 0.45 *(light.diffuse *  brightness)  + 0.6*light.diffuse * diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(texture(material.texture_diffuse1, texCoords));
+            diffuse  = 0.45 *(light.diffuse *  brightness)  + 0.6*light.diffuse * diff * vec3(texture(material.texture_diffuse1, texCoords));
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * vec3(texture(material.texture_specular2, texCoords));
         }
         if((materialEnabled == 1) && (textureEnabled == 0)){
-            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65));
-            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65));
-            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular *spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65));
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * material.ambient;
+            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse * diff * material.diffuse;
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular *spec * material.specular;
         }
         if((materialEnabled == 1) && (textureEnabled == 1)){
-            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65)) * texture(material.texture_diffuse1, texCoords).rgb;
-            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff* vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65))* texture(material.texture_diffuse1, texCoords).rgb;
-            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65))* texture(material.texture_specular2, texCoords).rgb;
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * material.ambient * texture(material.texture_diffuse1, texCoords).rgb;
+            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff* material.diffuse * texture(material.texture_diffuse1, texCoords).rgb;
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * material.specular * texture(material.texture_specular2, texCoords).rgb;
         }
     }
 
@@ -338,33 +304,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
     diffuse  *= attenuation;
     specular *= attenuation;
     vec3 result = ambient + diffuse + specular;
-    if(modelFlag == 0){
-        return result;
-    }
-
-    //calc light dilution
-    float ratio = 1.0;
-    vec3 I = normalize(fs_in.FragPos - cameraPos);
-    if (normalFlag == 1.0f){
-        vec3 fragPos = fs_in.TBN * fs_in.FragPos;
-        I = normalize(fragPos - cameraPos);
-    }
-    vec3 R = refract(I, normal, ratio);
-    areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
-    vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor; //if skybox relevant
-    result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
-
-    //implement density control
-    if(density < 0.5){
-        for(int i=0; i < floor(3 - density * 4); i++){
-            result *= result;
-        }
-    }
-    else{
-        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result; //if skybox is relevant
-        result = (density - 0.5) * (vec3(1.0f, 1.0, 1.0f) - result) + result;
-    }
     return result;
 } 
 
@@ -372,7 +311,6 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec2 texCoords)
 {
 
-    float areaOfDilution;
 
     // diffuse shading
     vec3 lightDir = normalize(light.position - fs_in.FragPos);
@@ -390,19 +328,19 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
     // combine results
     vec3 ambient, diffuse, specular;
     if((materialEnabled == 0) && (textureEnabled == 1)){
-       ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-       diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-       specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
+       ambient  = light.ambient  * vec3(texture(material.texture_diffuse1, texCoords));
+       diffuse  = light.diffuse  * diff * vec3(texture(material.texture_diffuse1, texCoords));
+       specular = light.specular * spec * vec3(texture(material.texture_specular2, texCoords));
     }
     if((materialEnabled == 1) && (textureEnabled == 0)){
-       ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65));
-       diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65));
-       specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65));
+       ambient  = light.ambient  * material.ambient;
+       diffuse  = light.diffuse  * diff * material.diffuse;
+       specular = light.specular * spec * material.specular;
     }
     if((materialEnabled == 1) && (textureEnabled == 1)){
-       ambient  = light.ambient  * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65)) * texture(material.texture_diffuse1, texCoords).rgb;
-       diffuse  = light.diffuse  * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65))* texture(material.texture_diffuse1, texCoords).rgb;
-       specular = light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65))* texture(material.texture_specular2, texCoords).rgb;
+       ambient  = light.ambient  * material.ambient * texture(material.texture_diffuse1, texCoords).rgb;
+       diffuse  = light.diffuse  * diff * material.diffuse * texture(material.texture_diffuse1, texCoords).rgb;
+       specular = light.specular * spec * material.specular * texture(material.texture_specular2, texCoords).rgb;
     }
     float bias = max(0.05 * (1.0 - dot(normal, lightDir)), 0.005); 
     float shadow = ShadowCalculation(fs_in.FragPosLightSpace, bias); 
@@ -438,44 +376,20 @@ vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec
        // combine results
 
         if((materialEnabled == 0) && (textureEnabled == 1)){
-            ambient  = 0.4 *(light.ambient * brightness)  + 0.1*light.ambient * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-            diffuse  = 0.4 *(light.diffuse *  brightness)  + 0.1*light.diffuse * diff * vec3(mix(texture(texture_specular, texCoords),texture(material.texture_diffuse1, texCoords),0.65));
-            specular = 0.4 *(light.specular * brightness) + 0.1*light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords),texture(material.texture_specular2, texCoords),0.65));
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * vec3(texture(material.texture_diffuse1, texCoords));
+            diffuse  = 0.45 *(light.diffuse *  brightness)  + 0.6*light.diffuse * diff * vec3(texture(material.texture_diffuse1, texCoords));
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * vec3(texture(material.texture_specular2, texCoords));
         }
         if((materialEnabled == 1) && (textureEnabled == 0)){
-            ambient  = 0.4 *(light.ambient * brightness)  + 0.1*light.ambient * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65));
-            diffuse  = 0.4 *(light.diffuse *  brightness) + 0.1*light.diffuse * diff * vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65));
-            specular = 0.4 *(light.specular * brightness) + 0.1*light.specular *spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65));
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * material.ambient;
+            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse * diff * material.diffuse;
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular *spec * material.specular;
         }
         if((materialEnabled == 1) && (textureEnabled == 1)){
-            ambient  = 0.4 *(light.ambient * brightness)  + 0.1*light.ambient * vec3(mix(texture(texture_specular, texCoords), vec4(material.ambient,1.0),0.65)) * texture(material.texture_diffuse1, texCoords).rgb;
-            diffuse  = 0.4 *(light.diffuse *  brightness) + 0.1*light.diffuse *diff* vec3(mix(texture(texture_specular, texCoords),vec4(material.diffuse,1.0),0.65))* texture(material.texture_diffuse1, texCoords).rgb;
-            specular = 0.4 *(light.specular * brightness) + 0.1*light.specular * spec * vec3(mix(texture(material.texture_specular1, texCoords), vec4(material.specular,1.0),0.65))* texture(material.texture_specular2, texCoords).rgb;
+            ambient  = 0.45 *(light.ambient * brightness)  + 0.6*light.ambient * material.ambient * texture(material.texture_diffuse1, texCoords).rgb;
+            diffuse  = 0.45 *(light.diffuse *  brightness) + 0.6*light.diffuse *diff* material.diffuse * texture(material.texture_diffuse1, texCoords).rgb;
+            specular = 0.45 *(light.specular * brightness) + 0.6*light.specular * spec * material.specular * texture(material.texture_specular2, texCoords).rgb;
         }
-    }
-
-    //calc light dilution
-    float ratio = 1.0;
-    vec3 I = normalize(fs_in.FragPos - cameraPos);
-    if (normalFlag == 1.0f){
-        vec3 fragPos = fs_in.TBN * fs_in.FragPos;
-        I = normalize(fragPos - cameraPos);
-    }
-    vec3 R = refract(I, normal, ratio);
-    areaOfDilution = (dot(lightDir,normal) + (diluteAreaVariable - 1))/diluteAreaVariable;
-    vec3 cangianteColor = result + areaOfDilution * light.cangiante;
-    //result = light.dilution * areaOfDilution *(cangianteColor - texture(skybox, R).rgb) + cangianteColor; //if skybox required
-    result = light.dilution * areaOfDilution *(cangianteColor - vec3(1.0f, 1.0f, 1.0f)) + cangianteColor;
-
-    //implement density control
-    if(density < 0.5){
-        for(int i=0; i < floor(3 - density * 4); i++){
-            result *= result;
-        }
-    }
-    else{
-        //result = (density - 0.5) * (texture(skybox, R).rgb - result) + result; //if skybox is required
-        result = (density - 0.5) * (vec3(1.0f, 1.0, 1.0f) - result) + result;
     }
     return (result);
 } 
