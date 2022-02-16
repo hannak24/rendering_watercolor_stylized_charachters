@@ -49,8 +49,8 @@ static void ShowSettingsMenu();
 bool show_app_main_menu_bar = true;
 
 // settings
-const unsigned int SCR_WIDTH = 800;
-const unsigned int SCR_HEIGHT = 600;
+unsigned int SCR_WIDTH = 800;
+unsigned int SCR_HEIGHT = 600;
 bool bloom = true;
 bool bloomKeyPressed = false;
 float exposure = 2.1999;
@@ -62,6 +62,7 @@ float darkEdge = 0.0677;
 float granulation = 0.5129;
 float finalTremor = 0.0080;
 bool wall = false;
+bool resizeFlag = false;
 
 // camera
 Camera camera(glm::vec3(0.0f, 1.268f, 5.046f));
@@ -400,10 +401,8 @@ int main()
     unsigned int paperTexture = loadTexture("dicplacementMap/disp.png", true);
     
 
-   
-
     // configure depth map FBO
-    // -----------------------
+   // -----------------------
     const unsigned int SHADOW_WIDTH = 1024, SHADOW_HEIGHT = 1024;
     unsigned int depthMapFBO;
     glGenFramebuffers(1, &depthMapFBO);
@@ -508,10 +507,92 @@ int main()
     shaderBloomFinal.setInt("scene", 0);
     shaderBloomFinal.setInt("bloomBlur", 1);
 
+   
+
     // render loop
     // -----------
     while (!glfwWindowShouldClose(window))
     {
+
+        if (resizeFlag == true) {
+
+            lastX = (float)SCR_WIDTH / 2.0;
+            lastY = (float)SCR_HEIGHT / 2.0;
+
+            // configure (floating point) framebuffers
+            // ---------------------------------------
+            unsigned int hdrFBO;
+            glGenFramebuffers(1, &hdrFBO);
+            glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
+            // create 2 floating point color buffers (1 for normal rendering, other for brightness threshold values)
+            unsigned int colorBuffers[3];
+            glGenTextures(3, colorBuffers);
+            for (unsigned int i = 0; i < 3; i++)
+            {
+                glBindTexture(GL_TEXTURE_2D, colorBuffers[i]);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);  // we clamp to the edge as the blur filter would otherwise sample repeated texture values!
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                // attach texture to framebuffer
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, colorBuffers[i], 0);
+            }
+            // create and attach depth buffer (renderbuffer)
+            unsigned int rboDepth;
+            glGenRenderbuffers(1, &rboDepth);
+            glBindRenderbuffer(GL_RENDERBUFFER, rboDepth);
+            glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT, SCR_WIDTH, SCR_HEIGHT);
+            glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboDepth);
+            // tell OpenGL which color attachments we'll use (of this framebuffer) for rendering 
+            unsigned int attachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1,GL_COLOR_ATTACHMENT2 };
+            glDrawBuffers(3, attachments);
+            // finally check if framebuffer is complete
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+                std::cout << "Framebuffer not complete!" << std::endl;
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+            // ping-pong-framebuffer for blurring
+            unsigned int pingpongFBO[2];
+            unsigned int pingpongColorbuffers[2];
+            glGenFramebuffers(2, pingpongFBO);
+            glGenTextures(2, pingpongColorbuffers);
+            for (unsigned int i = 0; i < 2; i++)
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
+                glBindTexture(GL_TEXTURE_2D, pingpongColorbuffers[i]);
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE); // we clamp to the edge as the blur filter would otherwise sample repeated texture values!
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongColorbuffers[i], 0);
+                // also check if framebuffers are complete (no need for depth buffer)
+                if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+                    std::cout << "Framebuffer not complete!" << std::endl;
+            }
+            if (SCR_HEIGHT != 600) { // maximum screen
+                camera.Position.x = 4.197;
+                camera.Position.y = 2.305;
+                camera.Position.z = 9.208;
+                cameraPositionX = 4.197;
+                cameraPositionY = 2.305;
+                cameraPositionZ = 9.208;
+            }
+            else { //original screen
+                 cameraPositionX = 0.0;
+                 cameraPositionY = 1.268;
+                 cameraPositionZ = 5.046;
+                 camera.Position.x = 0.0;
+                 camera.Position.y = 1.268;
+                 camera.Position.z = 5.046;
+            }
+            
+
+
+            resizeFlag = false;
+        }
+
         // per-frame time logic
         // --------------------
         float currentFrame = glfwGetTime();
@@ -950,6 +1031,9 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
     // make sure the viewport matches the new window dimensions; note that width and 
     // height will be significantly larger than specified on retina displays.
     glViewport(0, 0, width, height);
+    SCR_WIDTH = width;
+    SCR_HEIGHT = height;
+    resizeFlag = true;
 }
 
 // glfw: whenever the mouse moves, this callback is called
