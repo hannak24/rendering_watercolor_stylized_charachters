@@ -174,7 +174,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
     // combine results
     vec3 ambient, diffuse, specular;
     if(modelFlag == 0){
-        if(wallFlag == 0.0){
+        if(wallFlag == 1.0){
             ambient  = light.ambient  * vec3(texture(wall_texture, texCoords));
             diffuse  = light.diffuse  * diff * vec3(texture(wall_texture, texCoords));
             specular = light.specular * spec * vec3(texture(wall_texture, texCoords));    

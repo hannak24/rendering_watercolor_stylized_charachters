@@ -624,9 +624,12 @@ int main()
         unsigned int wall_texture = 0;
         unsigned int floor_texture = 0;
         if(wallEnabled)
-            unsigned int wall_texture = loadTexture(diffuseTextureWall, true);
+            //unsigned int wall_texture = loadTexture(diffuseTextureWall, true);
+            wall_texture = loadTexture(diffuseTextureWall, true);
+            shader.use();
+            shader.setInt("wallTexture", wall_texture);
         if(floorEnabled)
-            unsigned int floor_texture = loadTexture("textures/watercolor paper.jpg", true);
+            unsigned int floor_texture = loadTexture("textures/container.jpg", true);
         if (objectType == 0) {
             if (strcmp(previousObject.c_str(), defaultModel) != 0) {
                 ourModel = Model(defaultModel);
@@ -764,6 +767,7 @@ int main()
         shader.setVec3("lightPos", lightPos);
         shader.setMat4("lightSpaceMatrix", lightSpaceMatrix);
         shader.setBool("water", waterEnabled);
+        shader.setInt("wall_texture", wall_texture);
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, waterColorPaperTexture);
         glActiveTexture(GL_TEXTURE1);
@@ -1179,13 +1183,15 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader, int wall_t
         shader.setFloat("modelFlag", 0.0f);
         shader.setFloat("tremor", 0.0f);
         shader.setInt("noise_texture", 3);
-        shader.setInt("wall_texture", 0);
+        shader.setInt("wall_texture", 2);
         model = glm::mat4(1.0f);
         model = glm::translate(model, glm::vec3(wallTranslateX, wallTranslateY, wallTranslateZ)); // translate it down so it's at the center of the scene
         shader.setMat4("wallModel", model);
         model = glm::mat4(1.0);
         shader.setVec3("dirLight.ambient", light * 0.2f, light * 0.2f, light * 0.2f);
         shader.setMat4("model", model);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, wall_texture);
         glBindVertexArray(wallVAO);
         glDrawArrays(GL_TRIANGLES, 0, 6);
     }
