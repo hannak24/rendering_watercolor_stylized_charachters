@@ -624,22 +624,16 @@ int main()
         unsigned int wall_texture = 0;
         unsigned int floor_texture = 0;
         if(wallEnabled)
-            //unsigned int wall_texture = loadTexture(diffuseTextureWall, true);
-            wall_texture = loadTexture(diffuseTextureWall, true);
-            shader.use();
-            shader.setInt("wallTexture", wall_texture);
-        if(floorEnabled)
-            unsigned int floor_texture = loadTexture("textures/container.jpg", true);
+            wall_texture = loadTexture(diffuseTextureWall, true);          
+        if (floorEnabled) {
+            floor_texture = loadTexture(diffuseTextureFloor, true);
+        }
+ 
         if (objectType == 0) {
             if (strcmp(previousObject.c_str(), defaultModel) != 0) {
                 ourModel = Model(defaultModel);
                 previousModel = defaultModel;
                 previousObject = defaultModel;
-                adjustScale(ourModel.verticesMaxX, ourModel.verticesMaxY, ourModel.verticesMaxZ);
-            }
-            if (strcmp(previousModel.c_str(), defaultModel) != 0) {
-                ourModel = Model(defaultModel);
-                previousModel = defaultModel;
                 adjustScale(ourModel.verticesMaxX, ourModel.verticesMaxY, ourModel.verticesMaxZ);
             }
         }
@@ -774,6 +768,8 @@ int main()
         glBindTexture(GL_TEXTURE_2D, depthMap);
         glActiveTexture(GL_TEXTURE2);
         glBindTexture(GL_TEXTURE_2D, wall_texture);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, floor_texture);
 
         if (watercolorEnabled) {
             shader.use();
@@ -875,6 +871,8 @@ int main()
         glDeleteBuffers(1, &planeVBO);
         glDeleteVertexArrays(1, &wallVAO);
         glDeleteBuffers(1, &wallVBO);
+        glDeleteTextures(1, &floor_texture);
+        glDeleteTextures(1, &wall_texture);
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
@@ -1164,7 +1162,9 @@ void renderScene(Shader& shader, Model ourModel, Shader& modelShader, int wall_t
     shader.setFloat("diluteAreaVariable", 1);
     shader.setFloat("modelFlag", 0.0f);
     shader.setFloat("tremor", 0.0f);
-    shader.setInt("noise_texture", 3);
+    //shader.setInt("noise_texture", 3);
+   shader.setInt("floor_texture", 3);
+
     glm::mat4 model = glm::mat4(1.0f);
     shader.setVec3("dirLight.ambient", 0.2f, 0.2f, 0.2f);
     shader.setMat4("model", model);

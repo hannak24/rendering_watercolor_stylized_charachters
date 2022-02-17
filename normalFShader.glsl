@@ -70,6 +70,7 @@ uniform sampler2D texture_height;
 uniform sampler2D texture_noise;
 uniform sampler2D shadowMap;
 uniform sampler2D wall_texture;
+uniform sampler2D floor_texture;
 uniform samplerCube skybox;
 uniform float diluteAreaVariable;
 uniform float cangiante;
@@ -180,9 +181,9 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec2 texCoords)
             specular = light.specular * spec * vec3(texture(wall_texture, texCoords));    
         }
         else{ //if floor
-            ambient  = 0.2 * texture(material.texture_diffuse1, texCoords).rgb;
-            diffuse  = 0.7 * texture(material.texture_diffuse1, texCoords).rgb;
-            specular = 0.1 * texture(material.texture_diffuse1, texCoords).rgb;
+            ambient  = 0.2 * texture(floor_texture, texCoords).rgb;
+            diffuse  = 0.7 * texture(floor_texture, texCoords).rgb;
+            specular = 0.1 * texture(floor_texture, texCoords).rgb;
         }
     }
     else{ // it's a model
