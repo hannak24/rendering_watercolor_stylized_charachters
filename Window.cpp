@@ -96,7 +96,7 @@ int shadowing = PHONG;
 int primitive = SPHERE;
 char diffuseTextureObject[128] = "";
 char diffuseTextureWall[128] = "";
-char diffuseTextureFloor[128] = "";
+char diffuseTextureFloor[128] = "skyboxes/PondWinter/bottom.jpg";
 char normalMapObject[128] = "";
 char heightMapObject[128] = "";
 bool textureObjectEnabled = true;
@@ -118,12 +118,19 @@ float scaleX = 2.2281;
 float scaleY = 2.2281;
 float scaleZ = 2.2281;
 bool cubeBoxEnabled = false;
-char cubeBoxRight[128] = "skyboxes/watercolor paper/right.jpg";
-char cubeBoxLeft[128] = "skyboxes/watercolor paper/left.jpg";
-char cubeBoxTop[128] = "skyboxes/watercolor paper/top.jpg";
-char cubeBoxBottom[128] = "skyboxes/watercolor paper/bottom.jpg";
-char cubeBoxFront[128] = "skyboxes/watercolor paper/front.jpg";
-char cubeBoxBack[128] = "skyboxes/watercolor paper/back.jpg";
+//char cubeBoxRight[128] = "skyboxes/skybox/right.jpg";
+//char cubeBoxLeft[128] = "skyboxes/skybox/left.jpg";
+//char cubeBoxTop[128] = "skyboxes/skybox/top.jpg";
+//char cubeBoxBottom[128] = "skyboxes/skybox/bottom.jpg";
+//char cubeBoxFront[128] = "skyboxes/skybox/front.jpg";
+//char cubeBoxBack[128] = "skyboxes/skybox/back.jpg";
+char cubeBoxRight[128] = "skyboxes/PondWinter/right.jpg";
+char cubeBoxLeft[128] = "skyboxes/PondWinter/left.jpg";
+char cubeBoxTop[128] = "skyboxes/PondWinter/top.jpg";
+char cubeBoxBottom[128] = "skyboxes/PondWinter/bottom.jpg";
+char cubeBoxFront[128] = "skyboxes/PondWinter/front.jpg";
+char cubeBoxBack[128] = "skyboxes/PondWinter/back.jpg";
+
 bool wallEnabled = false;
 bool floorEnabled = false;
 float cameraRight = 0.0;
@@ -784,10 +791,15 @@ int main()
 
         //add skybox
         if (cubeBoxEnabled) {
+
+            //cubemapTexture = loadCubemap(faces);
+
             glDepthFunc(GL_LEQUAL);
             skyboxShader.use();
             glDepthMask(GL_FALSE);
             skyboxShader.use();
+
+
 
             // view/projection transformations
             projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.1f, 100.0f);
@@ -874,6 +886,7 @@ int main()
         glDeleteBuffers(1, &wallVBO);
         glDeleteTextures(1, &floor_texture);
         glDeleteTextures(1, &wall_texture);
+        //glDeleteTextures(1, &cubemapTexture);
     }
 
     // optional: de-allocate all resources once they've outlived their purpose:
